@@ -65,3 +65,63 @@ func TestStateMap_HasState(t *testing.T) {
 		})
 	}
 }
+
+func TestMetadata_Update(t *testing.T) {
+	type args struct {
+		key   string
+		value string
+	}
+	tests := []struct {
+		name string
+		m    Metadata
+		args args
+	}{
+		{
+			name: "success - update key and value",
+			m:    map[string]string{"key1": "value2"},
+			args: args{key: "key1", value: "value1"},
+		},
+		{
+			name: "success - update key and value with nil map",
+			m:    nil,
+			args: args{key: "key1", value: "value1"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tt.m.Update(tt.args.key, tt.args.value)
+		})
+	}
+}
+
+func TestMetadata_Has(t *testing.T) {
+	type args struct {
+		key string
+	}
+	tests := []struct {
+		name string
+		m    Metadata
+		args args
+		want bool
+	}{
+		{
+			name: "success - key exist",
+			m:    map[string]string{"key1": "value1"},
+			args: args{key: "key1"},
+			want: true,
+		},
+		{
+			name: "success - key does not exist",
+			m:    map[string]string{"key1": "value1"},
+			args: args{key: "key2"},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := tt.m.Has(tt.args.key); got != tt.want {
+				t.Errorf("Has() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
