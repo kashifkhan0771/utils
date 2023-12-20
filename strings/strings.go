@@ -4,12 +4,14 @@ Package strings defines strings helpers.
 package strings
 
 import (
-	"golang.org/x/text/language"
 	"regexp"
 	"strings"
 
 	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
+
+var c = cases.Title(language.English)
 
 // SubstringSearchOptions contains options for substring search.
 type SubstringSearchOptions struct {
@@ -51,10 +53,7 @@ func SubstringSearch(input, substring string, options SubstringSearchOptions) []
 
 // Title return string in title case with English language-specific title
 func Title(input string) string {
-	c := cases.Title(language.English)
-
 	return c.String(input)
-
 }
 
 // ToTitle converts a string to title case, capitalizing the first letter of each word.
