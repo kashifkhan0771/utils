@@ -65,3 +65,37 @@ func TestStateMap_HasState(t *testing.T) {
 		})
 	}
 }
+
+func TestStateMap_ToggleState(t *testing.T) {
+	type args struct {
+		stateType string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "success - toggled the state in the state map",
+			args: args{stateType: "key1"},
+			want: false,
+		},
+		{
+			name: "success - toggled the state in the state map",
+			args: args{stateType: "key2"},
+			want: true,
+		}}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			state := NewStateMap()
+			state.SetState(tt.args.stateType, !tt.want)
+
+			state.ToggleState(tt.args.stateType)
+
+			got := state.IsState(tt.args.stateType)
+			if got != tt.want {
+				t.Errorf("ToggleState() : %v, want : %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -13,6 +13,11 @@ func (s StateMap) SetState(stateType string, value bool) {
 	s[stateType] = value
 }
 
+// ToggleState toggles the value of the state with the provided key in the StateMap.
+func (s StateMap) ToggleState(stateType string) {
+	s[stateType] = !s[stateType]
+}
+
 // IsState return the value of the state provided from StateMap
 func (s StateMap) IsState(stateType string) bool {
 	if ok, v := s[stateType]; ok {
