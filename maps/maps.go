@@ -33,3 +33,31 @@ func (s StateMap) HasState(stateType string) bool {
 
 	return ok
 }
+
+type Metadata map[string]string
+
+func NewMetadata() Metadata {
+	return make(map[string]string)
+}
+
+func (m Metadata) Update(key, value string) {
+	if m == nil {
+		m = NewMetadata()
+	}
+
+	m[key] = value
+}
+
+func (m Metadata) Has(key string) bool {
+	_, ok := m[key]
+
+	return ok
+}
+
+func (m Metadata) Value(key string) string {
+	if !m.Has(key) {
+		return ""
+	}
+
+	return m[key]
+}
