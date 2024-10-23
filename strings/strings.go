@@ -156,3 +156,15 @@ func SanitizeEmail(email string) string {
 
 	return strings.TrimSpace(email)
 }
+
+func Reverse(input string) string {
+	runes := []rune(input)
+	inputLength := len(runes)
+	result := make([]rune, inputLength)
+	lastCharacterIndex := inputLength - 1
+
+	for index, character := range input {
+		result[lastCharacterIndex-index] = character
+	}
+	return string(result)
+}
