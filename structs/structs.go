@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-// Result is result of each field comparison with field name it's old and new value
+// Result represents the comparison outcome of a field, including its name, old value, and new value.
 type Result struct {
 	FieldName string
 	OldValue  interface{}
