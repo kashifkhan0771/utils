@@ -1,13 +1,4 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: enhancement
-assignees: ''
-
----
-
----
 name: Feature Request
 about: Suggest an idea for the Go Utils Library
 title: "[FEATURE] Title"
