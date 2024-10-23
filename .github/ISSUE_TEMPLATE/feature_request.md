@@ -3,7 +3,6 @@ name: Feature Request
 about: Suggest an idea for the Go Utils Library
 title: "[FEATURE] Title"
 labels: feature
-CC: @kashifkhan0771
 ---
 
 ## Feature Description
