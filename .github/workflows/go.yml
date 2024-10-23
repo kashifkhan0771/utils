@@ -11,7 +11,7 @@ on:
 
 jobs:
 
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -27,10 +27,6 @@ jobs:
 
     - name: Download dependencies
       run: go mod download
-
-    - name: Build
-      run: |
-        go build -v -o bin/ ./...
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
