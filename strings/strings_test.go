@@ -426,9 +426,9 @@ func TestCommonSuffix(t *testing.T) {
 		},
 	}
 
-	for _, test := range tests {
-		if got := CommonSuffix(test.input...); got != test.expectedOutput {
-			t.Errorf("CommonSuffix() = %v, want %v", got, test.expectedOutput)
+	for _, tt := range tests {
+		if got := CommonSuffix(tt.input...); got != tt.expectedOutput {
+			t.Errorf("CommonSuffix() = %v, want %v", got, tt.expectedOutput)
 		}
 	}
 }
