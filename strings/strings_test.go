@@ -347,9 +347,11 @@ func TestReverse(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		if got := Reverse(tt.input); got != tt.expectedOutput {
-			t.Errorf("Reverse() = %v, want %v", got, tt.expectedOutput)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Reverse(tt.input); got != tt.expectedOutput {
+				t.Errorf("Reverse() = %v, want %v", got, tt.expectedOutput)
+			}
+		})
 	}
 }
 
