@@ -322,3 +322,31 @@ func TestTitle(t *testing.T) {
 		})
 	}
 }
+
+func TestReverse(t *testing.T) {
+	tests := []struct {
+		input          string
+		expectedOutput string
+	}{
+		{
+			input:          "hello",
+			expectedOutput: "olleh",
+		},
+		{
+			input:          "étoile",
+			expectedOutput: "elioté",
+		},
+		{
+			input:          "你好",
+			expectedOutput: "好你",
+		},
+	}
+
+	for _, test := range tests {
+		result := Reverse(test.input)
+
+		if result != test.expectedOutput {
+			t.Errorf("success - reverse word, want %s, got %s", test.expectedOutput, result)
+		}
+	}
+}
