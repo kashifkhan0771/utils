@@ -157,6 +157,7 @@ func SanitizeEmail(email string) string {
 	return strings.TrimSpace(email)
 }
 
+// Reverse returns reversed string
 func Reverse(input string) string {
 	runes := []rune(input)
 	inputLength := len(runes)
@@ -169,6 +170,7 @@ func Reverse(input string) string {
 	return string(result)
 }
 
+// CommonPrefix returns common prefix from the array of strings
 func CommonPrefix(input ...string) string {
 	if len(input) == 0 {
 		return ""
@@ -201,6 +203,7 @@ func CommonPrefix(input ...string) string {
 	return string(prefix)
 }
 
+// CommonSuffix returns common suffix from the array of strings
 func CommonSuffix(input ...string) string {
 	if len(input) == 0 {
 		return ""
