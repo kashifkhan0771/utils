@@ -348,7 +348,7 @@ func TestReverse(t *testing.T) {
 
 	for _, test := range tests {
 		if got := Reverse(test.input); got != test.expectedOutput {
-			t.Errorf("Title() = %v, want %v", got, test.expectedOutput)
+			t.Errorf("Reverse() = %v, want %v", got, test.expectedOutput)
 		}
 	}
 }
@@ -388,7 +388,7 @@ func TestCommonPrefix(t *testing.T) {
 
 	for _, test := range tests {
 		if got := CommonPrefix(test.input...); got != test.expectedOutput {
-			t.Errorf("Title() = %v, want %v", got, test.expectedOutput)
+			t.Errorf("CommonPrefix() = %v, want %v", got, test.expectedOutput)
 		}
 	}
 }
@@ -428,7 +428,7 @@ func TestCommonSuffix(t *testing.T) {
 
 	for _, test := range tests {
 		if got := CommonSuffix(test.input...); got != test.expectedOutput {
-			t.Errorf("Title() = %v, want %v", got, test.expectedOutput)
+			t.Errorf("CommonSuffix() = %v, want %v", got, test.expectedOutput)
 		}
 	}
 }
