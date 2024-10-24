@@ -72,6 +72,13 @@ func TestCompareStructs(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name:    "fail - non struct parameters",
+			old:     map[string]string{"test": "example"},
+			new:     map[string]string{"test": "example-updated"},
+			want:    nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -24,7 +24,11 @@ func CompareStructs(old, new interface{}) ([]Result, error) {
 	oldValue := reflect.ValueOf(old)
 	newValue := reflect.ValueOf(new)
 
-	var comparedResults = make([]Result, 0)
+	if oldValue.Kind() != reflect.Struct || newValue.Kind() != reflect.Struct {
+		return nil, fmt.Errorf("both parameters should be struct")
+	}
+
+	var comparedResults = make([]Result, 0, oldValue.NumField())
 
 	for i := 0; i < oldValue.NumField(); i++ {
 		field := oldValue.Type().Field(i)
