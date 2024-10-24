@@ -400,7 +400,7 @@ func TestCommonSuffix(t *testing.T) {
 		expectedOutput string
 	}{
 		{
-			name:           "success - common suffix",
+			name:           "success - no common suffix",
 			input:          []string{"nation", "national", "nasty"},
 			expectedOutput: "",
 		},
