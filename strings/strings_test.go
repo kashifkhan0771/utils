@@ -322,3 +322,115 @@ func TestTitle(t *testing.T) {
 		})
 	}
 }
+
+func TestReverse(t *testing.T) {
+	tests := []struct {
+		name           string
+		input          string
+		expectedOutput string
+	}{
+		{
+			name:           "success - reverse english word",
+			input:          "hello",
+			expectedOutput: "olleh",
+		},
+		{
+			name:           "success - reverse word with accented character",
+			input:          "étoile",
+			expectedOutput: "elioté",
+		},
+		{
+			name:           "success - reverse Chinese characters",
+			input:          "你好",
+			expectedOutput: "好你",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Reverse(tt.input); got != tt.expectedOutput {
+				t.Errorf("Reverse() = %v, want %v", got, tt.expectedOutput)
+			}
+		})
+	}
+}
+
+func TestCommonPrefix(t *testing.T) {
+	tests := []struct {
+		name           string
+		input          []string
+		expectedOutput string
+	}{
+		{
+			name:           "success - common prefix",
+			input:          []string{"nation", "national", "nasty"},
+			expectedOutput: "na",
+		},
+		{
+			name:           "success - common prefix with accented character",
+			input:          []string{"défaire", "développer", "déménager"},
+			expectedOutput: "dé",
+		},
+		{
+			name:           "success - no common prefix found",
+			input:          []string{"nation", "lotion", "dragon"},
+			expectedOutput: "",
+		},
+		{
+			name:           "success - common prefix with single word",
+			input:          []string{"nation"},
+			expectedOutput: "nation",
+		},
+		{
+			name:           "success - common prefix with empty string",
+			input:          []string{""},
+			expectedOutput: "",
+		},
+	}
+
+	for _, tt := range tests {
+		if got := CommonPrefix(tt.input...); got != tt.expectedOutput {
+			t.Errorf("CommonPrefix() = %v, want %v", got, tt.expectedOutput)
+		}
+	}
+}
+
+func TestCommonSuffix(t *testing.T) {
+	tests := []struct {
+		name           string
+		input          []string
+		expectedOutput string
+	}{
+		{
+			name:           "success - no common suffix",
+			input:          []string{"nation", "national", "nasty"},
+			expectedOutput: "",
+		},
+		{
+			name:           "success - common suffix with accented character",
+			input:          []string{"éducation", "réaction", "information"},
+			expectedOutput: "tion",
+		},
+		{
+			name:           "success - common suffix with same word",
+			input:          []string{"nation", "nation", "nation"},
+			expectedOutput: "nation",
+		},
+		{
+			name:           "success - common suffix with single word",
+			input:          []string{"nation"},
+			expectedOutput: "nation",
+		},
+		{
+			name:           "success - common suffix with empty string",
+			input:          []string{""},
+			expectedOutput: "",
+		},
+	}
+
+	for _, tt := range tests {
+		if got := CommonSuffix(tt.input...); got != tt.expectedOutput {
+			t.Errorf("CommonSuffix() = %v, want %v", got, tt.expectedOutput)
+		}
+	}
+}

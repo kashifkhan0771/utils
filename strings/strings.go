@@ -156,3 +156,108 @@ func SanitizeEmail(email string) string {
 
 	return strings.TrimSpace(email)
 }
+
+// Reverse returns a reversed version of the input string.
+// It correctly handles Unicode characters.
+// For example:
+//
+//	Reverse("hello") returns "olleh"
+//	Reverse("世界") returns "界世"
+func Reverse(input string) string {
+	runes := []rune(input)
+	inputLength := len(runes)
+	result := make([]rune, inputLength)
+	lastCharacterIndex := inputLength - 1
+
+	for index, character := range runes {
+		result[lastCharacterIndex-index] = character
+	}
+	return string(result)
+}
+
+// CommonPrefix returns the longest common prefix of the given strings.
+// If no strings are provided, it returns an empty string.
+// If only one string is provided, it returns that string.
+// For example, CommonPrefix("nation", "national", "nasty") returns "na".
+func CommonPrefix(input ...string) string {
+	if len(input) == 0 {
+		return ""
+	}
+
+	if len(input) == 1 {
+		return input[0]
+	}
+
+	prefix := []rune(input[0])
+
+	if len(prefix) == 0 {
+		return ""
+	}
+
+	for i := 1; i < len(input); i++ {
+		if input[i] == "" {
+			return ""
+		}
+
+		item := []rune(input[i])
+		shortestTextLength := len(prefix)
+		if len(prefix) > len(item) {
+			shortestTextLength = len(item)
+		}
+		for j := 0; j < shortestTextLength; j++ {
+			if prefix[j] != item[j] {
+				prefix = prefix[:j]
+				break
+			}
+		}
+	}
+
+	return string(prefix)
+}
+
+// CommonSuffix returns the longest common suffix of the given strings.
+// If no strings are provided, it returns an empty string.
+// If only one string is provided, it returns that string.
+// For example, CommonSuffix("testing", "running", "jumping") returns "ing".
+func CommonSuffix(input ...string) string {
+	if len(input) == 0 {
+		return ""
+	}
+
+	if len(input) == 1 {
+		return input[0]
+	}
+
+	suffix := []rune(input[0])
+
+	if len(suffix) == 0 {
+		return ""
+	}
+
+	for i := 1; i < len(input); i++ {
+		if input[i] == "" {
+			return ""
+		}
+
+		item := []rune(input[i])
+
+		suffixLength := len(suffix)
+		itemLength := len(item)
+
+		// Adjust suffix length if current item is shorter
+		if itemLength < suffixLength {
+			suffix = suffix[suffixLength-itemLength:]
+			suffixLength = len(suffix)
+
+		}
+
+		for j, k := suffixLength-1, itemLength-1; j >= 0 && k >= 0; j, k = j-1, k-1 {
+			if suffix[j] != item[k] {
+				suffix = suffix[j+1:]
+				break
+			}
+		}
+	}
+
+	return string(suffix)
+}
