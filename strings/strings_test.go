@@ -370,7 +370,7 @@ func TestCommonPrefix(t *testing.T) {
 			expectedOutput: "dé",
 		},
 		{
-			name:           "success - common prefix with no common prefix",
+			name:           "success - no common prefix found",
 			input:          []string{"nation", "lotion", "dragon"},
 			expectedOutput: "",
 		},

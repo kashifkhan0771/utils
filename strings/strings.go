@@ -157,7 +157,12 @@ func SanitizeEmail(email string) string {
 	return strings.TrimSpace(email)
 }
 
-// Reverse returns reversed string
+// Reverse returns a reversed version of the input string.
+// It correctly handles Unicode characters.
+// For example:
+//
+//	Reverse("hello") returns "olleh"
+//	Reverse("世界") returns "界世"
 func Reverse(input string) string {
 	runes := []rune(input)
 	inputLength := len(runes)
