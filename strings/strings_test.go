@@ -350,3 +350,39 @@ func TestReverse(t *testing.T) {
 		}
 	}
 }
+
+func TestCommonPrefix(t *testing.T) {
+	tests := []struct {
+		input          []string
+		expectedOutput string
+	}{
+		{
+			input:          []string{"nation", "national", "nasty"},
+			expectedOutput: "na",
+		},
+		{
+			input:          []string{"défaire", "développer", "déménager"},
+			expectedOutput: "dé",
+		},
+		{
+			input:          []string{"nation", "lotion", "dragon"},
+			expectedOutput: "",
+		},
+		{
+			input:          []string{"nation"},
+			expectedOutput: "nation",
+		},
+		{
+			input:          []string{""},
+			expectedOutput: "",
+		},
+	}
+
+	for _, test := range tests {
+		result := CommonPrefix(test.input...)
+
+		if result != test.expectedOutput {
+			t.Errorf("success - common prefix, want %s, got %s", test.expectedOutput, result)
+		}
+	}
+}
