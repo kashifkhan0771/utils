@@ -325,100 +325,110 @@ func TestTitle(t *testing.T) {
 
 func TestReverse(t *testing.T) {
 	tests := []struct {
+		name           string
 		input          string
 		expectedOutput string
 	}{
 		{
+			name:           "success - reverse english word",
 			input:          "hello",
 			expectedOutput: "olleh",
 		},
 		{
+			name:           "success - reverse word with accented character",
 			input:          "étoile",
 			expectedOutput: "elioté",
 		},
 		{
+			name:           "success - reverse Chinese characters",
 			input:          "你好",
 			expectedOutput: "好你",
 		},
 	}
 
 	for _, test := range tests {
-		result := Reverse(test.input)
-
-		if result != test.expectedOutput {
-			t.Errorf("success - reverse word, want %s, got %s", test.expectedOutput, result)
+		if got := Reverse(test.input); got != test.expectedOutput {
+			t.Errorf("Title() = %v, want %v", got, test.expectedOutput)
 		}
 	}
 }
 
 func TestCommonPrefix(t *testing.T) {
 	tests := []struct {
+		name           string
 		input          []string
 		expectedOutput string
 	}{
 		{
+			name:           "success - common prefix",
 			input:          []string{"nation", "national", "nasty"},
 			expectedOutput: "na",
 		},
 		{
+			name:           "success - common prefix with accented character",
 			input:          []string{"défaire", "développer", "déménager"},
 			expectedOutput: "dé",
 		},
 		{
+			name:           "success - common prefix with no common prefix",
 			input:          []string{"nation", "lotion", "dragon"},
 			expectedOutput: "",
 		},
 		{
+			name:           "success - common prefix with single word",
 			input:          []string{"nation"},
 			expectedOutput: "nation",
 		},
 		{
+			name:           "success - common prefix with empty string",
 			input:          []string{""},
 			expectedOutput: "",
 		},
 	}
 
 	for _, test := range tests {
-		result := CommonPrefix(test.input...)
-
-		if result != test.expectedOutput {
-			t.Errorf("success - common prefix, want %s, got %s", test.expectedOutput, result)
+		if got := CommonPrefix(test.input...); got != test.expectedOutput {
+			t.Errorf("Title() = %v, want %v", got, test.expectedOutput)
 		}
 	}
 }
 
 func TestCommonSuffix(t *testing.T) {
 	tests := []struct {
+		name           string
 		input          []string
 		expectedOutput string
 	}{
 		{
+			name:           "success - common suffix",
 			input:          []string{"nation", "national", "nasty"},
 			expectedOutput: "",
 		},
 		{
+			name:           "success - common suffix with accented character",
 			input:          []string{"éducation", "réaction", "information"},
 			expectedOutput: "tion",
 		},
 		{
+			name:           "success - common suffix with same word",
 			input:          []string{"nation", "nation", "nation"},
 			expectedOutput: "nation",
 		},
 		{
+			name:           "success - common suffix with single word",
 			input:          []string{"nation"},
 			expectedOutput: "nation",
 		},
 		{
+			name:           "success - common suffix with empty string",
 			input:          []string{""},
 			expectedOutput: "",
 		},
 	}
 
 	for _, test := range tests {
-		result := CommonSuffix(test.input...)
-
-		if result != test.expectedOutput {
-			t.Errorf("success - common suffix, want %s, got %s", test.expectedOutput, result)
+		if got := CommonSuffix(test.input...); got != test.expectedOutput {
+			t.Errorf("Title() = %v, want %v", got, test.expectedOutput)
 		}
 	}
 }
