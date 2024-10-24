@@ -168,3 +168,35 @@ func Reverse(input string) string {
 	}
 	return string(result)
 }
+
+func CommonPrefix(input ...string) string {
+	if len(input) == 0 {
+		return ""
+	}
+
+	if len(input) == 1 {
+		return input[0]
+	}
+
+	prefix := []rune(input[0])
+
+	for i := 1; i < len(input); i++ {
+		if input[i] == "" {
+			return ""
+		}
+
+		item := []rune(input[i])
+		shortestTextLength := len(prefix)
+		if len(prefix) > len(item) {
+			shortestTextLength = len(item)
+		}
+		for j := 0; j < shortestTextLength; j++ {
+			if prefix[j] != item[j] {
+				prefix = prefix[:j]
+				break
+			}
+		}
+	}
+
+	return string(prefix)
+}
