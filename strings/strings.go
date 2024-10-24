@@ -200,3 +200,41 @@ func CommonPrefix(input ...string) string {
 
 	return string(prefix)
 }
+
+func CommonSuffix(input ...string) string {
+	if len(input) == 0 {
+		return ""
+	}
+
+	if len(input) == 1 {
+		return input[0]
+	}
+
+	suffix := []rune(input[0])
+
+	for i := 1; i < len(input); i++ {
+		if input[i] == "" {
+			return ""
+		}
+
+		item := []rune(input[i])
+
+		suffixLength := len(suffix)
+		currentItemLength := len(item)
+
+		if currentItemLength < suffixLength {
+			suffix = suffix[suffixLength-currentItemLength:]
+			suffixLength = len(suffix)
+
+		}
+
+		for j, k := suffixLength-1, currentItemLength-1; j >= 0 && k >= 0; j, k = j-1, k-1 {
+			if suffix[j] != item[k] {
+				suffix = suffix[j+1:]
+				break
+			}
+		}
+	}
+
+	return string(suffix)
+}
