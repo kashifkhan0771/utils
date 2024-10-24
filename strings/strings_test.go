@@ -386,3 +386,39 @@ func TestCommonPrefix(t *testing.T) {
 		}
 	}
 }
+
+func TestCommonSuffix(t *testing.T) {
+	tests := []struct {
+		input          []string
+		expectedOutput string
+	}{
+		{
+			input:          []string{"nation", "national", "nasty"},
+			expectedOutput: "",
+		},
+		{
+			input:          []string{"éducation", "réaction", "information"},
+			expectedOutput: "tion",
+		},
+		{
+			input:          []string{"nation", "nation", "nation"},
+			expectedOutput: "nation",
+		},
+		{
+			input:          []string{"nation"},
+			expectedOutput: "nation",
+		},
+		{
+			input:          []string{""},
+			expectedOutput: "",
+		},
+	}
+
+	for _, test := range tests {
+		result := CommonSuffix(test.input...)
+
+		if result != test.expectedOutput {
+			t.Errorf("success - common suffix, want %s, got %s", test.expectedOutput, result)
+		}
+	}
+}
