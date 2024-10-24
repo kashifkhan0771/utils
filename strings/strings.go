@@ -170,7 +170,10 @@ func Reverse(input string) string {
 	return string(result)
 }
 
-// CommonPrefix returns common prefix from the array of strings
+// CommonPrefix returns the longest common prefix of the given strings.
+// If no strings are provided, it returns an empty string.
+// If only one string is provided, it returns that string.
+// For example, CommonPrefix("nation", "national", "nasty") returns "na".
 func CommonPrefix(input ...string) string {
 	if len(input) == 0 {
 		return ""
@@ -181,6 +184,10 @@ func CommonPrefix(input ...string) string {
 	}
 
 	prefix := []rune(input[0])
+
+	if len(prefix) == 0 {
+		return ""
+	}
 
 	for i := 1; i < len(input); i++ {
 		if input[i] == "" {
@@ -203,7 +210,10 @@ func CommonPrefix(input ...string) string {
 	return string(prefix)
 }
 
-// CommonSuffix returns common suffix from the array of strings
+// CommonSuffix returns the longest common suffix of the given strings.
+// If no strings are provided, it returns an empty string.
+// If only one string is provided, it returns that string.
+// For example, CommonSuffix("testing", "running", "jumping") returns "ing".
 func CommonSuffix(input ...string) string {
 	if len(input) == 0 {
 		return ""
@@ -215,6 +225,10 @@ func CommonSuffix(input ...string) string {
 
 	suffix := []rune(input[0])
 
+	if len(suffix) == 0 {
+		return ""
+	}
+
 	for i := 1; i < len(input); i++ {
 		if input[i] == "" {
 			return ""
@@ -223,15 +237,16 @@ func CommonSuffix(input ...string) string {
 		item := []rune(input[i])
 
 		suffixLength := len(suffix)
-		currentItemLength := len(item)
+		itemLength := len(item)
 
-		if currentItemLength < suffixLength {
-			suffix = suffix[suffixLength-currentItemLength:]
+		// Adjust suffix length if current item is shorter
+		if itemLength < suffixLength {
+			suffix = suffix[suffixLength-itemLength:]
 			suffixLength = len(suffix)
 
 		}
 
-		for j, k := suffixLength-1, currentItemLength-1; j >= 0 && k >= 0; j, k = j-1, k-1 {
+		for j, k := suffixLength-1, itemLength-1; j >= 0 && k >= 0; j, k = j-1, k-1 {
 			if suffix[j] != item[k] {
 				suffix = suffix[j+1:]
 				break
