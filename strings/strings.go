@@ -163,7 +163,7 @@ func Reverse(input string) string {
 	result := make([]rune, inputLength)
 	lastCharacterIndex := inputLength - 1
 
-	for index, character := range input {
+	for index, character := range runes {
 		result[lastCharacterIndex-index] = character
 	}
 	return string(result)
