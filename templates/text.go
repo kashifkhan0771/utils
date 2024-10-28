@@ -5,9 +5,9 @@ import (
 	"text/template"
 )
 
-// RenderText processes a text template with the provided data and functions
+// RenderText processes a text template with the provided data.
 func RenderText(tmpl string, data interface{}) (string, error) {
-	t, err := template.New("textTemplate").Funcs(customFuncsMap).Parse(tmpl)
+	t, err := template.New("textTemplate").Funcs(GetCustomFuncMap()).Parse(tmpl)
 	if err != nil {
 		return "", err
 	}
@@ -16,6 +16,6 @@ func RenderText(tmpl string, data interface{}) (string, error) {
 	if err := t.Execute(&buf, data); err != nil {
 		return "", err
 	}
-	
+
 	return buf.String(), nil
 }
