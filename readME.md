@@ -44,6 +44,8 @@ Provides functions to handle boolean conversion from strings.
 
 Example:
 ```
+package main
+
 import "github.com/kashifkhan0771/utils/boolean"
 
 func main() {
@@ -62,20 +64,27 @@ Typed setters and getters for safely storing and retrieving values from context.
 
 Example:
 ```
-import (
-    "context"
-    "fmt"
+package main
 
-    "github.com/kashifkhan0771/utils/ctxutils"
+import (
+	"context"
+	"fmt"
+
+	"github.com/kashifkhan0771/utils/ctxutils"
 )
 
 func main() {
-    ctx := context.Background()
-    ctx = ctxutils.SetStringValue(ctx, "username", "shahzad")
-    
-    if username, ok := ctxutils.GetStringValue(ctx, "username"); ok {
-        fmt.Println("Username:", username) // Output: Username: shahzad
-    }
+	// Define the key using ContextKeyString
+	usernameKey := ctxutils.ContextKeyString{Key: "username"}
+
+	// Set a value in the context with the defined key
+	ctx := context.Background()
+	ctx = ctxutils.SetStringValue(ctx, usernameKey, "shahzad")
+
+	// Retrieve the value from the context using the same key
+	if username, ok := ctxutils.GetStringValue(ctx, usernameKey); ok {
+		fmt.Println("Username:", username) // Output: Username: shahzad
+	}
 }
 ```
 
@@ -88,17 +97,19 @@ Helpers for common slice operations.
 
 Example:
 ```
-import (
-    "fmt"
+package main
 
-    "github.com/kashifkhan0771/utils/slice"
+import (
+	"fmt"
+
+	"github.com/kashifkhan0771/utils/slice"
 )
 
 func main() {
-    items := []string{"apple", "banana", "apple", "orange"}
-    uniqueItems := slice.RemoveDuplicateStr(items)
-    
-    fmt.Println(uniqueItems) // Output: [apple banana orange]
+	items := []string{"apple", "banana", "apple", "orange", "banana", "apple", "orange"}
+	uniqueItems := slice.RemoveDuplicateStr(items)
+
+	fmt.Println(uniqueItems) // Output: [apple banana orange]
 }
 ```
 
@@ -122,18 +133,24 @@ Advanced string operations and transformations.
 
 Example:
 ```
-import (
-    "fmt"
+package main
 
-    "github.com/kashifkhan0771/utils/strings"
+import (
+	"fmt"
+
+	"github.com/kashifkhan0771/utils/strings"
 )
 
 func main() {
-    title := strings.Title("hello world") // Converts to title case
-    valid := strings.IsValidEmail("example@email.com")
-    
-    fmt.Println(title)       // Output: Hello World
-    fmt.Println(valid)       // Output: true
+	title := strings.Title("hello world") // Converts to title case
+	valid := strings.IsValidEmail("example@email.com")
+	inValid := strings.IsValidEmail("example.email.com")
+	inValid1 := strings.IsValidEmail("example@email.tech")
+
+	fmt.Println(title)    // Output: Hello World
+	fmt.Println(valid)    // Output: true
+	fmt.Println(inValid)  // Output: false
+	fmt.Println(inValid1) // Output: true
 }
 ```
 
@@ -144,23 +161,25 @@ Efficient, tag-based struct comparison.
 
 Example:
 ```
-import (
-    "fmt"
+package main
 
-    "github.com/kashifkhan0771/utils/structs"
+import (
+	"fmt"
+
+	"github.com/kashifkhan0771/utils/structs"
 )
 
 type Person struct {
-    Name string `compare:"name"`
-    Age  int    `compare:"age"`
+	Name string `updateable:"true"`
+	Age  int    `updateable:"true"`
 }
 
 func main() {
-    person1 := Person{Name: "Alice", Age: 25}
-    person2 := Person{Name: "Alice", Age: 30}
-    
-    differences, _ := structs.CompareStructs(person1, person2)
-    fmt.Println(differences) // Output: [{age 25 30}]
+	person1 := Person{Name: "Alice", Age: 25}
+	person2 := Person{Name: "Alice", Age: 30}
+
+	differences, _ := structs.CompareStructs(person1, person2)
+	fmt.Println(differences) // Output: [{Age 25 30}]
 }
 ```
 
