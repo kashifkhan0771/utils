@@ -16,9 +16,9 @@ To use utils in your project, add it as a module dependency:
 ```
 go get github.com/kashifkhan0771/utils
 ```
-Alternatively, include it directly in your go.mod file:
+Alternatively, include it directly in your go.mod file (use the latest release):
 ```
-require github.com/kashifkhan0771/utils latest
+require github.com/kashifkhan0771/utils v0.3.0
 ```
 
 ## Key Features
