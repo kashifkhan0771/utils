@@ -177,7 +177,7 @@ Contributions to this project are welcome! If you would like to contribute, plea
 2. Create a Branch: Work on your feature or fix in a new branch.
 3. Make Changes and Test: Implement your changes and test thoroughly.
 4. Submit a Pull Request: Open a PR for review and discussion.
-5. Check the [Issues](github.com/kashifkhan0771/utils/issues) page for tasks to tackle or ideas to suggest.
+5. Check the [Issues](https://github.com/kashifkhan0771/utils/issues) page for tasks to tackle or ideas to suggest.
 6. Check the [Discussions](https://github.com/kashifkhan0771/utils/discussions) page for ongoing discussions and add share your thoughts.
 
 Together, we can make Utils even better for the Go community!
