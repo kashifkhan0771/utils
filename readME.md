@@ -25,14 +25,15 @@ require github.com/kashifkhan0771/utils v0.3.0
 
 **Boolean Utilities (boolean)**: Simple functions for evaluating and converting string values to booleans.
 
-**Context Utilities (ctxutils)**: Convenient functions for setting and retrieving typed values from context.
+**Context Utilities (context)**: Convenient functions for setting and retrieving typed values from context.
 
 **Map Helpers (maps)**: State management with StateMap, metadata storage with Metadata, and efficient map operations.
 
 **Slice Utilities (slice)**: Duplicate removal for string and integer slices.
 
 **String Manipulation (strings)**: Substring search, case transformations, ROT13/Caesar encoding, email validation, and more.
-Struct Comparison (structs): Deep comparison between structs with custom field tags.
+
+**Struct Comparison (structs)**: Deep comparison between structs with custom field tags.
 
 ## Usage Guide
 After adding utils to your project, you can import and utilize the packages as needed. Below is a breakdown of each package and some example usage.
@@ -183,20 +184,9 @@ func main() {
 }
 ```
 
-## Future Enhancements
-- Additional utilities for common string, slice, and map operations.
-- Customizable context key types and extended error handling.
-- Support for advanced encryption methods.
-
-
 # Contributions
-Contributions to this project are welcome! If you would like to contribute, please feel free to:
+Contributions to this project are welcome! If you would like to contribute, please feel free to open a PR.
 
-1. Fork the Repository: Clone your fork locally.
-2. Create a Branch: Work on your feature or fix in a new branch.
-3. Make Changes and Test: Implement your changes and test thoroughly.
-4. Submit a Pull Request: Open a PR for review and discussion.
-5. Check the [Issues](https://github.com/kashifkhan0771/utils/issues) page for tasks to tackle or ideas to suggest.
-6. Check the [Discussions](https://github.com/kashifkhan0771/utils/discussions) page for ongoing discussions and add share your thoughts.
+Please read the [Contribution Guide](/CONTRIBUTING.md) before opening any new pull request
 
 Together, we can make Utils even better for the Go community!

@@ -6,9 +6,10 @@ This is a short guide on how to contribute to the project.
 
 If you find a bug that you'd like to fix, or a new feature that you'd like to implement then please submit a pull request via GitHub.
 
-Now in your terminal
 
-    git clone ssh://git@github.cisco.com/kashifkhan0771/utils.git
+Fork the Repository: Clone your fork locally now in your terminal
+
+    git clone ssh://git@github.cisco.com/<user_name>/utils.git
     cd utils
 
 Make a branch to add your new feature
