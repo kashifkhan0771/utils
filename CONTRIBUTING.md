@@ -7,9 +7,12 @@ This is a short guide on how to contribute to the project.
 If you find a bug that you'd like to fix, or a new feature that you'd like to implement then please submit a pull request via GitHub.
 
 
-Fork the Repository: Clone your fork locally now in your terminal
+Fork the Repository:
+1. Visit https://github.com/kashifkhan0771/utils
+2. Click the "Fork" button to create your own fork
+3. Clone your fork locally:
 
-    git clone ssh://git@github.cisco.com/<user_name>/utils.git
+    git clone git@github.com:<your-username>/utils.git
     cd utils
 
 Make a branch to add your new feature
