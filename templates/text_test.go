@@ -1,14 +1,13 @@
 package templates
 
 import (
-	"fmt"
 	"testing"
 	"time"
 )
 
 var (
 	testTemplate1 = `Welcome {{toUpper .Name}}! Today is {{formatDate .Date "2006-01-02"}}.`
-	want1         = fmt.Sprintf("Welcome ALICE! Today is %s.", time.Now().Format("2006-01-02"))
+	want1         = "Welcome ALICE! Today is 2024-10-01."
 
 	testTemplate2 = `
 		{{- $upper := toUpper "hello" -}}
@@ -105,7 +104,7 @@ func TestRenderText(t *testing.T) {
 					Date time.Time
 				}{
 					Name: "alice",
-					Date: time.Now(),
+					Date: time.Date(2024, 10, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
 			want:    want1,

@@ -20,7 +20,7 @@ var customFuncsMap = template.FuncMap{
 	"trim":     strings.TrimSpace,
 	"split":    strings.Split,
 	"reverse":  strutils.Reverse,
-	"toString": func(v int) string { return fmt.Sprintf("%d", v) },
+	"toString": func(v interface{}) string { return fmt.Sprintf("%v", v) },
 
 	// date and time functions
 	"formatDate": func(t time.Time, layout string) string { return t.Format(layout) },
