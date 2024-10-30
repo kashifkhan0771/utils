@@ -146,12 +146,12 @@ func main() {
 	title := strings.Title("hello world") // Converts to title case
 	valid := strings.IsValidEmail("example@email.com")
 	inValid := strings.IsValidEmail("example.email.com")
-	inValid1 := strings.IsValidEmail("example@email.tech")
+	anotherValid := strings.IsValidEmail("example@email.tech")
 
-	fmt.Println(title)    // Output: Hello World
-	fmt.Println(valid)    // Output: true
-	fmt.Println(inValid)  // Output: false
-	fmt.Println(inValid1) // Output: true
+	fmt.Println(title)        // Output: Hello World
+	fmt.Println(valid)        // Output: true
+	fmt.Println(inValid)      // Output: false
+	fmt.Println(anotherValid) // Output: true
 }
 ```
 
