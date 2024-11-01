@@ -6,22 +6,25 @@ import (
 )
 
 func TestNumber(t *testing.T) {
-	// Generate random numbers to ensure they are different
-	n1, err := Number()
-	if err != nil {
-		t.Errorf("Number() error = %v", err)
-		return
+	const iterations = 1000
+	seen := make(map[int64]bool)
+
+	for i := 0; i < iterations; i++ {
+		n, err := Number()
+		if err != nil {
+			t.Errorf("Number() error = %v", err)
+			return
+		}
+
+		// Track unique numbers
+		seen[n] = true
 	}
 
-	n2, err := Number()
-	if err != nil {
-		t.Errorf("Number() error = %v", err)
-		return
-	}
-
-	// Number should be different (theres an extremely small chance they could be the same)
-	if n1 == n2 {
-		t.Errorf("Generated numbers are equal: %v", n1)
+	// With true randomness, we expect a high percentage of unique numbers
+	// Given the massive range of int64, getting even 2 duplicates would be extremely unlikely
+	uniqueRatio := float64(len(seen)) / float64(iterations)
+	if uniqueRatio < 0.99 {
+		t.Errorf("Expected mostly unique numbers, but got uniqueness ratio of %v", uniqueRatio)
 	}
 }
 
@@ -167,33 +170,65 @@ func TestPick(t *testing.T) {
 }
 
 func TestShuffle(t *testing.T) {
-	original := []int{1, 2, 3, 4, 5}
-	shuffled := make([]int, len(original))
-	copy(shuffled, original)
-
-	err := Shuffle(shuffled)
-	if err != nil {
-		t.Errorf("Shuffle() error = %v", err)
-		return
-	}
-
-	// Check the elements are still present
-	if len(shuffled) != len(original) {
-		t.Errorf("Shuffle() changed slice length")
-		return
-	}
-
-	// Check if the order is different
-	different := false
+	// Create a larger test slice
+	original := make([]int, 100)
 	for i := range original {
-		if original[i] != shuffled[i] {
-			different = true
-			break
+		original[i] = i
+	}
+
+	// Run multiple iterations to ensure consistent behavior
+	const iterations = 1000
+	positionCounts := make([]map[int]int, len(original))
+	for i := range positionCounts {
+		positionCounts[i] = make(map[int]int)
+	}
+
+	for iter := 0; iter < iterations; iter++ {
+		shuffled := make([]int, len(original))
+		copy(shuffled, original)
+
+		err := Shuffle(shuffled)
+		if err != nil {
+			t.Errorf("Shuffle() error = %v", err)
+			return
+		}
+
+		// Check length hasn't changed
+		if len(shuffled) != len(original) {
+			t.Errorf("Shuffle() changed slice length")
+			return
+		}
+
+		// Track positions of each number to verify distribution
+		for pos, val := range shuffled {
+			positionCounts[val][pos]++
+		}
+
+		// Verify elements are still presente
+		seen := make(map[int]bool)
+		for _, v := range shuffled {
+			seen[v] = true
+		}
+		for _, v := range original {
+			if !seen[v] {
+				t.Errorf("Shuffle() lost element %v", v)
+				return
+			}
 		}
 	}
 
-	if !different {
-		t.Errorf("Shuffle() did not change the order of elements")
+	// Check distribution of positions
+	// Each number should appear in each position roughly iterations/len(original) times
+	expectedPerPosition := float64(iterations) / float64(len(original))
+	tolerance := expectedPerPosition * 0.5 // Allow 50% deviation
+
+	for num, positions := range positionCounts {
+		for pos, count := range positions {
+			if float64(count) < expectedPerPosition-tolerance || float64(count) > expectedPerPosition+tolerance {
+				t.Errorf("Number %v appeared in position %v %d times, expected roughly %.2f (±%.2f)",
+					num, pos, count, expectedPerPosition, tolerance)
+			}
+		}
 	}
 }
 
@@ -252,7 +287,7 @@ func TestStringWithCharset(t *testing.T) {
 	}
 }
 
-// TeckPick helper
+// TestPick helper
 func contains[T comparable](slice []T, item T) bool {
 	for _, v := range slice {
 		if v == item {
