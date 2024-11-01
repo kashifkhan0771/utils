@@ -30,14 +30,20 @@ func NumberInRange(min, max int64) (int64, error) {
 	}
 
 	rangeSize := max - min + 1
+	// Calculate the largest multiple of rangeSize that fits in MaxInt64
+	limit := math.MaxInt64 - (math.MaxInt64 % rangeSize)
 
-	// Generate random number within the range
-	n, err := rand.Int(rand.Reader, big.NewInt(rangeSize))
-	if err != nil {
-		return 0, fmt.Errorf("failed to generate random number in range: %w", err)
+	for {
+		n, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
+		if err != nil {
+			return 0, fmt.Errorf("failed to generate random number in range: %w", err)
+		}
+		
+		if n.Int64() < limit {
+			return min + (n.Int64() % rangeSize), nil
+		}
+		// If we're above the limit, try again to ensure uniform distribution
 	}
-
-	return n.Int64() + min, nil
 }
 
 // String generates a random string using the both default cons
