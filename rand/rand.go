@@ -53,22 +53,7 @@ func String() (string, error) {
 
 // StringWithLength generates a random string of the x length using the default charset
 func StringWithLength(length int) (string, error) {
-	if length < 0 {
-		return "", fmt.Errorf("length cannot be negative: %d", length)
-	}
-
-	result := make([]byte, length)
-	charsetLength := big.NewInt(int64(len(DefaultCharset)))
-
-	for i := 0; i < length; i++ {
-		n, err := rand.Int(rand.Reader, charsetLength)
-		if err != nil {
-			return "", fmt.Errorf("failed to generaet random string: %w", err)
-		}
-		result[i] = DefaultCharset[n.Int64()]
-	}
-
-	return string(result), nil
+    return StringWithCharset(length, DefaultCharset)
 }
 
 // Pick returns a random element from the provided slice
