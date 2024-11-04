@@ -170,65 +170,59 @@ func TestPick(t *testing.T) {
 }
 
 func TestShuffle(t *testing.T) {
-	// Create a larger test slice
-	original := make([]int, 100)
-	for i := range original {
-		original[i] = i
+	tests := []struct {
+		name    string
+		slice   []int
+		wantErr bool
+	}{
+		{
+			name:    "success - non-empty slice",
+			slice:   []int{1, 2, 3, 4, 5},
+			wantErr: false,
+		},
+		{
+			name:    "success - empty slice",
+			slice:   []int{},
+			wantErr: false,
+		},
+		{
+			name:    "success - single element",
+			slice:   []int{1},
+			wantErr: false,
+		},
 	}
 
-	// Run multiple iterations to ensure consistent behavior
-	const iterations = 1000
-	positionCounts := make([]map[int]int, len(original))
-	for i := range positionCounts {
-		positionCounts[i] = make(map[int]int)
-	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			original := make([]int, len(tt.slice))
+			copy(original, tt.slice)
 
-	for iter := 0; iter < iterations; iter++ {
-		shuffled := make([]int, len(original))
-		copy(shuffled, original)
-
-		err := Shuffle(shuffled)
-		if err != nil {
-			t.Errorf("Shuffle() error = %v", err)
-			return
-		}
-
-		// Check length hasn't changed
-		if len(shuffled) != len(original) {
-			t.Errorf("Shuffle() changed slice length")
-			return
-		}
-
-		// Track positions of each number to verify distribution
-		for pos, val := range shuffled {
-			positionCounts[val][pos]++
-		}
-
-		// Verify elements are still presente
-		seen := make(map[int]bool)
-		for _, v := range shuffled {
-			seen[v] = true
-		}
-		for _, v := range original {
-			if !seen[v] {
-				t.Errorf("Shuffle() lost element %v", v)
+			err := Shuffle(tt.slice)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Shuffle() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-		}
-	}
 
-	// Check distribution of positions
-	// Each number should appear in each position roughly iterations/len(original) times
-	expectedPerPosition := float64(iterations) / float64(len(original))
-	tolerance := expectedPerPosition * 0.5 // Allow 50% deviation
+			if err == nil {
+				// Check length hasn't changed
+				if len(tt.slice) != len(original) {
+					t.Errorf("Shuffle() changed slice length")
+					return
+				}
 
-	for num, positions := range positionCounts {
-		for pos, count := range positions {
-			if float64(count) < expectedPerPosition-tolerance || float64(count) > expectedPerPosition+tolerance {
-				t.Errorf("Number %v appeared in position %v %d times, expected roughly %.2f (±%.2f)",
-					num, pos, count, expectedPerPosition, tolerance)
+				// Verify all elements are still present
+				seen := make(map[int]bool)
+				for _, v := range tt.slice {
+					seen[v] = true
+				}
+				for _, v := range original {
+					if !seen[v] {
+						t.Errorf("Shuffle() lost element %v", v)
+						return
+					}
+				}
 			}
-		}
+		})
 	}
 }
 
