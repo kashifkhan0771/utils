@@ -1,6 +1,9 @@
 package pointers
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestDefaultIfNil(t *testing.T) {
 	tests := []struct {
@@ -80,6 +83,82 @@ func TestDefaultIfNil(t *testing.T) {
 				}
 			default:
 				t.Errorf("Unsupported type %T", v)
+			}
+		})
+	}
+}
+
+func TestNullableBool(t *testing.T) {
+	type args struct {
+		b *bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "success - b is nil",
+			args: args{
+				b: nil,
+			},
+			want: false,
+		},
+		{
+			name: "success - b is not nil and is false",
+			args: args{
+				b: new(bool), // new(bool) initializes to false
+			},
+			want: false,
+		},
+		{
+			name: "success - b is not nil and is true",
+			args: args{
+				b: func() *bool { v := true; return &v }(),
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NullableBool(tt.args.b); got != tt.want {
+				t.Errorf("NullableBool() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestNullableTime(t *testing.T) {
+	now := time.Now()
+	type args struct {
+		t *time.Time
+	}
+	tests := []struct {
+		name string
+		args args
+		want time.Time
+	}{
+		{
+			name: "success - t is nil",
+			args: args{
+				t: nil,
+			},
+			want: time.Time{},
+		},
+		{
+			name: "success - t has a value",
+			args: args{
+				t: func() *time.Time {
+					return &now
+				}(),
+			},
+			want: now,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := NullableTime(tt.args.t); got != tt.want {
+				t.Errorf("NullableTime() = %v, want %v", got, tt.want)
 			}
 		})
 	}
