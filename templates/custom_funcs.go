@@ -2,15 +2,16 @@ package templates
 
 import (
 	"fmt"
+	htmlTemplate "html/template"
 	"strings"
-	"text/template"
+	textTemplate "text/template"
 	"time"
 
 	strutils "github.com/kashifkhan0771/utils/strings"
 )
 
 // custom functions for templates
-var customFuncsMap = template.FuncMap{
+var customFuncsMap = textTemplate.FuncMap{
 	// string functions
 	"toUpper":  strings.ToUpper,
 	"toLower":  strings.ToLower,
@@ -40,9 +41,14 @@ var customFuncsMap = template.FuncMap{
 	// debugging functions
 	"dump":   func(v interface{}) string { return fmt.Sprintf("%#v", v) },
 	"typeOf": func(v interface{}) string { return fmt.Sprintf("%T", v) },
+
+	// safe HTML rendering for trusted content	
+	"safeHTML": func(s string) htmlTemplate.HTML {
+		return htmlTemplate.HTML(s)
+	},
 }
 
 // GetCustomFuncMap returns a map of custom functions
-func GetCustomFuncMap() template.FuncMap {
+func GetCustomFuncMap() textTemplate.FuncMap {
 	return customFuncsMap
 }

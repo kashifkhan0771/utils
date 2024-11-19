@@ -184,6 +184,104 @@ func main() {
 }
 ```
 
+
+### Templates
+Dynamic rendering of HTML and text templates.
+
+**HTML Template Rendering**: Enhances Go's html/template library by incorporating a comprehensive set of utility functions making it easier to handle inline conditionals, loops, and a variety of string, numeric, logic, date, and debugging operations within templates.
+
+Example:
+
+```
+package main
+
+import (
+	"fmt"
+	"github.com/kashifkhan0771/utils/templates"
+)
+
+func main() {
+	htmlTemplate := `<h1>{{toUpper .Title}}</h1><p>{{.Content}}</p>`
+	data := map[string]interface{}{
+		"Title":   "hello, world",
+		"Content": "This is a sample content for HTML template rendering.",
+	}
+
+	result, err := templates.RenderHTMLTemplate(htmlTemplate, data)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Println(result)
+	// Output: <h1>HELLO, WORLD</h1><p>This is a sample content for HTML template rendering.</p>
+}
+```
+
+**Text Template Rendering**: Enhances Go's text/template library by incorporating a comprehensive set of utility functions making it easier to handle a variety of string, numeric, logic, date, and debugging operations within templates.
+
+Example:
+
+```
+package main
+
+import (
+	"fmt"
+	"github.com/kashifkhan0771/utils/templates"
+)
+
+func main() {
+	textTemplate := `Name: {{.Name | toUpper}}, Age: {{add .Age 5}}`
+	data := map[string]interface{}{
+		"Name": "john doe",
+		"Age":  20,
+	}
+
+	result, err := templates.RenderText(textTemplate, data)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Println(result)
+	// Output: Name: JOHN DOE, Age: 25
+}
+```
+
+**Custom Functions**
+
+The templates package offers a set of custom functions that can be directly used within templates to perform various operations.
+
+_String Functions:_
+
+- toUpper, toLower, title, contains, replace, trim, split, reverse, toString
+
+_Date and Time Functions:_
+
+- formatDate, now
+
+_Arithmetic Functions:_
+
+- add, sub, mul, div, mod
+
+_Conditional and Logical Functions:_
+
+- isNil, not
+
+_Debugging Functions:_
+
+- dump, typeOf
+
+Example:
+
+```
+{{ "example text" | toUpper }}           // Outputs: EXAMPLE TEXT
+{{ formatDate now "2006-01-02" }}        // Outputs the current date in YYYY-MM-DD format
+{{ add 10 5 }}                           // Outputs: 15
+{{ typeOf .SomeVariable }}               // Outputs the type of .SomeVariable
+```
+
+
 # Contributions
 Contributions to this project are welcome! If you would like to contribute, please feel free to open a PR.
 
