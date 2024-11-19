@@ -42,7 +42,7 @@ var customFuncsMap = textTemplate.FuncMap{
 	"dump":   func(v interface{}) string { return fmt.Sprintf("%#v", v) },
 	"typeOf": func(v interface{}) string { return fmt.Sprintf("%T", v) },
 
-	// safe HTML rendering for trusted content	
+	// safe HTML rendering for trusted content
 	"safeHTML": func(s string) htmlTemplate.HTML {
 		return htmlTemplate.HTML(s)
 	},
