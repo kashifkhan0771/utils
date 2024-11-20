@@ -1,6 +1,6 @@
 module github.com/kashifkhan0771/utils
 
-go 1.18
+go 1.23.3
 
 require golang.org/x/text v0.20.0
 
