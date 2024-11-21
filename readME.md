@@ -5,7 +5,7 @@ Common Utilities library for Go
 Utils is a lightweight, flexible, and reusable library providing utility functions and helpers for common operations in Go applications. With packages designed for managing boolean conversions, handling context values, map operations, slice utilities, string manipulations, and struct comparison, utils enhances Go projects with optimized, clean, and practical solutions.
 
 ### Prerequisites
-**Go**: The project is written in Golang, so you'll need Go installed (preferably Go 1.16 or later). You can download and install Go from [here](https://go.dev/doc/install).
+**Go**: The project is written in Golang, so you'll need Go installed (preferably Go 1.23.3 or later). You can download and install Go from [here](https://go.dev/doc/install).
 
 **Git**: For cloning the repository.
 
