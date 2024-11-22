@@ -134,7 +134,8 @@ func CaesarEncrypt(input string, shift int) string {
 	return string(shifted)
 }
 
-// Encode takes a string and returns its Run-Length Encoded representation
+// RunLengthEncode takes a string and returns its Run-Length Encoded
+// representation or the original string if the encoding did not achieve any compression
 func RunLengthEncode(input string) string {
 	if len(input) == 0 {
 		return ""
@@ -166,10 +167,11 @@ func RunLengthEncode(input string) string {
 	return encoded.String()
 }
 
-// Decode takes a Run-Length Encoded string and returns the decoded original string
-func RunLengthDecode(encoded string) string {
+// RunLengthDecode takes a Run-Length Encoded string and returns
+// the decoded string or an error + the orignal encoded string
+func RunLengthDecode(encoded string) (string, error) {
 	if len(encoded) == 0 {
-		return ""
+		return "", nil
 	}
 
 	var decoded strings.Builder
@@ -188,7 +190,13 @@ func RunLengthDecode(encoded string) string {
 
 		if j > i+1 {
 			// Parse the count if a number follows the character
-			count, _ := strconv.Atoi(string(runes[i+1 : j]))
+			count, err := strconv.Atoi(string(runes[i+1 : j]))
+
+			// If an error accures return the error and the original string
+			if err != nil {
+				return encoded, err
+			}
+
 			decoded.WriteString(strings.Repeat(string(char), count))
 		} else {
 			// If no number follows, treat the character as unencoded
@@ -199,7 +207,7 @@ func RunLengthDecode(encoded string) string {
 		i = j
 	}
 
-	return decoded.String()
+	return decoded.String(), nil
 }
 
 // CaesarDecrypt decrypts a string encrypted with the Caesar cipher and a given shift.
