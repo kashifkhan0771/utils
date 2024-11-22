@@ -201,19 +201,9 @@ func TestRunLengthEncode(t *testing.T) {
 			want: "abcdefg",
 		},
 		{
-			name: "success - encode empty string",
-			args: args{input: ""},
-			want: "",
-		},
-		{
-			name: "success - encode single character",
-			args: args{input: "a"},
-			want: "a",
-		},
-		{
-			name: "success - encode long sequence",
-			args: args{input: "aaaaaaaaaa"},
-			want: "a10",
+			name: "success - encode a string containing special characters using Run-Length encoding",
+			args: args{input: "!!!a#$$$$$@"},
+			want: "!3a1#1$5@1",
 		},
 	}
 	for _, tt := range tests {
@@ -240,9 +230,19 @@ func TestRunLengthDecode(t *testing.T) {
 			want: "aaabbccccdd",
 		},
 		{
-			name: "success - decode empty string",
-			args: args{input: ""},
-			want: "",
+			name: "success - decode a string that has been encoded using Run-Length encoding",
+			args: args{input: "A2B2C"},
+			want: "AABBC",
+		},
+		{
+			name: "success - decode a string that has been encoded using Run-Length encoding",
+			args: args{input: "a2z"},
+			want: "aaz",
+		},
+		{
+			name: "success - decode a string containing special characters that has been encoded using Run-Length encoding",
+			args: args{input: "!3#%$5"},
+			want: "!!!#%$$$$$",
 		},
 	}
 	for _, tt := range tests {

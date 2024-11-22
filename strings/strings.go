@@ -141,23 +141,21 @@ func RunLengthEncode(input string) string {
 	}
 
 	var encoded strings.Builder
-
-	currentChar := input[0]
+	runes := []rune(input)
 	count := 1
 
 	for i := 1; i < len(input); i++ {
-		if input[i] == currentChar {
+		if runes[i] == runes[i-1] {
 			count++
 		} else {
-			encoded.WriteByte(currentChar)
+			encoded.WriteRune(runes[i-1])
 			encoded.WriteString(strconv.Itoa(count))
-			currentChar = input[i]
 			count = 1
 		}
 	}
 
 	// Write the last character and its count
-	encoded.WriteByte(input[len(input)-1])
+	encoded.WriteRune(runes[len(runes)-1])
 	encoded.WriteString(strconv.Itoa(count))
 
 	// Return the original string if encoding doesn't save space
@@ -175,21 +173,27 @@ func RunLengthDecode(encoded string) string {
 	}
 
 	var decoded strings.Builder
-	length := len(encoded)
-	for i := 0; i < length; {
-		char := encoded[i]
+	runes := []rune(encoded)
+	length := len(runes)
+	i := 0
+
+	for i < length {
+		char := runes[i]
 		j := i + 1
 
-		// Extract the number after the character
-		for j < length && encoded[j] >= '0' && encoded[j] <= '9' {
+		// Check if a number follows the character
+		for j < length && runes[j] >= '0' && runes[j] <= '9' {
 			j++
 		}
 
-		// Parse the count
-		count, _ := strconv.Atoi(encoded[i+1 : j])
-
-		// Write the character `count` times
-		decoded.WriteString(strings.Repeat(string(char), count))
+		if j > i+1 {
+			// Parse the count if a number follows the character
+			count, _ := strconv.Atoi(string(runes[i+1 : j]))
+			decoded.WriteString(strings.Repeat(string(char), count))
+		} else {
+			// If no number follows, treat the character as unencoded
+			decoded.WriteRune(char)
+		}
 
 		// Move to the next character group
 		i = j
