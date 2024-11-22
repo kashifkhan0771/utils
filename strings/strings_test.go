@@ -181,6 +181,58 @@ func TestRot13Decode(t *testing.T) {
 	}
 }
 
+func TestRunLengthEncode(t *testing.T) {
+	type args struct {
+		input string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "success - encode a string using Run-Length encoding",
+			args: args{input: "aaabbccccdd"},
+			want: "a3b2c4d2",
+		},
+		{
+			name: "success - make sure RunLengthEncode does not alter a normal string",
+			args: args{input: "abcdefg"},
+			want: "abcdefg",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RunLengthEncode(tt.args.input); got != tt.want {
+				t.Errorf("RunLengthEncode() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRunLengthDecode(t *testing.T) {
+	type args struct {
+		input string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "success - decode a string that has been encoded using Run-Length encoding",
+			args: args{input: "a3b2c4d2"},
+			want: "aaabbccccdd",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RunLengthDecode(tt.args.input); got != tt.want {
+				t.Errorf("RunLengthDecode() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 func TestCaesarEncrypt(t *testing.T) {
 	type args struct {
 		input string

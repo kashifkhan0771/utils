@@ -5,6 +5,7 @@ package strings
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 
 	"golang.org/x/text/cases"
@@ -131,6 +132,67 @@ func CaesarEncrypt(input string, shift int) string {
 		shifted[i] = shiftedChar
 	}
 	return string(shifted)
+}
+
+// Encode takes a string and returns its Run-Length Encoded representation
+func RunLengthEncode(input string) string {
+	if len(input) == 0 {
+		return ""
+	}
+
+	var encoded strings.Builder
+	count := 1
+
+	for i := 1; i < len(input); i++ {
+		if input[i] == input[i-1] {
+			count++
+		} else {
+			encoded.WriteByte(input[i-1])
+			encoded.WriteString(strconv.Itoa(count))
+			count = 1
+		}
+	}
+
+	// Write the last character and its count
+	encoded.WriteByte(input[len(input)-1])
+	encoded.WriteString(strconv.Itoa(count))
+
+	// Return the original string if encoding doesn't save space
+	if encoded.Len() >= len(input) {
+		return input
+	}
+
+	return encoded.String()
+}
+
+// Decode takes a Run-Length Encoded string and returns the decoded original string
+func RunLengthDecode(encoded string) string {
+	if len(encoded) == 0 {
+		return ""
+	}
+
+	var decoded strings.Builder
+	length := len(encoded)
+	for i := 0; i < length; {
+		char := encoded[i]
+		j := i + 1
+
+		// Extract the number after the character
+		for j < length && encoded[j] >= '0' && encoded[j] <= '9' {
+			j++
+		}
+
+		// Parse the count
+		count, _ := strconv.Atoi(encoded[i+1 : j])
+
+		// Write the character `count` times
+		decoded.WriteString(strings.Repeat(string(char), count))
+
+		// Move to the next character group
+		i = j
+	}
+
+	return decoded.String()
 }
 
 // CaesarDecrypt decrypts a string encrypted with the Caesar cipher and a given shift.
