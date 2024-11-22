@@ -141,14 +141,17 @@ func RunLengthEncode(input string) string {
 	}
 
 	var encoded strings.Builder
+
+	currentChar := input[0]
 	count := 1
 
 	for i := 1; i < len(input); i++ {
-		if input[i] == input[i-1] {
+		if input[i] == currentChar {
 			count++
 		} else {
-			encoded.WriteByte(input[i-1])
+			encoded.WriteByte(currentChar)
 			encoded.WriteString(strconv.Itoa(count))
+			currentChar = input[i]
 			count = 1
 		}
 	}
