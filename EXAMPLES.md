@@ -798,7 +798,7 @@ func main() {
 ### RunLengthDecode
 ```go
 func main() {
-	decoded := strings.RunLengthDecode("3a3b3c")
+	decoded, _ := strings.RunLengthDecode("3a3b3c")
 	fmt.Println(decoded) // Output: aaabbbccc
 }
 ```
