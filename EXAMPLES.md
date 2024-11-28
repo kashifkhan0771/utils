@@ -787,6 +787,22 @@ func main() {
 }
 ```
 
+### RunLengthEncode
+```go
+func main() {
+	encoded := strings.RunLengthEncode("aaabbbccc")
+	fmt.Println(encoded) // Output: 3a3b3c
+}
+```
+
+### RunLengthDecode
+```go
+func main() {
+	decoded, _ := strings.RunLengthDecode("3a3b3c")
+	fmt.Println(decoded) // Output: aaabbbccc
+}
+```
+
 ### IsValidEmail
 ```go
 func main() {

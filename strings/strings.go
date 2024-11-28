@@ -5,6 +5,7 @@ package strings
 
 import (
 	"regexp"
+	"strconv"
 	"strings"
 
 	"golang.org/x/text/cases"
@@ -131,6 +132,82 @@ func CaesarEncrypt(input string, shift int) string {
 		shifted[i] = shiftedChar
 	}
 	return string(shifted)
+}
+
+// RunLengthEncode takes a string and returns its Run-Length Encoded
+// representation or the original string if the encoding did not achieve any compression
+func RunLengthEncode(input string) string {
+	if len(input) == 0 {
+		return ""
+	}
+
+	var encoded strings.Builder
+	runes := []rune(input)
+	count := 1
+
+	for i := 1; i < len(input); i++ {
+		if runes[i] == runes[i-1] {
+			count++
+		} else {
+			encoded.WriteRune(runes[i-1])
+			encoded.WriteString(strconv.Itoa(count))
+			count = 1
+		}
+	}
+
+	// Write the last character and its count
+	encoded.WriteRune(runes[len(runes)-1])
+	encoded.WriteString(strconv.Itoa(count))
+
+	// Return the original string if encoding doesn't save space
+	if encoded.Len() >= len(input) {
+		return input
+	}
+
+	return encoded.String()
+}
+
+// RunLengthDecode takes a Run-Length Encoded string and returns
+// the decoded string or an error + the orignal encoded string
+func RunLengthDecode(encoded string) (string, error) {
+	if len(encoded) == 0 {
+		return "", nil
+	}
+
+	var decoded strings.Builder
+	runes := []rune(encoded)
+	length := len(runes)
+	i := 0
+
+	for i < length {
+		char := runes[i]
+		j := i + 1
+
+		// Check if a number follows the character
+		for j < length && runes[j] >= '0' && runes[j] <= '9' {
+			j++
+		}
+
+		if j > i+1 {
+			// Parse the count if a number follows the character
+			count, err := strconv.Atoi(string(runes[i+1 : j]))
+
+			// If an error accures return the error and the original string
+			if err != nil {
+				return encoded, err
+			}
+
+			decoded.WriteString(strings.Repeat(string(char), count))
+		} else {
+			// If no number follows, treat the character as unencoded
+			decoded.WriteRune(char)
+		}
+
+		// Move to the next character group
+		i = j
+	}
+
+	return decoded.String(), nil
 }
 
 // CaesarDecrypt decrypts a string encrypted with the Caesar cipher and a given shift.

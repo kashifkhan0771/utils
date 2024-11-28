@@ -181,6 +181,78 @@ func TestRot13Decode(t *testing.T) {
 	}
 }
 
+func TestRunLengthEncode(t *testing.T) {
+	type args struct {
+		input string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "success - encode a string using Run-Length encoding",
+			args: args{input: "aaabbccccdd"},
+			want: "a3b2c4d2",
+		},
+		{
+			name: "success - make sure RunLengthEncode does not alter a normal string",
+			args: args{input: "abcdefg"},
+			want: "abcdefg",
+		},
+		{
+			name: "success - encode a string containing special characters using Run-Length encoding",
+			args: args{input: "!!!a#$$$$$@"},
+			want: "!3a1#1$5@1",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RunLengthEncode(tt.args.input); got != tt.want {
+				t.Errorf("RunLengthEncode() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRunLengthDecode(t *testing.T) {
+	type args struct {
+		input string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "success - decode a string that has been encoded using Run-Length encoding",
+			args: args{input: "a3b2c4d2"},
+			want: "aaabbccccdd",
+		},
+		{
+			name: "success - decode a string that has been encoded using Run-Length encoding",
+			args: args{input: "A2B2C"},
+			want: "AABBC",
+		},
+		{
+			name: "success - decode a string that has been encoded using Run-Length encoding",
+			args: args{input: "a2z"},
+			want: "aaz",
+		},
+		{
+			name: "success - decode a string containing special characters that has been encoded using Run-Length encoding",
+			args: args{input: "!3#%$5"},
+			want: "!!!#%$$$$$",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got, _ := RunLengthDecode(tt.args.input); got != tt.want {
+				t.Errorf("RunLengthDecode() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 func TestCaesarEncrypt(t *testing.T) {
 	type args struct {
 		input string
