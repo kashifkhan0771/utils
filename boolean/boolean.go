@@ -15,6 +15,13 @@ func IsTrue(v string) bool {
 	return b
 }
 
+/*
+Toggle negates the given boolean value.
+
+Returns:
+  - true if the input is false.
+  - false if the input is true.
+*/
 func Toggle(value bool) bool {
 	return !value
 }
