@@ -1,5 +1,9 @@
 package math
 
+import (
+	"errors"
+)
+
 // number is a type constraint that matches all numeric types (integers and floats).
 type number interface {
 	int | int8 | int16 | int32 | int64 |
@@ -90,16 +94,20 @@ func Swap[T any](x, y *T) {
 }
 
 // Factorial calculates the factorial of a non-negative integer x.
-func Factorial(x int) int {
+func Factorial(x int) (int, error) {
+	if x < 0 {
+		return x, errors.New("Factorial of a negative number is undefined")
+	}
+
 	if x == 0 || x == 1 {
-		return 1
+		return 1, nil
 	}
 
 	result := 1
 	for i := 2; i <= x; i++ {
 		result *= i
 	}
-	return result
+	return result, nil
 }
 
 // GCD computes the greatest common divisor (GCD) of two integers x and y

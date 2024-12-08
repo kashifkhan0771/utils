@@ -1553,16 +1553,17 @@ import (
 )
 
 func main() {
-	fmt.Println(utils.Factorial(5))
-	fmt.Println(utils.Factorial(0))
-	fmt.Println(utils.Factorial(1))
+    result, err := utils.Factorial(5)
+    if err != nil {
+        fmt.Printf("%v\n", err)
+    }
+
+    fmt.Println(result)
 }
 ```
 #### Output:
 ```
 120
-1
-1
 ```
 
 ---

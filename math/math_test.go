@@ -519,10 +519,15 @@ func TestFactorial(t *testing.T) {
 			args: args{x: 7},
 			want: 5040,
 		},
+		{
+			name: "failure - factorial of -3",
+			args: args{x: -3},
+			want: -3,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Factorial(tt.args.x); got != tt.want {
+			if got, _ := Factorial(tt.args.x); got != tt.want {
 				t.Errorf("Factorial() = %v, want %v", got, tt.want)
 			}
 		})

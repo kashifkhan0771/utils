@@ -137,7 +137,7 @@ Here are the one-line descriptions for the URL-related code examples:
 
 - **Swap**: Swaps the values of two variables in place. It uses pointers to modify the original variables.
 
-- **Factorial**: Computes the factorial of a non-negative integer. Factorial of `n` is defined as the product of all integers from `1` to `n`. For `0` and `1`, the result is `1`.
+- **Factorial**: Computes the factorial of a non-negative integer. Factorial of `n` is defined as the product of all integers from `1` to `n`. For `0` and `1`, the result is `1`. Factorial returns an error on invalid input.
 
 - **GCD**: Finds the greatest common divisor (GCD) of two integers using the Euclidean algorithm. If one of the inputs is `0`, the other input is returned.
 
