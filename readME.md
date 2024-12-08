@@ -129,7 +129,7 @@ Here are the one-line descriptions for the URL-related code examples:
 
 - **Clamp**: Restricts a given value to be within a specified range. If the value is below the minimum, it returns the minimum; if above the maximum, it returns the maximum.
 
-- **IntPow**: Computes the integer power of a base raised to an exponent using fast exponentiation. Works only for integers.
+- **IntPow**: Calculates base raised to the power of exp. Supports both positive and negative exponents. Returns float64 for fractional results.
 
 - **IsEven**: Checks if the given integer is even. Returns `true` for even numbers and `false` otherwise.
 

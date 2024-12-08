@@ -1450,6 +1450,7 @@ func main() {
 	fmt.Println(utils.IntPow(2, 3))  // 2^3
 	fmt.Println(utils.IntPow(5, 0))  // 5^0
 	fmt.Println(utils.IntPow(3, 2))  // 3^2
+	fmt.Println(utils.IntPow(2, -3))  // 3^(-3)
 }
 ```
 #### Output:
@@ -1457,6 +1458,7 @@ func main() {
 8
 1
 9
+0.125
 ```
 
 ---

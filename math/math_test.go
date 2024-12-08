@@ -357,7 +357,7 @@ func TestIntPow(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want int
+		want float64
 	}{
 		{
 			name: "success - base 2, exp 3",
@@ -373,6 +373,11 @@ func TestIntPow(t *testing.T) {
 			name: "success - base 3, exp 2",
 			args: args{base: 3, exp: 2},
 			want: 9,
+		},
+		{
+			name: "success - base 2, exp -3",
+			args: args{base: 2, exp: -3},
+			want: 0.125,
 		},
 	}
 	for _, tt := range tests {

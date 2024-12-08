@@ -63,9 +63,21 @@ func Clamp[T number](min, max, value T) T {
 	return value
 }
 
-// IntPow calculates the integer power of a base raised to an exponent using exponentiation by squaring.
-func IntPow(base, exp int) int {
+// IntPow calculates base raised to the power of exp.
+// Supports both positive and negative exponents. Returns float64 for fractional results.
+func IntPow(base, exp int) float64 {
+	if exp == 0 {
+		return 1 // Any number to the power of 0 is 1
+	}
+
 	result := 1
+	isNegative := exp < 0
+
+	// Use absolute value of exp for calculations
+	if isNegative {
+		exp = -exp
+	}
+
 	for exp > 0 {
 		if exp%2 == 1 {
 			result *= base
@@ -73,7 +85,13 @@ func IntPow(base, exp int) int {
 		base *= base
 		exp /= 2
 	}
-	return result
+
+	// If the exponent was negative, return the reciprocal
+	if isNegative {
+		return 1 / float64(result)
+	}
+
+	return float64(result)
 }
 
 // IsEven checks if an integer x is even.
