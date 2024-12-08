@@ -18,7 +18,7 @@ type signedNumber interface {
 
 // Abs returns the absolute value of a number.
 // For negative inputs, it returns -x; otherwise, it returns x.
-func Abs[T number](x T) T {
+func Abs[T signedNumber](x T) T {
 	if x < 0 {
 		return -x
 	}
