@@ -145,5 +145,8 @@ func GCD(x, y int) int {
 
 // LCM computes the least common multiple (LCM) of two integers x and y
 func LCM(x, y int) int {
+	if x == 0 || y == 0 {
+		return 0
+	}
 	return (x / GCD(x, y)) * y
 }
