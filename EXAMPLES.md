@@ -1311,6 +1311,12 @@ if err != nil {
 
 ### Calculate the absolute value of a number
 ```go
+import (
+	"fmt"
+
+	utils "github.com/kashifkhan0771/utils/math"
+)
+
 func main() {
 	fmt.Println(utils.Abs(-5))
 	fmt.Println(utils.Abs(10))
