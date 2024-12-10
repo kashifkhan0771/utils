@@ -135,16 +135,14 @@ func Factorial(x int) (int, error) {
 // GCD computes the greatest common divisor (GCD) of two integers x and y
 // using the Euclidean algorithm.
 func GCD(x, y int) int {
+	x = Abs(x)
+	y = Abs(y)
+
 	for y != 0 {
 		x, y = y, x%y
 	}
 
-	// The greatest common divisor must be positive
-	if x >= 0 {
-		return x
-	}
-
-	return -x
+	return x
 }
 
 // LCM computes the least common multiple (LCM) of two integers x and y
