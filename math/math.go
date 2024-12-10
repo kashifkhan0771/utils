@@ -2,6 +2,7 @@ package math
 
 import (
 	"errors"
+	"log"
 )
 
 // number is a type constraint that matches all numeric types (integers and floats).
@@ -66,6 +67,9 @@ func Clamp[T number](min, max, value T) T {
 // IntPow calculates base raised to the power of exp.
 // Supports both positive and negative exponents. Returns float64 for fractional results.
 func IntPow(base, exp int) float64 {
+	if base == 0 && exp < 0 {
+		log.Fatal("IntPow: Error, base 0 raised to a negative number simplifies to 1/0(Impossible).")
+	}
 	if exp == 0 {
 		return 1 // Any number to the power of 0 is 1
 	}
