@@ -3,6 +3,7 @@ package fake
 import (
 	"regexp"
 	"testing"
+	"time"
 )
 
 func TestGenerateUUID(t *testing.T) {
@@ -33,5 +34,19 @@ func TestGenerateUUID(t *testing.T) {
             t.Errorf("Duplicate UUID found: %s", uuid)
         }
         uuidSet[uuid] = struct{}{}
+    }
+}
+
+func TestRandomDate(t *testing.T) {
+    start := time.Date(EpochYear, time.Month(EpochMonth), EpochDay, EpochHour, EpochMinute, EpochSecond, EpochNano, time.UTC)
+    end := time.Now()
+
+    randomDate, err := RandomDate()
+    if err != nil {
+        t.Fatalf("Expected no error, but got %v", err)
+    }
+
+    if randomDate.Before(start) || randomDate.After(end) {
+        t.Fatalf("Random date %v is outside the expected range [%v, %v]", randomDate, start, end)
     }
 }

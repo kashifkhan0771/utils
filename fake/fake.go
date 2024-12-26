@@ -6,8 +6,19 @@ package fake
 import (
 	"crypto/rand"
 	"fmt"
+	rnd "github.com/kashifkhan0771/utils/rand"
 	"io"
 	"time"
+)
+
+const (
+    EpochYear   = 1970
+    EpochMonth  = 1
+    EpochDay    = 1
+    EpochHour   = 0
+    EpochMinute = 0
+    EpochSecond = 0
+    EpochNano   = 0
 )
 
 // RandomUUID generates a fake UUIDv4.
@@ -26,6 +37,20 @@ func RandomUUID() (string, error) {
 	return fmt.Sprintf("%08x-%04x-%04x-%04x-%12x", uuid[:4], uuid[4:6], uuid[6:8], uuid[8:10], uuid[10:]), nil
 }
 
-func RandomDate() time.Time {
-	return time.Time{}
+// RandomDate generates a random date.
+func RandomDate() (time.Time, error) {
+	start := time.Date(EpochYear, time.Month(EpochMonth), EpochDay, EpochHour, EpochMinute, EpochSecond, EpochNano, time.UTC).Unix()
+	end := time.Now().Unix()
+
+	sec, err := rnd.NumberInRange(start, end)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	nsec, err := rnd.NumberInRange(0, 1e9)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return time.Unix(sec, nsec), nil
 }
