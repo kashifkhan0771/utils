@@ -50,3 +50,16 @@ func TestRandomDate(t *testing.T) {
         t.Fatalf("Random date %v is outside the expected range [%v, %v]", randomDate, start, end)
     }
 }
+
+func TestGenerateRandomPhoneNumber(t *testing.T) {
+    phoneNumber, err := RandomPhoneNumber()
+    if err != nil {
+        t.Fatalf("Expected no error, but got %v", err)
+    }
+
+    re := regexp.MustCompile(`^\+1 \(\d{3}\) \d{3}-\d{4}$`)
+
+    if !re.MatchString(phoneNumber) {
+        t.Errorf("Generated phone number %v does not match the expected format", phoneNumber)
+    }
+}

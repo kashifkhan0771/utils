@@ -12,13 +12,13 @@ import (
 )
 
 const (
-    EpochYear   = 1970
-    EpochMonth  = 1
-    EpochDay    = 1
-    EpochHour   = 0
-    EpochMinute = 0
-    EpochSecond = 0
-    EpochNano   = 0
+	EpochYear   = 1970
+	EpochMonth  = 1
+	EpochDay    = 1
+	EpochHour   = 0
+	EpochMinute = 0
+	EpochSecond = 0
+	EpochNano   = 0
 )
 
 // RandomUUID generates a fake UUIDv4.
@@ -53,4 +53,24 @@ func RandomDate() (time.Time, error) {
 	}
 
 	return time.Unix(sec, nsec), nil
+}
+
+// RandomPhoneNumber generates a random phone number.
+func RandomPhoneNumber() (string, error) {
+	areaCode, err := rnd.NumberInRange(100, 999)
+	if err != nil {
+		return "", err
+	}
+
+	firstPart, err := rnd.NumberInRange(100, 999)
+	if err != nil {
+		return "", err
+	}
+
+	secondPart, err := rnd.NumberInRange(1000, 9999)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("+1 (%d) %d-%d", areaCode, firstPart, secondPart), nil
 }
