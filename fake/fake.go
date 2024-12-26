@@ -21,6 +21,13 @@ const (
 	EpochNano   = 0
 )
 
+const MaxStreetNumber = 150
+
+var streetNames = []string{"Main St", "High St", "Broadway", "Maple Ave", "Oak St", "Pine St", "Cedar St", "Elm St"}
+var cities = []string{"Springfield", "Rivertown", "Lakeview", "Greenville", "Fairview", "Madison", "Georgetown", "Clinton"}
+var states = []string{"AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"}
+var postalCodes = []string{"12345", "23456", "34567", "45678", "56789", "67890", "78901", "89012", "90123"}
+
 // RandomUUID generates a fake UUIDv4.
 func RandomUUID() (string, error) {
 	uuid := make([]byte, 16)
@@ -73,4 +80,38 @@ func RandomPhoneNumber() (string, error) {
 	}
 
 	return fmt.Sprintf("+1 (%d) %d-%d", areaCode, firstPart, secondPart), nil
+}
+
+// RandomAddress generates a random phone number.
+func RandomAddress() (string, error) {
+	streetNumber, err := rnd.NumberInRange(0, MaxStreetNumber)
+	if err != nil {
+		return "", err
+	}
+
+	idx, err := rnd.NumberInRange(0, int64(len(streetNames)-1))
+	if err != nil {
+		return "", err
+	}
+	streetName := streetNames[idx]
+
+	idx, err = rnd.NumberInRange(0, int64(len(streetNames)-1))
+	if err != nil {
+		return "", err
+	}
+	city := cities[idx]
+
+	idx, err = rnd.NumberInRange(0, int64(len(states)-1))
+	if err != nil {
+		return "", err
+	}
+	state := states[idx]
+
+	idx, err = rnd.NumberInRange(0, int64(len(postalCodes)-1))
+    if err != nil {
+        return "", err
+    }
+    postalCode := postalCodes[idx]
+
+    return fmt.Sprintf("%d %s, %s, %s %s, USA", streetNumber, streetName, city, state, postalCode), nil
 }

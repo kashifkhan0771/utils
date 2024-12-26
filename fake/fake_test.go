@@ -63,3 +63,16 @@ func TestGenerateRandomPhoneNumber(t *testing.T) {
         t.Errorf("Generated phone number %v does not match the expected format", phoneNumber)
     }
 }
+
+func TestRandomAddress(t *testing.T) {
+    address, err := RandomAddress()
+    if err != nil {
+        t.Fatalf("Expected no error, but got %v", err)
+    }
+
+    re := regexp.MustCompile(`^\d+ [A-Za-z ]+, [A-Za-z ]+, [A-Z]{2} \d{5}, USA$`)
+
+    if !re.MatchString(address) {
+        t.Errorf("Generated address %v does not match the expected format", address)
+    }
+}
