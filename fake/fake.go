@@ -82,7 +82,7 @@ func RandomPhoneNumber() (string, error) {
 	return fmt.Sprintf("+1 (%d) %d-%d", areaCode, firstPart, secondPart), nil
 }
 
-// RandomAddress generates a random phone number.
+// RandomAddress generates a random address.
 func RandomAddress() (string, error) {
 	streetNumber, err := rnd.NumberInRange(0, MaxStreetNumber)
 	if err != nil {
