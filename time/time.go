@@ -19,7 +19,7 @@ func EndOfDay(t time.Time) time.Time {
 func AddBusinessDays(t time.Time, days int) time.Time {
 	for days > 0 {
 		t = t.AddDate(0, 0, 1)
-		if t.Weekday() != time.Saturday && t.Weekday() != time.Sunday {
+		if !IsWeekend(t) {
 			days--
 		}
 	}
@@ -179,4 +179,13 @@ func GetDayName(dayNumber int) (string, error) {
 	}
 
 	return days[dayNumber], nil
+}
+
+func FormatForDisplay(t time.Time) string {
+	return t.Format("Monday, 2 Jan 2006")
+}
+
+func IsToday(t time.Time) bool {
+	now := time.Now()
+	return t.Year() == now.Year() && t.YearDay() == now.YearDay()
 }
