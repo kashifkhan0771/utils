@@ -103,10 +103,6 @@ require github.com/kashifkhan0771/utils v0.3.0
 - **RenderHTMLTemplate**: Renders an HTML template with dynamic values.
 - **RenderText**: Renders a text template with dynamic values.
 
-Here are the one-line descriptions for the URL-related code examples:
-
----
-
 ### 11. URLs
 - **Parse a URL**: Parses a URL into its components like scheme, host, path, query, and fragment.
 
@@ -115,8 +111,6 @@ Here are the one-line descriptions for the URL-related code examples:
 - **Resolve Relative URLs**: Resolves a relative URL against a base URL to form an absolute URL.
 
 - **URL Encoding**: Encodes URL components to ensure they are properly formatted for inclusion in URLs.
-
----
 
 ### 12. Math
 - **Abs**: Returns the absolute value of the given number. Works for both integers and floating-point numbers. If the input is negative, it returns its positive equivalent; otherwise, it returns the number as is.
