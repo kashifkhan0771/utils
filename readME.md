@@ -137,7 +137,16 @@ require github.com/kashifkhan0771/utils v0.3.0
 
 - **LCM**: Finds the least common multiple (LCM) of two integers.
 
-### 13. Time Utilities
+### 13. Fake
+- **RandomUUID**: Generates a random UUID of version 4 and variant 2.
+
+- **RandomDate**: Generates a random date between 1st January 1970 and the current date.
+
+- **RandomPhoneNumber**: Generates a random US phone number in the format (XXX) XXX-XXXX.
+
+- **RandomAddress**: Generates a random US address including street, city, state, and ZIP code.
+
+### 14. Time Utilities
 
 - **StartOfDay**: Returns a time.Time set to the beginning (00:00:00) of the given day.
 
@@ -178,17 +187,6 @@ require github.com/kashifkhan0771/utils v0.3.0
 - **FormatForDisplay**: Formats a date in a readable format (e.g., "Monday, 2 Jan 2006").
 
 - **IsToday**: Checks if a given date is today.
-
----
-
-### 13. Fake
-- **RandomUUID**: Generates a random UUID of version 4 and variant 2.
-
-- **RandomDate**: Generates a random date between 1st January 1970 and the current date.
-
-- **RandomPhoneNumber**: Generates a random US phone number in the format (XXX) XXX-XXXX.
-
-- **RandomAddress**: Generates a random US address including street, city, state, and ZIP code.
 
 ---
 
