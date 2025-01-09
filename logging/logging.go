@@ -104,7 +104,10 @@ func (l *Logger) log(level LogLevel, message string) {
 	logMessage := fmt.Sprintf("%s[%s] [%s] %s: %s%s\n", color, timestamp, levelStr, l.prefix, message, ColorReset)
 
 	// Write the log message to the configured output
-	fmt.Fprint(l.output, logMessage)
+	_, err := fmt.Fprint(l.output, logMessage)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to write log: %v\n", err)
+	}
 }
 
 // Info logs a message at the INFO level.
