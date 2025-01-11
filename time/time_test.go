@@ -6,6 +6,9 @@ import (
 	"time"
 )
 
+// time.Now mock
+var now = time.Date(2025, 1, 10, 0, 0, 0, 0, time.UTC)
+
 func TestStartOfDay(t *testing.T) {
 	type args struct {
 		input time.Time
@@ -346,7 +349,7 @@ func TestConvertToTimeZone(t *testing.T) {
 				location: "Local",
 			},
 			wantErr: false,
-			want:    time.Date(2023, 12, 25, 15, 0, 0, 0, time.UTC).In(time.Now().Location()),
+			want:    time.Date(2023, 12, 25, 15, 0, 0, 0, time.UTC).In(now.Location()),
 		},
 		{
 			name: "Convert PST to IST",
@@ -445,7 +448,7 @@ func TestCalculateAge(t *testing.T) {
 		{
 			name: "Birthday today, age remains the same",
 			args: args{
-				birthDate: time.Date(time.Now().Year()-30, time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.UTC),
+				birthDate: time.Date(now.Year()-30, now.Month(), now.Day(), 0, 0, 0, 0, time.UTC),
 			},
 			want: 30,
 		},
@@ -475,7 +478,13 @@ func TestCalculateAge(t *testing.T) {
 			args: args{
 				birthDate: time.Date(2000, 2, 29, 0, 0, 0, 0, time.UTC),
 			},
-			want: time.Now().Year() - 2000,
+			want: func() int {
+				leapYearAge := now.Year() - 2000
+				if now.Before(time.Date(now.Year(), 2, 29, 0, 0, 0, 0, time.UTC)) {
+					leapYearAge--
+				}
+				return leapYearAge
+			}(),
 		},
 		{
 			name: "Future date, invalid age",
