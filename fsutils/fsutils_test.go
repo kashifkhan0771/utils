@@ -123,3 +123,45 @@ func TestFindFiles(t *testing.T) {
 		})
 	}
 }
+
+func TestGetDirectorySize(t *testing.T) {
+	// Create a temporary directory for testing
+	tempDir, err := os.MkdirTemp("", "testdir")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer os.RemoveAll(tempDir)
+
+	// Create some test files with known sizes
+	files := []struct {
+		path     string
+		contents string
+		size     int64
+	}{
+		{path: filepath.Join(tempDir, "file1.txt"), contents: "file1", size: 5},
+		{path: filepath.Join(tempDir, "file2.txt"), contents: "file2", size: 5},
+		{path: filepath.Join(tempDir, "file3.log"), contents: "file3", size: 5},
+		{path: filepath.Join(tempDir, "file4.txt"), contents: "file4", size: 5},
+		{path: filepath.Join(tempDir, "file5.md"), contents: "file5", size: 5},
+	}
+
+	var expectedSize int64 = 0
+	for _, file := range files {
+		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
+			t.Fatal(err)
+		}
+		expectedSize += file.size
+	}
+
+	t.Run("Calculate directory size", func(t *testing.T) {
+		result, err := GetDirectorySize(tempDir)
+		if err != nil {
+			t.Fatalf("GetDirectorySize() error = %v", err)
+		}
+
+		if result != expectedSize {
+			t.Errorf("GetDirectorySize() = %d; want %d", result, expectedSize)
+		}
+	})
+}

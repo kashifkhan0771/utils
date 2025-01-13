@@ -249,6 +249,8 @@ The `logging` package provides a simple, flexible, and color-coded logging syste
 
 - **FindFiles**: Searches for files with the specified extension in the given root directory and returns a slice of matching file paths.
 
+- **GetDirectorySize**: Calculates the total size (in bytes) of all files within the specified directory.
+
 ---
 
 ## Examples:

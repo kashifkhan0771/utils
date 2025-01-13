@@ -55,3 +55,26 @@ func FindFiles(root string, extension string) ([]string, error) {
 
 	return files, nil
 }
+
+// GetDirectorySize calculates the total size (in bytes) of all files within the specified directory.
+func GetDirectorySize(path string) (int64, error) {
+	var size int64 = 0
+
+	err := filepath.Walk(path, func(fPath string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() {
+			size += info.Size()
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return 0, err
+	}
+
+	return size, nil
+}

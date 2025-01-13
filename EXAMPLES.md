@@ -2489,3 +2489,31 @@ TXT Files: [/path/to/your/dir/file1.txt /path/to/your/dir/file2.txt /path/to/you
 LOG Files: [/path/to/your/dir/file3.log]
 All Files: [/path/to/your/dir/file1.txt /path/to/your/dir/file2.txt /path/to/your/dir/file3.log /path/to/your/dir/file4.txt]
 ```
+
+### Calculate the total size (in bytes) of all files in a directory
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	dir := "/path/to/your/dir"
+
+	size, err := fsutils.GetDirectorySize(dir)
+	if err != nil {
+		log.Fatalf("Error calculating directory size: %v", err)
+	}
+
+	fmt.Printf("The total size of directory \"%s\" is %dB\n", dir, size)
+}
+
+```
+#### Output:
+```
+The total size of directory "/path/to/your/dir" is 6406B
+```
