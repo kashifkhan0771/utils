@@ -2,6 +2,8 @@ package fsutils
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -36,6 +38,87 @@ func TestFormatFileSize(t *testing.T) {
 			result := FormatFileSize(tt.size)
 			if result != tt.expected {
 				t.Errorf("FormatFileSize(%d) = %s; want %s", tt.size, result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestFindFiles(t *testing.T) {
+	// Create a temporary directory for testing
+	tempDir, err := os.MkdirTemp("", "testdir")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer os.RemoveAll(tempDir)
+
+	// Create some test files
+	files := []struct {
+		path     string
+		contents string
+	}{
+		{path: filepath.Join(tempDir, "file1.txt"), contents: "file1"},
+		{path: filepath.Join(tempDir, "file2.txt"), contents: "file2"},
+		{path: filepath.Join(tempDir, "file3.log"), contents: "file3"},
+		{path: filepath.Join(tempDir, "file4.txt"), contents: "file4"},
+		{path: filepath.Join(tempDir, "file5.md"), contents: "file5"},
+		{path: filepath.Join(tempDir, "file6.md"), contents: "file6"},
+		{path: filepath.Join(tempDir, "file7.log"), contents: "file7"},
+		{path: filepath.Join(tempDir, "file8.txt"), contents: "file8"},
+	}
+
+	for _, file := range files {
+		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	tests := []struct {
+		extension string
+		expected  []string
+	}{
+		{extension: ".txt", expected: []string{
+			filepath.Join(tempDir, "file1.txt"),
+			filepath.Join(tempDir, "file2.txt"),
+			filepath.Join(tempDir, "file4.txt"),
+			filepath.Join(tempDir, "file8.txt"),
+		}},
+		{extension: ".log", expected: []string{
+			filepath.Join(tempDir, "file3.log"),
+			filepath.Join(tempDir, "file7.log"),
+		}},
+		{extension: ".md", expected: []string{
+			filepath.Join(tempDir, "file5.md"),
+			filepath.Join(tempDir, "file6.md"),
+		}},
+		{extension: ".json", expected: []string{}},
+		{extension: "", expected: []string{
+			filepath.Join(tempDir, "file1.txt"),
+			filepath.Join(tempDir, "file2.txt"),
+			filepath.Join(tempDir, "file3.log"),
+			filepath.Join(tempDir, "file4.txt"),
+			filepath.Join(tempDir, "file5.md"),
+			filepath.Join(tempDir, "file6.md"),
+			filepath.Join(tempDir, "file7.log"),
+			filepath.Join(tempDir, "file8.txt"),
+		}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.extension, func(t *testing.T) {
+			result, err := FindFiles(tempDir, tt.extension)
+			if err != nil {
+				t.Fatalf("FindFiles() error = %v", err)
+			}
+
+			if len(result) != len(tt.expected) {
+				t.Fatalf("FindFiles() = %v; want %v", result, tt.expected)
+			}
+
+			for i, file := range result {
+				if file != tt.expected[i] {
+					t.Errorf("FindFiles() = %v; want %v", result, tt.expected)
+				}
 			}
 		})
 	}

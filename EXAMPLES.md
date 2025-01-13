@@ -2445,3 +2445,47 @@ func main() {
 1.00 GB
 1.00 TB
 ```
+
+### Search for files with the specified extension
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	dir := "/path/to/your/dir"
+
+	txtFiles, err := fsutils.FindFiles(dir, ".txt")
+	if err != nil {
+		log.Fatalf("Error finding .txt files: %v", err)
+	}
+	
+	fmt.Println("TXT Files:", txtFiles)
+
+	logFiles, err := fsutils.FindFiles(dir, ".log")
+	if err != nil {
+		log.Fatalf("Error finding .log files: %v", err)
+	}
+
+	fmt.Println("LOG Files:", logFiles)
+
+	allFiles, err := fsutils.FindFiles(dir, "")
+	if err != nil {
+		log.Fatalf("Error finding all files: %v", err)
+	}
+
+	fmt.Println("All Files:", allFiles)
+}
+
+```
+#### Output:
+```
+TXT Files: [/path/to/your/dir/file1.txt /path/to/your/dir/file2.txt /path/to/your/dir/file4.txt]
+LOG Files: [/path/to/your/dir/file3.log]
+All Files: [/path/to/your/dir/file1.txt /path/to/your/dir/file2.txt /path/to/your/dir/file3.log /path/to/your/dir/file4.txt]
+```

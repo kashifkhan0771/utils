@@ -247,6 +247,8 @@ The `logging` package provides a simple, flexible, and color-coded logging syste
 
 - **FormatFileSize**: Formats a file size given in bytes into a human-readable string with appropriate units (B, KB, MB, GB, TB).
 
+- **FindFiles**: Searches for files with the specified extension in the given root directory and returns a slice of matching file paths.
+
 ---
 
 ## Examples:

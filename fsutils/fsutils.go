@@ -1,6 +1,10 @@
 package fsutils
 
-import "fmt"
+import (
+	"fmt"
+	"io/fs"
+	"path/filepath"
+)
 
 type ByteSize int64
 
@@ -26,4 +30,28 @@ func FormatFileSize(size int64) string {
 	default:
 		return fmt.Sprintf("%d B", size)
 	}
+}
+
+// FindFiles searches for files with the specified extension in the given root directory
+// and returns a slice of matching file paths.
+func FindFiles(root string, extension string) ([]string, error) {
+	files := make([]string, 0)
+
+	err := filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !info.IsDir() && (filepath.Ext(path) == extension || extension == "") {
+			files = append(files, path)
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return files, nil
 }
