@@ -122,6 +122,31 @@ func TestFindFiles(t *testing.T) {
 			}
 		})
 	}
+
+	t.Run("invalid path", func(t *testing.T) {
+		_, err := FindFiles("/nonexistent/path", ".txt")
+		if err == nil {
+			t.Error("Expected error for nonexistent path")
+		}
+	})
+
+	t.Run("permission denied", func(t *testing.T) {
+		tempDir, err := os.MkdirTemp("", "testdir")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer os.RemoveAll(tempDir)
+
+		if err := os.Chmod(tempDir, 0000); err != nil {
+			t.Fatal(err)
+		}
+		defer os.Chmod(tempDir, 0755)
+
+		_, err = FindFiles(tempDir, ".txt")
+		if err == nil {
+			t.Error("Expected permission denied error")
+		}
+	})
 }
 
 func TestGetDirectorySize(t *testing.T) {
