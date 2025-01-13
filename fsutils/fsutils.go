@@ -38,11 +38,20 @@ func FormatFileSize(size int64) string {
 // FindFiles searches for files with the specified extension in the given root directory
 // and returns a slice of matching file paths.
 func FindFiles(root string, extension string) ([]string, error) {
+	root = filepath.Clean(root)
+	if !filepath.IsAbs(root) {
+		return nil, fmt.Errorf("absolute path required, got: %s", root)
+	}
+
 	files := make([]string, 0)
 
 	err := filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
 		if err != nil {
 			return err
+		}
+
+		if info.Mode()&os.ModeSymlink != 0 {
+			return nil
 		}
 
 		if !info.IsDir() && (filepath.Ext(path) == extension || extension == "") {
