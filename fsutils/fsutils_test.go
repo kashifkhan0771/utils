@@ -301,4 +301,68 @@ func TestDirsIdentical(t *testing.T) {
 			t.Errorf("DirsIdentical() = %v; want %v", result, false)
 		}
 	})
+
+	t.Run("nested directories", func(t *testing.T) {
+		dir1, dir2 := setupNestedDirs(t)
+		defer os.RemoveAll(dir1)
+		defer os.RemoveAll(dir2)
+
+		identical, err := DirsIdentical(dir1, dir2)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !identical {
+			t.Error("Nested directories should be identical")
+		}
+	})
+}
+
+func setupNestedDirs(t *testing.T) (string, string) {
+	// Create temporary directories for testing
+	tempDir1, err := os.MkdirTemp("", "nestedtestdir1")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tempDir2, err := os.MkdirTemp("", "nestedtestdir2")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Create nested directory structure in both directories
+	nestedDirs := []string{
+		"dir1",
+		"dir1/dir2",
+		"dir1/dir2/dir3",
+	}
+
+	for _, dir := range nestedDirs {
+		if err := os.MkdirAll(filepath.Join(tempDir1, dir), 0755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.MkdirAll(filepath.Join(tempDir2, dir), 0755); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	// Create some test files in the nested directories
+	files := []struct {
+		path     string
+		contents string
+	}{
+		{path: filepath.Join(tempDir1, "dir1/file1.txt"), contents: "file1"},
+		{path: filepath.Join(tempDir1, "dir1/dir2/file2.txt"), contents: "file2"},
+		{path: filepath.Join(tempDir1, "dir1/dir2/dir3/file3.txt"), contents: "file3"},
+	}
+
+	for _, file := range files {
+		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(tempDir2, file.path[len(tempDir1):]), []byte(file.contents), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	return tempDir1, tempDir2
 }
