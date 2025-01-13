@@ -140,7 +140,12 @@ func TestFindFiles(t *testing.T) {
 		if err := os.Chmod(tempDir, 0000); err != nil {
 			t.Fatal(err)
 		}
-		defer os.Chmod(tempDir, 0755)
+		
+		defer func() {
+			if err := os.Chmod(tempDir, 0755); err != nil {
+				t.Errorf("Failed to restore directory permissions: %v", err)
+			}
+		}()
 
 		_, err = FindFiles(tempDir, ".txt")
 		if err == nil {
