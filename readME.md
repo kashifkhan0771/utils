@@ -243,6 +243,10 @@ The `logging` package provides a simple, flexible, and color-coded logging syste
 - Logs are automatically flushed to the configured output as soon as they're written.  
 - To log without colors (e.g., for testing), set the `disableColors` field to `true` in the `Logger` instance.
 
+### 16. File System Utilities
+
+- **FormatFileSize**: Formats a file size given in bytes into a human-readable string with appropriate units (B, KB, MB, GB, TB).
+
 ---
 
 ## Examples:

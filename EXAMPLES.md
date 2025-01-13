@@ -16,7 +16,8 @@ This document provides practical examples of how to use the library's features. 
 12. [Math](#12-math)
 13. [Fake](#13-fake)
 14. [Time](#14-time)
-14. [Loggin](#15-logging)
+15. [Loggin](#15-logging)
+16. [File System Utilities](#16-fsutils)
 
 ## 1. Boolean
 
@@ -2413,4 +2414,34 @@ func main() {
 #### Output:
 ```
 [2025-01-09 12:34:56] [INFO] CustomPrefix: This message has a custom prefix.
+```
+
+## 16. Fsutils
+
+### Format a file size given in bytes into a human-readable format
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	sizes := []int64{0, 512, 1024, 1048576, 1073741824, 1099511627776}
+
+	for _, size := range sizes {
+		fmt.Println(fsutils.FormatFileSize(size))
+	}
+}
+```
+#### Output:
+```
+0 B
+512 B
+1.00 KB
+1.00 MB
+1.00 GB
+1.00 TB
 ```
