@@ -39,10 +39,6 @@ func FormatFileSize(size int64) string {
 // and returns a slice of matching file paths.
 func FindFiles(root string, extension string) ([]string, error) {
 	root = filepath.Clean(root)
-	if !filepath.IsAbs(root) {
-		return nil, fmt.Errorf("absolute path required, got: %s", root)
-	}
-
 	files := make([]string, 0)
 
 	err := filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
@@ -135,6 +131,20 @@ func FilesIdentical(file1, file2 string) (bool, error) {
 // It returns true if both directories contain the same files with identical content,
 // and false otherwise
 func DirsIdentical(dir1, dir2 string) (bool, error) {
+	dir1 = filepath.Clean(dir1)
+	dir2 = filepath.Clean(dir2)
+
+	// Check if either path is a symlink
+	for _, dir := range []string{dir1, dir2} {
+		info, err := os.Lstat(dir)
+		if err != nil {
+			return false, err
+		}
+		if info.Mode()&os.ModeSymlink != 0 {
+			return false, fmt.Errorf("symlinks are not supported: %s", dir)
+		}
+	}
+
 	files1, err := FindFiles(dir1, "")
 	if err != nil {
 		return false, err
@@ -149,7 +159,14 @@ func DirsIdentical(dir1, dir2 string) (bool, error) {
 		return false, nil
 	}
 
-	used := make(map[string]bool)
+	type result struct {
+		path string
+		identical bool
+		err error
+	}
+
+	workers := make(chan struct{}, 10)
+	results := make(chan result)
 
 	for _, file1 := range files1 {
 		relativePath1, err := filepath.Rel(dir1, file1)
@@ -157,17 +174,32 @@ func DirsIdentical(dir1, dir2 string) (bool, error) {
 			return false, err
 		}
 
-		matchingFile2 := filepath.Join(dir2, relativePath1)
-		if _, err := os.Stat(matchingFile2); os.IsNotExist(err) {
+		file2 := filepath.Join(dir2, relativePath1)
+		if _, err := os.Lstat(file2); os.IsNotExist(err) {
 			return false, nil
 		}
 
-		if identical, err := FilesIdentical(file1, matchingFile2); err != nil || !identical {
-			return false, err
-		}
-
-		used[relativePath1] = true
+		workers <- struct{}{}
+		go func(f1 string, f2 string, rPath string) {
+			defer func() { <-workers }()
+			identical, err := FilesIdentical(f1, f2)
+			results <- result{f1, identical, err}
+		}(file1, file2, relativePath1)
 	}
 
-	return len(used) == len(files1), nil
+	matched := make(map[string]bool)
+	for range files1 {
+		r := <-results
+		if r.err != nil {
+			return false, r.err
+		}
+
+		if !r.identical {
+			return false, nil
+		}
+
+		matched[r.path] = true
+	}
+
+	return len(matched) == len(files1), nil
 }
