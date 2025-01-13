@@ -105,24 +105,28 @@ func FilesIdentical(file1, file2 string) (bool, error) {
 	}
 	defer f2.Close()
 
-	const chunkSize = 4096
+	const chunkSize = 32 * 1024
 	b1 := make([]byte, chunkSize)
 	b2 := make([]byte, chunkSize)
 
 	for {
-		_, err1 := f1.Read(b1)
-		_, err2 := f2.Read(b2)
+		n1, err1 := f1.Read(b1)
+		n2, err2 := f2.Read(b2)
+
+		if n1 != n2 || !bytes.Equal(b1[:n1], b2[:n2]) {
+			return false, nil
+		}
 
 		if err1 != nil || err2 != nil {
 			if err1 == io.EOF && err2 == io.EOF {
 				return true, nil
 			}
 
-			return false, fmt.Errorf("error reading files: %v, %v", err1, err2)
-		}
+			if err1 == io.EOF || err2 == io.EOF {
+				return false, nil
+			}
 
-		if !bytes.Equal(b1, b2) {
-			return false, nil
+			return false, fmt.Errorf("error reading files: %v, %v", err1, err2)
 		}
 	}
 }
