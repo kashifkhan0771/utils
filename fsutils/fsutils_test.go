@@ -165,3 +165,54 @@ func TestGetDirectorySize(t *testing.T) {
 		}
 	})
 }
+
+func TestFilesIdentical(t *testing.T) {
+	// Create a temporary directory for testing
+	tempDir, err := os.MkdirTemp("", "testdir")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer os.RemoveAll(tempDir)
+
+	// Create some test files
+	files := []struct {
+		path     string
+		contents string
+	}{
+		{path: filepath.Join(tempDir, "file1.txt"), contents: "file1"},
+		{path: filepath.Join(tempDir, "file2.txt"), contents: "file1"},
+		{path: filepath.Join(tempDir, "file3.txt"), contents: "file3"},
+		{path: filepath.Join(tempDir, "file4.txt"), contents: "file4"},
+	}
+
+	for _, file := range files {
+		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	tests := []struct {
+		file1    string
+		file2    string
+		expected bool
+	}{
+		{file1: filepath.Join(tempDir, "file1.txt"), file2: filepath.Join(tempDir, "file2.txt"), expected: true},
+		{file1: filepath.Join(tempDir, "file1.txt"), file2: filepath.Join(tempDir, "file3.txt"), expected: false},
+		{file1: filepath.Join(tempDir, "file3.txt"), file2: filepath.Join(tempDir, "file4.txt"), expected: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(fmt.Sprintf("%s vs %s", tt.file1, tt.file2), func(t *testing.T) {
+			result, err := FilesIdentical(tt.file1, tt.file2)
+			if err != nil {
+				t.Fatalf("FilesIdentical() error = %v", err)
+			}
+
+			if result != tt.expected {
+				t.Errorf("FilesIdentical() = %v; want %v", result, tt.expected)
+			}
+		})
+	}
+}
+

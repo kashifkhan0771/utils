@@ -251,6 +251,8 @@ The `logging` package provides a simple, flexible, and color-coded logging syste
 
 - **GetDirectorySize**: Calculates the total size (in bytes) of all files within the specified directory.
 
+- **FilesIdentical**: Compares two files byte by byte to determine if they are identical.
+
 ---
 
 ## Examples:

@@ -1,8 +1,11 @@
 package fsutils
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"io/fs"
+	"os"
 	"path/filepath"
 )
 
@@ -56,7 +59,7 @@ func FindFiles(root string, extension string) ([]string, error) {
 	return files, nil
 }
 
-// GetDirectorySize calculates the total size (in bytes) of all files within the specified directory.
+// GetDirectorySize calculates the total size (in bytes) of all files within the specified directory
 func GetDirectorySize(path string) (int64, error) {
 	var size int64 = 0
 
@@ -77,4 +80,40 @@ func GetDirectorySize(path string) (int64, error) {
 	}
 
 	return size, nil
+}
+
+// FilesIdentical compares two files byte by byte to determine if they are identical
+func FilesIdentical(file1, file2 string) (bool, error) {
+	f1, err := os.Open(file1)
+	if err != nil {
+		return false, err
+	}
+	defer f1.Close()
+
+	f2, err := os.Open(file2)
+	if err != nil {
+		return false, err
+	}
+	defer f2.Close()
+
+	const chunkSize = 4096
+	b1 := make([]byte, chunkSize)
+	b2 := make([]byte, chunkSize)
+
+	for {
+		_, err1 := f1.Read(b1)
+		_, err2 := f2.Read(b2)
+
+		if err1 != nil || err2 != nil {
+			if err1 == io.EOF && err2 == io.EOF {
+				return true, nil
+			}
+			
+			return false, fmt.Errorf("error reading files: %v, %v", err1, err2)
+		}
+
+		if !bytes.Equal(b1, b2) {
+			return false, nil
+		}
+	}
 }
