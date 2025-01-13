@@ -108,7 +108,7 @@ func FilesIdentical(file1, file2 string) (bool, error) {
 			if err1 == io.EOF && err2 == io.EOF {
 				return true, nil
 			}
-			
+
 			return false, fmt.Errorf("error reading files: %v, %v", err1, err2)
 		}
 
@@ -116,4 +116,45 @@ func FilesIdentical(file1, file2 string) (bool, error) {
 			return false, nil
 		}
 	}
+}
+
+// DirsIdentical compares two directories to determine if they are identical
+// It returns true if both directories contain the same files with identical content,
+// and false otherwise
+func DirsIdentical(dir1, dir2 string) (bool, error) {
+	files1, err := FindFiles(dir1, "")
+	if err != nil {
+		return false, err
+	}
+
+	files2, err := FindFiles(dir2, "")
+	if err != nil {
+		return false, err
+	}
+
+	if len(files1) != len(files2) {
+		return false, nil
+	}
+
+	used := make(map[string]bool)
+
+	for _, file1 := range files1 {
+		relativePath1, err := filepath.Rel(dir1, file1)
+		if err != nil {
+			return false, err
+		}
+
+		matchingFile2 := filepath.Join(dir2, relativePath1)
+		if _, err := os.Stat(matchingFile2); os.IsNotExist(err) {
+			return false, nil
+		}
+
+		if identical, err := FilesIdentical(file1, matchingFile2); err != nil || !identical {
+			return false, err
+		}
+
+		used[relativePath1] = true
+	}
+
+	return len(used) == len(files1), nil
 }

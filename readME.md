@@ -253,6 +253,8 @@ The `logging` package provides a simple, flexible, and color-coded logging syste
 
 - **FilesIdentical**: Compares two files byte by byte to determine if they are identical.
 
+- **DirsIdentical**: Compares two directories to determine if they are identical.
+
 ---
 
 ## Examples:

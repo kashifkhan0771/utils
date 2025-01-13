@@ -2518,7 +2518,7 @@ func main() {
 The total size of directory "/path/to/your/dir" is 6406B
 ```
 
-### Compares two files
+### Compare two files
 ```go
 package main
 
@@ -2549,4 +2549,37 @@ func main() {
 #### Output:
 ```
 The files /path/to/your/file1.txt and /path/to/your/file2.txt are identical
+```
+
+### Compare two directories
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	dir1 := "/path/to/your/dir1"
+	dir2 := "/path/to/your/dir2"
+
+	identical, err := fsutils.DirsIdentical(dir1, dir2)
+	if err != nil {
+		log.Fatalf("Error comparing directories: %v", err)
+	}
+
+	if identical {
+		fmt.Printf("The directories %s and %s are identical.\n", dir1, dir2)
+	} else {
+		fmt.Printf("The directories %s and %s are not identical.\n", dir1, dir2)
+	}
+}
+
+```
+#### Output:
+```
+The directories /path/to/your/dir1 and /path/to/your/dir2 are identical.
 ```

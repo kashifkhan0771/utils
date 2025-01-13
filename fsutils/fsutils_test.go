@@ -216,3 +216,89 @@ func TestFilesIdentical(t *testing.T) {
 	}
 }
 
+func TestDirsIdentical(t *testing.T) {
+	// Create temporary directories for testing
+	tempDir1, err := os.MkdirTemp("", "testdir1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir1)
+
+	tempDir2, err := os.MkdirTemp("", "testdir2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir2)
+
+	// Create some test files in both directories
+	files1 := []struct {
+		path     string
+		contents string
+	}{
+		{path: filepath.Join(tempDir1, "file1.txt"), contents: "file1"},
+		{path: filepath.Join(tempDir1, "file2.txt"), contents: "file2"},
+		{path: filepath.Join(tempDir1, "file3.log"), contents: "file3"},
+	}
+
+	files2 := []struct {
+		path     string
+		contents string
+	}{
+		{path: filepath.Join(tempDir2, "file1.txt"), contents: "file1"},
+		{path: filepath.Join(tempDir2, "file2.txt"), contents: "file2"},
+		{path: filepath.Join(tempDir2, "file3.log"), contents: "file3"},
+	}
+
+	for _, file := range files1 {
+		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	for _, file := range files2 {
+		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	t.Run("Identical directories", func(t *testing.T) {
+		result, err := DirsIdentical(tempDir1, tempDir2)
+		if err != nil {
+			t.Fatalf("DirsIdentical() error = %v", err)
+		}
+
+		if !result {
+			t.Errorf("DirsIdentical() = %v; want %v", result, true)
+		}
+	})
+
+	if err := os.WriteFile(filepath.Join(tempDir2, "file2.txt"), []byte("modified"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("Non-identical directories", func(t *testing.T) {
+		result, err := DirsIdentical(tempDir1, tempDir2)
+		if err != nil {
+			t.Fatalf("DirsIdentical() error = %v", err)
+		}
+
+		if result {
+			t.Errorf("DirsIdentical() = %v; want %v", result, false)
+		}
+	})
+
+	if err := os.WriteFile(filepath.Join(tempDir2, "file4.txt"), []byte("file4"), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("Directories with different number of files", func(t *testing.T) {
+		result, err := DirsIdentical(tempDir1, tempDir2)
+		if err != nil {
+			t.Fatalf("DirsIdentical() error = %v", err)
+		}
+
+		if result {
+			t.Errorf("DirsIdentical() = %v; want %v", result, false)
+		}
+	})
+}
