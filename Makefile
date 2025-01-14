@@ -3,4 +3,5 @@ test:
 	bash ./scripts/test.sh
 
 lint:
-	golangci-lint run
+	@which golangci-lint > /dev/null || (echo "Error: golangci-lint is not installed" && exit 1)
+	golangci-lint run --config=.golangci.yml
