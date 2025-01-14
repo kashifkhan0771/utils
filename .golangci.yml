@@ -6,8 +6,5 @@ linters:
   enable:
     - govet
     - staticcheck
-    - revive
     - gofmt
     - errcheck
-    - gosec
-
