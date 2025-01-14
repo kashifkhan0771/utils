@@ -243,6 +243,18 @@ The `logging` package provides a simple, flexible, and color-coded logging syste
 - Logs are automatically flushed to the configured output as soon as they're written.  
 - To log without colors (e.g., for testing), set the `disableColors` field to `true` in the `Logger` instance.
 
+### 16. File System Utilities
+
+- **FormatFileSize**: Formats a file size given in bytes into a human-readable string with appropriate units (B, KB, MB, GB, TB).
+
+- **FindFiles**: Searches for files with the specified extension in the given root directory and returns a slice of matching file paths.
+
+- **GetDirectorySize**: Calculates the total size (in bytes) of all files within the specified directory.
+
+- **FilesIdentical**: Compares two files byte by byte to determine if they are identical.
+
+- **DirsIdentical**: Compares two directories to determine if they are identical.
+
 ---
 
 ## Examples:
