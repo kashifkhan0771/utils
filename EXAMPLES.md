@@ -16,7 +16,8 @@ This document provides practical examples of how to use the library's features. 
 12. [Math](#12-math)
 13. [Fake](#13-fake)
 14. [Time](#14-time)
-14. [Loggin](#15-logging)
+15. [Loggin](#15-logging)
+16. [File System Utilities](#16-fsutils)
 
 ## 1. Boolean
 
@@ -2413,4 +2414,172 @@ func main() {
 #### Output:
 ```
 [2025-01-09 12:34:56] [INFO] CustomPrefix: This message has a custom prefix.
+```
+
+## 16. Fsutils
+
+### Format a file size given in bytes into a human-readable format
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	sizes := []int64{0, 512, 1024, 1048576, 1073741824, 1099511627776}
+
+	for _, size := range sizes {
+		fmt.Println(fsutils.FormatFileSize(size))
+	}
+}
+```
+#### Output:
+```
+0 B
+512 B
+1.00 KB
+1.00 MB
+1.00 GB
+1.00 TB
+```
+
+### Search for files with the specified extension
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	dir := "/path/to/your/dir"
+
+	txtFiles, err := fsutils.FindFiles(dir, ".txt")
+	if err != nil {
+		log.Fatalf("Error finding .txt files: %v", err)
+	}
+	
+	fmt.Println("TXT Files:", txtFiles)
+
+	logFiles, err := fsutils.FindFiles(dir, ".log")
+	if err != nil {
+		log.Fatalf("Error finding .log files: %v", err)
+	}
+
+	fmt.Println("LOG Files:", logFiles)
+
+	allFiles, err := fsutils.FindFiles(dir, "")
+	if err != nil {
+		log.Fatalf("Error finding all files: %v", err)
+	}
+
+	fmt.Println("All Files:", allFiles)
+}
+
+```
+#### Output:
+```
+TXT Files: [/path/to/your/dir/file1.txt /path/to/your/dir/file2.txt /path/to/your/dir/file4.txt]
+LOG Files: [/path/to/your/dir/file3.log]
+All Files: [/path/to/your/dir/file1.txt /path/to/your/dir/file2.txt /path/to/your/dir/file3.log /path/to/your/dir/file4.txt]
+```
+
+### Calculate the total size (in bytes) of all files in a directory
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	dir := "/path/to/your/dir"
+
+	size, err := fsutils.GetDirectorySize(dir)
+	if err != nil {
+		log.Fatalf("Error calculating directory size: %v", err)
+	}
+
+	fmt.Printf("The total size of directory \"%s\" is %dB\n", dir, size)
+}
+
+```
+#### Output:
+```
+The total size of directory "/path/to/your/dir" is 6406B
+```
+
+### Compare two files
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	file1 := "/path/to/your/file1.txt"
+	file2 := "/path/to/your/file2.txt"
+
+	identical, err := fsutils.FilesIdentical(file1, file2)
+	if err != nil {
+		log.Fatalf("Error comparing files: %v", err)
+	}
+
+	if identical {
+		fmt.Printf("The files %s and %s are identical\n", file1, file2)
+	} else {
+		fmt.Printf("The files %s and %s are not identical\n", file1, file2)
+	}
+}
+
+```
+#### Output:
+```
+The files /path/to/your/file1.txt and /path/to/your/file2.txt are identical
+```
+
+### Compare two directories
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	dir1 := "/path/to/your/dir1"
+	dir2 := "/path/to/your/dir2"
+
+	identical, err := fsutils.DirsIdentical(dir1, dir2)
+	if err != nil {
+		log.Fatalf("Error comparing directories: %v", err)
+	}
+
+	if identical {
+		fmt.Printf("The directories %s and %s are identical.\n", dir1, dir2)
+	} else {
+		fmt.Printf("The directories %s and %s are not identical.\n", dir1, dir2)
+	}
+}
+
+```
+#### Output:
+```
+The directories /path/to/your/dir1 and /path/to/your/dir2 are identical.
 ```
