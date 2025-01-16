@@ -5,10 +5,11 @@ package url
 
 import (
 	"errors"
-	"golang.org/x/net/publicsuffix"
 	"net/url"
 	"regexp"
 	"strings"
+
+	"golang.org/x/net/publicsuffix"
 )
 
 // BuildURL constructs a URL by combining a scheme, host, path, and query parameters.
