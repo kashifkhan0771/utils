@@ -12,7 +12,7 @@ import (
 func normalizeWhitespace(input string) string {
 	// Remove leading and trailing whitespace
 	input = strings.TrimSpace(input)
-    
+
 	// Normalize whitespace by replacing multiple spaces and newlines with a single space
 	whitespace := regexp.MustCompile(`\s+`)
 	input = whitespace.ReplaceAllString(input, " ")

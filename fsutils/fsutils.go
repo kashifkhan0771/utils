@@ -160,9 +160,9 @@ func DirsIdentical(dir1, dir2 string) (bool, error) {
 	}
 
 	type result struct {
-		path string
+		path      string
 		identical bool
-		err error
+		err       error
 	}
 
 	workers := make(chan struct{}, 10)
