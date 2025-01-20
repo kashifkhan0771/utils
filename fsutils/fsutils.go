@@ -221,6 +221,10 @@ type FileMetadata struct {
 // GetFileMetadata retrieves metadata for the specified file path.
 // It returns a FileMetadata struct containing details about the file.
 func GetFileMetadata(filePath string) (FileMetadata, error) {
+	if filePath == "" {
+		return FileMetadata{}, fmt.Errorf("file path cannot be empty")
+	}
+
 	filePath = filepath.Clean(filePath)
 
 	info, err := os.Lstat(filePath)
@@ -246,7 +250,7 @@ func GetFileMetadata(filePath string) (FileMetadata, error) {
 	if stat, ok := info.Sys().(*syscall.Stat_t); ok {
 		owner, err := user.LookupId(fmt.Sprint(stat.Uid))
 		if err != nil {
-			return metadata, err
+			return metadata, fmt.Errorf("failed to lookup owner: %w", err)
 		}
 
 		metadata.Owner = owner.Username
