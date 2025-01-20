@@ -464,4 +464,39 @@ func TestGetFileMetadata(t *testing.T) {
 			t.Error("Expected error for nonexistent file")
 		}
 	})
+
+	t.Run("Empty path", func(t *testing.T) {
+		_, err := GetFileMetadata("")
+		if err == nil {
+			t.Error("Expected error for empty path")
+		}
+	})
+
+	t.Run("Symlink", func(t *testing.T) {
+		tempDir, err := os.MkdirTemp("", "testdir")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer os.RemoveAll(tempDir)
+
+		// Create a file and a symlink to it
+		filePath := filepath.Join(tempDir, "testfile.txt")
+		if err := os.WriteFile(filePath, []byte("test"), 0644); err != nil {
+			t.Fatal(err)
+		}
+
+		linkPath := filepath.Join(tempDir, "testlink")
+		if err := os.Symlink(filePath, linkPath); err != nil {
+			t.Fatal(err)
+		}
+
+		metadata, err := GetFileMetadata(linkPath)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if metadata.Mode&os.ModeSymlink == 0 {
+			t.Error("Expected symlink mode")
+		}
+	})
 }
