@@ -254,6 +254,8 @@ func GetFileMetadata(filePath string) (FileMetadata, error) {
 		}
 
 		metadata.Owner = owner.Username
+	} else {
+		metadata.Owner = "unknown"
 	}
 
 	return metadata, nil
