@@ -18,6 +18,8 @@ This document provides practical examples of how to use the library's features. 
 14. [Time](#14-time)
 15. [Loggin](#15-logging)
 16. [File System Utilities](#16-fsutils)
+15. [Loggin](#15-logging)
+16. [File System Utilities](#16-fsutils)
 
 ## 1. Boolean
 

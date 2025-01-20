@@ -6,9 +6,10 @@ package fake
 import (
 	"crypto/rand"
 	"fmt"
-	rnd "github.com/kashifkhan0771/utils/rand"
 	"io"
 	"time"
+
+	rnd "github.com/kashifkhan0771/utils/rand"
 )
 
 const (
@@ -108,10 +109,10 @@ func RandomAddress() (string, error) {
 	state := states[idx]
 
 	idx, err = rnd.NumberInRange(0, int64(len(postalCodes)-1))
-    if err != nil {
-        return "", err
-    }
-    postalCode := postalCodes[idx]
+	if err != nil {
+		return "", err
+	}
+	postalCode := postalCodes[idx]
 
-    return fmt.Sprintf("%d %s, %s, %s %s, USA", streetNumber, streetName, city, state, postalCode), nil
+	return fmt.Sprintf("%d %s, %s, %s %s, USA", streetNumber, streetName, city, state, postalCode), nil
 }
