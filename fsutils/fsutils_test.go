@@ -140,7 +140,7 @@ func TestFindFiles(t *testing.T) {
 		if err := os.Chmod(tempDir, 0000); err != nil {
 			t.Fatal(err)
 		}
-		
+
 		defer func() {
 			if err := os.Chmod(tempDir, 0755); err != nil {
 				t.Errorf("Failed to restore directory permissions: %v", err)
@@ -395,4 +395,73 @@ func setupNestedDirs(t *testing.T) (string, string) {
 	}
 
 	return tempDir1, tempDir2
+}
+
+func TestGetFileMetadata(t *testing.T) {
+	// Create a temporary directory for testing
+	tempDir, err := os.MkdirTemp("", "testdir")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	// Create a test file
+	filePath := filepath.Join(tempDir, "testfile.txt")
+	contents := "test file contents"
+	if err := os.WriteFile(filePath, []byte(contents), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	t.Run("Get file metadata", func(t *testing.T) {
+		metadata, err := GetFileMetadata(filePath)
+		if err != nil {
+			t.Fatalf("GetFileMetadata() error = %v", err)
+		}
+
+		if metadata.Name != "testfile.txt" {
+			t.Errorf("GetFileMetadata() Name = %v; want %v", metadata.Name, "testfile.txt")
+		}
+
+		if metadata.Size != int64(len(contents)) {
+			t.Errorf("GetFileMetadata() Size = %v; want %v", metadata.Size, len(contents))
+		}
+
+		if metadata.IsDir {
+			t.Errorf("GetFileMetadata() IsDir = %v; want %v", metadata.IsDir, false)
+		}
+
+		if metadata.Ext != ".txt" {
+			t.Errorf("GetFileMetadata() Ext = %v; want %v", metadata.Ext, ".txt")
+		}
+
+		if metadata.Path != filePath {
+			t.Errorf("GetFileMetadata() Path = %v; want %v", metadata.Path, filePath)
+		}
+
+		if metadata.Owner == "" {
+			t.Errorf("GetFileMetadata() Owner should not be empty")
+		}
+	})
+
+	t.Run("Get directory metadata", func(t *testing.T) {
+		metadata, err := GetFileMetadata(tempDir)
+		if err != nil {
+			t.Fatalf("GetFileMetadata() error = %v", err)
+		}
+
+		if metadata.Name != filepath.Base(tempDir) {
+			t.Errorf("GetFileMetadata() Name = %v; want %v", metadata.Name, filepath.Base(tempDir))
+		}
+
+		if !metadata.IsDir {
+			t.Errorf("GetFileMetadata() IsDir = %v; want %v", metadata.IsDir, true)
+		}
+	})
+
+	t.Run("Nonexistent file", func(t *testing.T) {
+		_, err := GetFileMetadata(filepath.Join(tempDir, "nonexistent.txt"))
+		if err == nil {
+			t.Error("Expected error for nonexistent file")
+		}
+	})
 }
