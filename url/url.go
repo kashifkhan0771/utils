@@ -5,12 +5,30 @@ package url
 
 import (
 	"errors"
+	"fmt"
 	"net/url"
 	"regexp"
 	"strings"
 
 	"golang.org/x/net/publicsuffix"
 )
+
+// alphaNumericRegex validates strings containing only letters, numbers, and hyphens
+const alphaNumericRegex = "^[a-zA-Z0-9-]+$"
+
+// hostRegex validates hostnames according to RFC 1123
+// Rules:
+// - Each label must start and end with alphanumeric characters
+// - Middle characters can be alphanumeric or hyphens
+// - Multiple labels can be joined with dots
+const hostRegex = `^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])(\.[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])*$`
+
+// pathRegex validates URL paths containing letters, numbers, hyphens, underscores  and forward slashes
+const pathRegex = "^[a-zA-Z0-9_-]+(?:/[a-zA-Z0-9_-]+)*$"
+
+var alphaNumericRe = regexp.MustCompile(alphaNumericRegex)
+var hostRe = regexp.MustCompile(hostRegex)
+var pathRe = regexp.MustCompile(pathRegex)
 
 // BuildURL constructs a URL by combining a scheme, host, path, and query parameters.
 //
@@ -64,8 +82,7 @@ func BuildURL(scheme, host, path string, query map[string]string) (string, error
 		errMessage = append(errMessage, "scheme is required")
 	}
 	if host != "" {
-		re := regexp.MustCompile(`^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])(\.[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])*$`)
-		if !re.MatchString(host) {
+		if !hostRe.MatchString(host) {
 			errMessage = append(errMessage, "the host is not valid")
 		}
 	}
@@ -74,9 +91,8 @@ func BuildURL(scheme, host, path string, query map[string]string) (string, error
 	}
 
 	if path != "" {
-		re := regexp.MustCompile("^[a-zA-Z]+(\\/[a-zA-Z]+)*$")
-		if !re.MatchString(path) {
-			errMessage = append(errMessage, "path is permitted with a-z character and multiple path segments")
+		if !pathRe.MatchString(path) {
+			errMessage = append(errMessage, "path is permitted with a-z, 0-9, - and _ characters and multiple path segments")
 		}
 	}
 
@@ -149,23 +165,41 @@ func BuildURL(scheme, host, path string, query map[string]string) (string, error
 func AddQueryParams(urlStr string, params map[string]string) (string, error) {
 	parsedURL, err := url.Parse(urlStr)
 	if err != nil {
-		return "", errors.New("URL could not be parsed")
+		return "", fmt.Errorf("URL %s could not be parsed. err: %w", urlStr, err)
 	}
 	switch parsedURL.Scheme {
 	case "http", "https", "ws", "wss", "ftp":
 	default:
-		return "", errors.New("invalid URL scheme")
+		return "", fmt.Errorf("URL scheme %s is invalid", parsedURL.Scheme)
 	}
 	queryParams := parsedURL.Query()
+
 	for key, value := range params {
-		re := regexp.MustCompile("^[a-zA-Z0-9-]+$")
-		if !re.MatchString(value) || !re.MatchString(key) || value == "" {
-			return "", errors.New("the query parameter is not valid")
+		err = validateKeyValue(key, value)
+		if err != nil {
+			return "", err
 		}
 		queryParams.Add(key, value)
 	}
 	parsedURL.RawQuery = queryParams.Encode()
 	return parsedURL.String(), nil
+}
+
+func validateKeyValue(key, value string) error {
+	if key == "" {
+		return errors.New("query parameter key cannot be empty")
+	}
+	if value == "" {
+		return fmt.Errorf("query parameter value for key %s cannot be empty", key)
+	}
+	if !alphaNumericRe.MatchString(key) {
+		return fmt.Errorf("query parameter key %s must be alphanumeric", key)
+	}
+	if !alphaNumericRe.MatchString(value) {
+		return fmt.Errorf("query parameter value %s for key %s must be alphanumeric", value, key)
+	}
+
+	return nil
 }
 
 // IsValidURL checks whether a given URL string is valid and its scheme matches the allowed list.
@@ -258,16 +292,16 @@ func IsValidURL(urlStr string, allowedReqSchemes []string) bool {
 func ExtractDomain(urlStr string) (string, error) {
 	parsedURL, err := url.Parse(urlStr)
 	if err != nil {
-		return "", errors.New("URL could not be parsed")
+		return "", fmt.Errorf("URL %s could not be parsed. err: %w", urlStr, err)
 	}
 
 	host, err := publicsuffix.EffectiveTLDPlusOne(parsedURL.Hostname())
 	if err != nil {
-		return "", errors.New("could not extract public suffix")
+		return "", fmt.Errorf("could not extract public suffix from host %s. err: %w", parsedURL.Hostname(), err)
 	}
 
 	if host == "" {
-		return "", errors.New("parameter not found")
+		return "", errors.New("public suffix is empty")
 	}
 
 	return host, nil
@@ -318,7 +352,7 @@ func GetQueryParam(urlStr, param string) (string, error) {
 	value, exists := queryParams[param]
 
 	if !exists || len(value) == 0 {
-		return "", errors.New("parameter not found")
+		return "", fmt.Errorf("parameter %s not found in URL %s", param, urlStr)
 	}
 
 	return value[0], nil

@@ -118,7 +118,7 @@ func Swap[T any](x, y *T) {
 // Factorial calculates the factorial of a non-negative integer x.
 func Factorial(x int) (int, error) {
 	if x < 0 {
-		return x, errors.New("Factorial of a negative number is undefined")
+		return x, errors.New("factorial of a negative number is undefined")
 	}
 
 	if x == 0 || x == 1 {

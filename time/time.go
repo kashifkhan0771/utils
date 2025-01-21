@@ -156,7 +156,7 @@ func GetMonthName(monthNumber int) (string, error) {
 	}
 
 	if monthNumber < 1 || monthNumber > 12 {
-		return "", fmt.Errorf("invalid month number: %d", monthNumber)
+		return "", fmt.Errorf("invalid month number %d - it should be between 1 and 12", monthNumber)
 	}
 
 	return months[monthNumber], nil
@@ -175,7 +175,7 @@ func GetDayName(dayNumber int) (string, error) {
 	}
 
 	if dayNumber < 0 || dayNumber > 6 {
-		return "", fmt.Errorf("invalid day number: %d", dayNumber)
+		return "", fmt.Errorf("invalid day number %d - it should be between 0 and 6", dayNumber)
 	}
 
 	return days[dayNumber], nil
