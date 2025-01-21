@@ -255,6 +255,8 @@ The `logging` package provides a simple, flexible, and color-coded logging syste
 
 - **DirsIdentical**: Compares two directories to determine if they are identical.
 
+- **GetFileMetadata**: Retrieves metadata for a specified file path. Returns a `FileMetadata` struct that can be marshaled to JSON.
+
 ---
 
 ## Examples:
