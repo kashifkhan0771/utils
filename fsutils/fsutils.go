@@ -6,7 +6,10 @@ import (
 	"io"
 	"io/fs"
 	"os"
+	"os/user"
 	"path/filepath"
+	"syscall"
+	"time"
 )
 
 type ByteSize int64
@@ -202,4 +205,58 @@ func DirsIdentical(dir1, dir2 string) (bool, error) {
 	}
 
 	return len(matched) == len(files1), nil
+}
+
+type FileMetadata struct {
+	Name    string      `json:"name"`
+	Size    int64       `json:"size"`
+	IsDir   bool        `json:"is_dir"`
+	ModTime time.Time   `json:"mod_time"`
+	Mode    os.FileMode `json:"mode"`
+	Path    string      `json:"path"`
+	Ext     string      `json:"ext"`
+	Owner   string      `json:"owner"`
+}
+
+// GetFileMetadata retrieves metadata for the specified file path.
+// It returns a FileMetadata struct containing details about the file.
+func GetFileMetadata(filePath string) (FileMetadata, error) {
+	if filePath == "" {
+		return FileMetadata{}, fmt.Errorf("file path cannot be empty")
+	}
+
+	filePath = filepath.Clean(filePath)
+
+	info, err := os.Lstat(filePath)
+	if err != nil {
+		return FileMetadata{}, err
+	}
+
+	path, err := filepath.Abs(filePath)
+	if err != nil {
+		return FileMetadata{}, err
+	}
+
+	metadata := FileMetadata{
+		Name:    info.Name(),
+		Size:    info.Size(),
+		IsDir:   info.IsDir(),
+		ModTime: info.ModTime(),
+		Mode:    info.Mode(),
+		Path:    path,
+		Ext:     filepath.Ext(info.Name()),
+	}
+
+	if stat, ok := info.Sys().(*syscall.Stat_t); ok {
+		owner, err := user.LookupId(fmt.Sprint(stat.Uid))
+		if err != nil {
+			return metadata, fmt.Errorf("failed to lookup owner: %w", err)
+		}
+
+		metadata.Owner = owner.Username
+	} else {
+		metadata.Owner = "unknown"
+	}
+
+	return metadata, nil
 }

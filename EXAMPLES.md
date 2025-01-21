@@ -18,6 +18,8 @@ This document provides practical examples of how to use the library's features. 
 14. [Time](#14-time)
 15. [Loggin](#15-logging)
 16. [File System Utilities](#16-fsutils)
+15. [Loggin](#15-logging)
+16. [File System Utilities](#16-fsutils)
 
 ## 1. Boolean
 
@@ -2582,4 +2584,115 @@ func main() {
 #### Output:
 ```
 The directories /path/to/your/dir1 and /path/to/your/dir2 are identical.
+```
+
+### Get File Metadata
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	file := "example.txt"
+	metadata, err := fsutils.GetFileMetadata(file)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	fmt.Printf(
+		"Name: %s, Size: %d, IsDir: %t, ModTime: %s, Mode: %v, Path: %s, Ext: %s, Owner: %s\n",
+		metadata.Name, metadata.Size, 
+		metadata.IsDir, metadata.ModTime.String(), 
+		metadata.Mode, metadata.Path, 
+		metadata.Ext, metadata.Owner,
+	)
+}
+
+```
+#### Output:
+```
+Name: example.txt, Size: 172, IsDir: false, ModTime: 2025-01-20 15:03:00.189199994 +0100 CET, Mode: -rw-rw-r--, Path: /path/to/your/dir/example.txt, Ext: .txt, Owner: owner
+```
+
+### Get Directory Metadata
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	dir := "example/"
+	metadata, err := fsutils.GetFileMetadata(dir)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	fmt.Printf(
+		"Name: %s, Size: %d, IsDir: %t, ModTime: %s, Mode: %v, Path: %s, Ext: %s, Owner: %s\n",
+		metadata.Name, metadata.Size, 
+		metadata.IsDir, metadata.ModTime.String(), 
+		metadata.Mode, metadata.Path, 
+		metadata.Ext, metadata.Owner,
+	)
+}
+
+```
+#### Output:
+```
+Name: example, Size: 4096, IsDir: true, ModTime: 2025-01-20 15:06:23.057206656 +0100 CET, Mode: drwxrwxr-x, Path: /path/to/your/dir/example, Ext: , Owner: owner
+```
+
+### Marshal File's Metadata to JSON
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	file := "example.txt"
+	metadata, err := fsutils.GetFileMetadata(file)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	json, err := json.Marshal(&metadata)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	fmt.Println(string(json))
+}
+
+```
+#### Output:
+```json
+{
+   "name": "example.txt",
+   "size": 172,
+   "is_dir": false,
+   "mod_time": "2025-01-20T15:06:34.812677487+01:00",
+   "mode": 436,
+   "path": "/path/to/your/dir/example.txt",
+   "ext": ".txt",
+}
 ```
