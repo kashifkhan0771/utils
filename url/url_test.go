@@ -3,7 +3,9 @@ Package url defines url utilities helpers.
 */
 package url
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestBuildURL(t *testing.T) {
 	type args struct {
@@ -69,8 +71,8 @@ func TestBuildURLError(t *testing.T) {
 		},
 		{
 			name: "error - build URL",
-			args: args{scheme: "http", host: "example.com", path: "one1Path2", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
-			want: "path is permitted with a-z character and multiple path segments",
+			args: args{scheme: "http", host: "example.com", path: "one1Path2@", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
+			want: "path is permitted with a-z, 0-9, - and _ characters and multiple path segments",
 		},
 		{
 			name: "error - build URL",
@@ -144,22 +146,22 @@ func TestAddQueryParamsError(t *testing.T) {
 		{
 			name: "error - add query params",
 			args: args{urlStr: "htt@p://example.com", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne"}},
-			want: "URL could not be parsed",
+			want: "URL htt@p://example.com could not be parsed. err: parse \"htt@p://example.com\": first path segment in URL cannot contain colon",
 		},
 		{
 			name: "error - add query params",
 			args: args{urlStr: "http://subdomain.example.com", queryParams: map[string]string{"queryParam@One": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
-			want: "the query parameter is not valid",
+			want: "query parameter key queryParam@One must be alphanumeric",
 		},
 		{
 			name: "error - add query params",
 			args: args{urlStr: "http://subdomain.example.com", queryParams: map[string]string{"queryParamOne": "valueQuery@ParamOne", "queryParamTwo": "valueQueryParamTwo"}},
-			want: "the query parameter is not valid",
+			want: "query parameter value valueQuery@ParamOne for key queryParamOne must be alphanumeric",
 		},
 		{
 			name: "error - add query params",
 			args: args{urlStr: "http://subdomain.example.com", queryParams: map[string]string{"queryParamOne": ""}},
-			want: "the query parameter is not valid",
+			want: "query parameter value for key queryParamOne cannot be empty",
 		},
 	}
 
@@ -298,7 +300,7 @@ func TestExtractDomainError(t *testing.T) {
 		{
 			name: "success - domain with multiple subdomains",
 			args: args{urlStr: "htt@ps://exam@ple.com"},
-			want: "URL could not be parsed",
+			want: "URL htt@ps://exam@ple.com could not be parsed. err: parse \"htt@ps://exam@ple.com\": first path segment in URL cannot contain colon",
 		},
 	}
 
@@ -396,17 +398,11 @@ func TestGetQueryParamError(t *testing.T) {
 	}{
 		name: "success - get query param with error",
 		args: args{urlStr: "http://someurl.com?paramOne=oneValue&paramTwo=otherValue", param: "none"},
-		want: "parameter not found",
+		want: "parameter none not found in URL http://someurl.com?paramOne=oneValue&paramTwo=otherValue",
 	}
-	t.Run(testError.name, func(t *testing.T) {
-		if _, err := GetQueryParam(testError.args.urlStr, testError.args.param); err == nil {
-			t.Errorf("GetQueryParam() did not return an error")
-		}
-	})
-
-	t.Run(testError.name, func(t *testing.T) {
-		if _, err := GetQueryParam(testError.args.urlStr, testError.args.param); err.Error() != "parameter not found" {
-			t.Errorf("GetQueryParam() did not return an error")
-		}
-	})
+	if _, err := GetQueryParam(testError.args.urlStr, testError.args.param); err == nil {
+		t.Errorf("GetQueryParam() expected error, got nil")
+	} else if err.Error() != testError.want {
+		t.Errorf("GetQueryParam() error = %v, want %v", err.Error(), testError.want)
+	}
 }
