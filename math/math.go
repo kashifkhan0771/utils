@@ -3,6 +3,7 @@ package math
 import (
 	"errors"
 	"log"
+	"sync"
 )
 
 // number is a type constraint that matches all numeric types (integers and floats).
@@ -151,4 +152,34 @@ func LCM(x, y int) int {
 		return 0
 	}
 	return (x / GCD(x, y)) * y
+}
+
+// CacheWrapper is a non-thread-safe caching decorator using generics.
+func CacheWrapper[T comparable, R any](fn func(T) R) func(T) R {
+	cache := make(map[T]R)
+	return func(input T) R {
+		// Check if the result is already cached
+		if result, exists := cache[input]; exists {
+			return result
+		}
+		// Call the function and store the result in the cache
+		result := fn(input)
+		cache[input] = result
+		return result
+	}
+}
+
+// SafeCacheWrapper is a thread-safe caching decorator using generics.
+func SafeCacheWrapper[T comparable, R any](fn func(T) R) func(T) R {
+	var cache sync.Map
+	return func(input T) R {
+		// Check if the result is already cached
+		if result, exists := cache.Load(input); exists {
+			return result.(R) // Type-safe due to generics
+		}
+		// Call the function and store the result in the cache
+		result := fn(input)
+		cache.Store(input, result)
+		return result
+	}
 }
