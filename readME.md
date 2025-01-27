@@ -137,10 +137,6 @@ require github.com/kashifkhan0771/utils v0.3.0
 
 - **LCM**: Finds the least common multiple (LCM) of two integers.
 
-- **CacheWrapper**: Is a non-thread-safe caching decorator.
-
-- **SafeCacheWrapper**: Is a thread-safe caching decorator.
-
 ### 13. Fake
 - **RandomUUID**: Generates a random UUID of version 4 and variant 2.
 
@@ -260,6 +256,14 @@ The `logging` package provides a simple, flexible, and color-coded logging syste
 - **DirsIdentical**: Compares two directories to determine if they are identical.
 
 - **GetFileMetadata**: Retrieves metadata for a specified file path. Returns a `FileMetadata` struct that can be marshaled to JSON.
+
+### 17. Caching
+
+The caching package provides utilities for creating caching decorators to enhance the performance of functions by storing computed results. It includes both thread-safe and non-thread-safe implementations.
+
+- **CacheWrapper**: Is a non-thread-safe caching decorator.
+
+- **SafeCacheWrapper**: Is a thread-safe caching decorator.
 
 ---
 

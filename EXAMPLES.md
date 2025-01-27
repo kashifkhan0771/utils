@@ -20,6 +20,7 @@ This document provides practical examples of how to use the library's features. 
 16. [File System Utilities](#16-fsutils)
 15. [Loggin](#15-logging)
 16. [File System Utilities](#16-fsutils)
+17. [Caching](#15-caching)
 
 ## 1. Boolean
 
@@ -1636,74 +1637,6 @@ func main() {
 ```
 ---
 
-## `CacheWrapper`
-
-
-### A non-thread-safe caching decorator
-
-```go
-package main
-
-import (
-	"fmt"
-	"math/big"
-	"github.com/kashifkhan0771/utils/math"
-)
-
-// Example function: Compute factorial
-func factorial(n int) *big.Int {
-	result := big.NewInt(1)
-	for i := 2; i <= n; i++ {
-		result.Mul(result, big.NewInt(int64(i)))
-	}
-	return result
-}
-
-func main() {
-	cachedFactorial := utils.CacheWrapper(factorial)
-	fmt.Println(cachedFactorial(10))
-}
-```
-#### Output:
-```
-3628800
-```
----
-
-## SafeCacheWrapper
-
-
-### A thread-safe caching decorator
-
-```go
-package main
-
-import (
-	"fmt"
-	"math/big"
-	"github.com/kashifkhan0771/utils/math"
-)
-
-// Example function: Compute factorial
-func factorial(n int) *big.Int {
-	result := big.NewInt(1)
-	for i := 2; i <= n; i++ {
-		result.Mul(result, big.NewInt(int64(i)))
-	}
-	return result
-}
-
-func main() {
-	cachedFactorial := utils.SafeCacheWrapper(factorial)
-	fmt.Println(cachedFactorial(10))
-}
-```
-#### Output:
-```
-3628800
-```
----
-
 ## 13. Fake
 
 ### Generate a random UUID of version 4 and variant 2
@@ -2764,4 +2697,72 @@ func main() {
    "path": "/path/to/your/dir/example.txt",
    "ext": ".txt",
 }
+```
+# 17. Caching
+
+## `CacheWrapper`
+
+
+### A non-thread-safe caching decorator
+
+```go
+package main
+
+import (
+	"fmt"
+	"math/big"
+	"github.com/kashifkhan0771/utils/math"
+)
+
+// Example function: Compute factorial
+func factorial(n int) *big.Int {
+	result := big.NewInt(1)
+	for i := 2; i <= n; i++ {
+		result.Mul(result, big.NewInt(int64(i)))
+	}
+	return result
+}
+
+func main() {
+	cachedFactorial := utils.CacheWrapper(factorial)
+	fmt.Println(cachedFactorial(10))
+}
+```
+#### Output:
+```
+3628800
+```
+---
+
+## SafeCacheWrapper
+
+
+### A thread-safe caching decorator
+
+```go
+package main
+
+import (
+	"fmt"
+	"math/big"
+	"github.com/kashifkhan0771/utils/math"
+)
+
+// Example function: Compute factorial
+func factorial(n int) *big.Int {
+	result := big.NewInt(1)
+	for i := 2; i <= n; i++ {
+		result.Mul(result, big.NewInt(int64(i)))
+	}
+	return result
+}
+
+func main() {
+	cachedFactorial := utils.SafeCacheWrapper(factorial)
+	fmt.Println(cachedFactorial(10))
+}
+```
+#### Output:
+```
+3628800
 ```
