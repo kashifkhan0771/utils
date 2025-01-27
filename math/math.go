@@ -154,7 +154,7 @@ func LCM(x, y int) int {
 	return (x / GCD(x, y)) * y
 }
 
-// CacheWrapper is a non-thread-safe caching decorator using generics.
+// CacheWrapper is a non-thread-safe caching decorator.
 func CacheWrapper[T comparable, R any](fn func(T) R) func(T) R {
 	cache := make(map[T]R)
 	return func(input T) R {
@@ -169,7 +169,7 @@ func CacheWrapper[T comparable, R any](fn func(T) R) func(T) R {
 	}
 }
 
-// SafeCacheWrapper is a thread-safe caching decorator using generics.
+// SafeCacheWrapper is a thread-safe caching decorator.
 func SafeCacheWrapper[T comparable, R any](fn func(T) R) func(T) R {
 	var cache sync.Map
 	return func(input T) R {

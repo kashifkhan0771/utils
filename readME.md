@@ -137,6 +137,10 @@ require github.com/kashifkhan0771/utils v0.3.0
 
 - **LCM**: Finds the least common multiple (LCM) of two integers.
 
+- **CacheWrapper**: Is a non-thread-safe caching decorator.
+
+- **SafeCacheWrapper**: Is a thread-safe caching decorator.
+
 ### 13. Fake
 - **RandomUUID**: Generates a random UUID of version 4 and variant 2.
 
