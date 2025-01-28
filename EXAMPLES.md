@@ -20,6 +20,7 @@ This document provides practical examples of how to use the library's features. 
 16. [File System Utilities](#16-fsutils)
 15. [Loggin](#15-logging)
 16. [File System Utilities](#16-fsutils)
+17. [Caching](#15-caching)
 
 ## 1. Boolean
 
@@ -1313,7 +1314,7 @@ if err != nil {
 
 ## 12. Math
 
-## 1. `Abs`
+## `Abs`
 
 ### Calculate the absolute value of a number
 ```go
@@ -1338,7 +1339,7 @@ func main() {
 
 ---
 
-## 2. `Sign`
+## `Sign`
 
 ### Determine the sign of a number
 ```go
@@ -1365,9 +1366,10 @@ func main() {
 
 ---
 
-## 3. `Min`
+## `Min`
 
 ### Find the smaller of two numbers
+
 ```go
 package main
 
@@ -1392,7 +1394,7 @@ func main() {
 
 ---
 
-## 4. `Max`
+## `Max`
 
 ### Find the larger of two numbers
 ```go
@@ -1419,7 +1421,7 @@ func main() {
 
 ---
 
-## 5. `Clamp`
+## `Clamp`
 
 ### Clamp a value to stay within a range
 ```go
@@ -1446,7 +1448,7 @@ func main() {
 
 ---
 
-## 6. `IntPow`
+## `IntPow`
 
 ### Compute integer powers
 ```go
@@ -1475,7 +1477,7 @@ func main() {
 
 ---
 
-## 7. `IsEven`
+## `IsEven`
 
 ### Check if a number is even
 ```go
@@ -1502,7 +1504,7 @@ true
 
 ---
 
-## 8. `IsOdd`
+## `IsOdd`
 
 ### Check if a number is odd
 ```go
@@ -1529,7 +1531,7 @@ false
 
 ---
 
-## 9. `Swap`
+## `Swap`
 
 ### Swap two variables
 ```go
@@ -1554,7 +1556,7 @@ func main() {
 
 ---
 
-## 10. `Factorial`
+## `Factorial`
 
 ### Calculate the factorial of a number
 ```go
@@ -1582,7 +1584,7 @@ func main() {
 
 ---
 
-## 11. `GCD`
+## `GCD`
 
 ### Find the greatest common divisor of two numbers
 ```go
@@ -1609,7 +1611,7 @@ func main() {
 
 ---
 
-## 12. `LCM`
+## `LCM`
 
 ### Find the least common multiple of two numbers
 ```go
@@ -2695,4 +2697,72 @@ func main() {
    "path": "/path/to/your/dir/example.txt",
    "ext": ".txt",
 }
+```
+# 17. Caching
+
+## `CacheWrapper`
+
+
+### A non-thread-safe caching decorator
+
+```go
+package main
+
+import (
+	"fmt"
+	"math/big"
+	"github.com/kashifkhan0771/utils/math"
+)
+
+// Example function: Compute factorial
+func factorial(n int) *big.Int {
+	result := big.NewInt(1)
+	for i := 2; i <= n; i++ {
+		result.Mul(result, big.NewInt(int64(i)))
+	}
+	return result
+}
+
+func main() {
+	cachedFactorial := utils.CacheWrapper(factorial)
+	fmt.Println(cachedFactorial(10))
+}
+```
+#### Output:
+```
+3628800
+```
+---
+
+## SafeCacheWrapper
+
+
+### A thread-safe caching decorator
+
+```go
+package main
+
+import (
+	"fmt"
+	"math/big"
+	"github.com/kashifkhan0771/utils/math"
+)
+
+// Example function: Compute factorial
+func factorial(n int) *big.Int {
+	result := big.NewInt(1)
+	for i := 2; i <= n; i++ {
+		result.Mul(result, big.NewInt(int64(i)))
+	}
+	return result
+}
+
+func main() {
+	cachedFactorial := utils.SafeCacheWrapper(factorial)
+	fmt.Println(cachedFactorial(10))
+}
+```
+#### Output:
+```
+3628800
 ```

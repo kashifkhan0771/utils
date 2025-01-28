@@ -1,6 +1,8 @@
 package math
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestAbsForInts(t *testing.T) {
 	type args struct {
