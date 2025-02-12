@@ -406,3 +406,42 @@ func TestGetQueryParamError(t *testing.T) {
 		t.Errorf("GetQueryParam() error = %v, want %v", err.Error(), testError.want)
 	}
 }
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+func BenchmarkBuildURL(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		BuildURL("http", "example.com", "onePath", map[string]string{"queryParamOne": "valueQueryParamOne"})
+	}
+}
+
+func BenchmarkAddQueryParams(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		AddQueryParams("http://example.com", map[string]string{"queryParamOne": "valueQueryParamOne"})
+	}
+}
+
+func BenchmarkIsValidURL(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		IsValidURL("http://example.com", []string{"http", "https"})
+	}
+}
+
+func BenchmarkExtractDomain(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		ExtractDomain("http://example.com")
+	}
+}
+
+func BenchmarkGetQueryParam(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		GetQueryParam("http://example.com?key=value", "key")
+	}
+}

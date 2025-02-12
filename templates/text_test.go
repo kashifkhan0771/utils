@@ -170,3 +170,21 @@ func TestRenderText(t *testing.T) {
 		})
 	}
 }
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+func BenchmarkRenderText(b *testing.B) {
+	data := struct {
+		Name string
+		Date time.Time
+	}{
+		Name: "alice",
+		Date: time.Date(2024, 10, 1, 0, 0, 0, 0, time.UTC),
+	}
+
+	for i := 0; i < b.N; i++ {
+		_, _ = RenderText(testTemplate1, data)
+	}
+}

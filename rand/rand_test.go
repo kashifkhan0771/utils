@@ -1,6 +1,8 @@
 package rand
 
 import (
+	"math/rand"
+	randv2 "math/rand/v2"
 	"strings"
 	"testing"
 )
@@ -289,4 +291,97 @@ func contains[T comparable](slice []T, item T) bool {
 		}
 	}
 	return false
+}
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+// The crypto/rand package is secure but slow compared to math/rand and math/rand/v2
+
+func BenchmarkNumberCrypto(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = Number()
+	}
+}
+
+// Using math/rand
+func numberMathRand() (int64, error) {
+	return rand.Int63(), nil
+}
+
+func BenchmarkNumberMath(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = numberMathRand()
+	}
+}
+
+// Using math/rand/v2
+func numberMathRandV2() (int64, error) {
+	return randv2.Int64(), nil
+}
+
+func BenchmarkNumberMathV2(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = numberMathRandV2()
+	}
+}
+
+func BenchmarkNumberInRange(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = NumberInRange(0, 1000)
+	}
+}
+
+func BenchmarkString(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = String()
+	}
+}
+
+func BenchmarkStringWithLength(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = StringWithLength(100)
+	}
+}
+
+func BenchmarkPick(b *testing.B) {
+	array := make([]int, 1000)
+	for i := 0; i < 1000; i++ {
+		array[i] = i
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = Pick(array)
+	}
+}
+
+func BenchmarkShuffle(b *testing.B) {
+	array := make([]int, 1000)
+	for i := 0; i < 1000; i++ {
+		array[i] = i
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_ = Shuffle(array)
+	}
+}
+
+func BenchmarkStringWithCharset(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = StringWithCharset(1000, DefaultCharset)
+	}
 }

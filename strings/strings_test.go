@@ -506,3 +506,80 @@ func TestCommonSuffix(t *testing.T) {
 		}
 	}
 }
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+func BenchmarkSubstringSearch(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		SubstringSearch("find this in a string", "this", SubstringSearchOptions{
+			CaseInsensitive: false,
+			ReturnIndexes:   false,
+		})
+	}
+}
+
+func BenchmarkToTitle(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		ToTitle("lower case", []string{})
+	}
+}
+
+func BenchmarkTokenize(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		Tokenize("This is a custom-tokenization!example", "-!")
+	}
+}
+
+func BenchmarkRot13Encode(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		Rot13Encode("Hello, World!")
+	}
+}
+
+func BenchmarkCaesarEncrypt(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		CaesarEncrypt("Hello, World!", 3)
+	}
+}
+
+func BenchmarkRunLengthEncode(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		RunLengthEncode("aaabbccccdd")
+	}
+}
+
+func BenchmarkIsValidEmail(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		IsValidEmail("example@email.com")
+	}
+}
+
+func BenchmarkReverse(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		Reverse("hello")
+	}
+}
+
+func BenchmarkCommonPrefix(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		CommonPrefix("nation", "national", "nasty")
+	}
+}
+
+func BenchmarkCommonSuffix(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		CommonSuffix("testing", "running", "jumping")
+	}
+}
