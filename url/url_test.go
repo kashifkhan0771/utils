@@ -414,14 +414,14 @@ func TestGetQueryParamError(t *testing.T) {
 func BenchmarkBuildURL(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		BuildURL("http", "example.com", "onePath", map[string]string{"queryParamOne": "valueQueryParamOne"})
+		_, _ = BuildURL("http", "example.com", "onePath", map[string]string{"queryParamOne": "valueQueryParamOne"})
 	}
 }
 
 func BenchmarkAddQueryParams(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		AddQueryParams("http://example.com", map[string]string{"queryParamOne": "valueQueryParamOne"})
+		_, _ = AddQueryParams("http://example.com", map[string]string{"queryParamOne": "valueQueryParamOne"})
 	}
 }
 
@@ -435,13 +435,13 @@ func BenchmarkIsValidURL(b *testing.B) {
 func BenchmarkExtractDomain(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		ExtractDomain("http://example.com")
+		_, _ = ExtractDomain("http://example.com")
 	}
 }
 
 func BenchmarkGetQueryParam(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		GetQueryParam("http://example.com?key=value", "key")
+		_, _ = GetQueryParam("http://example.com?key=value", "key")
 	}
 }

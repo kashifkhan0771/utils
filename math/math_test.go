@@ -638,7 +638,7 @@ func BenchmarkFactorial(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		Factorial(i % 20) // Factorial of numbers 0 to 19
+		_, _ = Factorial(i % 20) // Factorial of numbers 0 to 19
 	}
 }
 
