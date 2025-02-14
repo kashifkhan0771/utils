@@ -351,32 +351,38 @@ func BenchmarkStringWithLength(b *testing.B) {
 	}
 }
 
+var benchArray = make([]int, 1000)
+
+func init() {
+    for i := 0; i < 1000; i++ {
+        benchArray[i] = i
+    }
+}
+
 func BenchmarkPick(b *testing.B) {
-	array := make([]int, 1000)
-	for i := 0; i < 1000; i++ {
-		array[i] = i
-	}
+    array := make([]int, len(benchArray))
+    copy(array, benchArray)
 
-	b.ReportAllocs()
-	b.ResetTimer()
+    b.ReportAllocs()
+    b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
-		_, _ = Pick(array)
-	}
+    for i := 0; i < b.N; i++ {
+        _, _ = Pick(array)
+    }
 }
 
 func BenchmarkShuffle(b *testing.B) {
-	array := make([]int, 1000)
-	for i := 0; i < 1000; i++ {
-		array[i] = i
-	}
+    array := make([]int, 1000)
+    for i := 0; i < 1000; i++ {
+        array[i] = i
+    }
 
-	b.ReportAllocs()
-	b.ResetTimer()
+    b.ReportAllocs()
+    b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
-		_ = Shuffle(array)
-	}
+    for i := 0; i < b.N; i++ {
+        _ = Shuffle(array)
+    }
 }
 
 func BenchmarkStringWithCharset(b *testing.B) {
