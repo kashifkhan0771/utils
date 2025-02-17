@@ -116,3 +116,58 @@ func TestSafeCacheWrapperConcurrency(t *testing.T) {
 		}
 	}
 }
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+func fib(n int) int {
+	if n <= 1 {
+		return n
+	}
+	a, b := 0, 1
+	for i := 2; i <= n; i++ {
+		a, b = b, a+b
+	}
+	return b
+}
+
+func BenchmarkFib(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = fib(30)
+	}
+}
+
+func BenchmarkCachedFib(b *testing.B) {
+	cachedFib := CacheWrapper(fib)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = cachedFib(30)
+	}
+}
+
+func BenchmarkSafeCachedFib(b *testing.B) {
+	cachedFib := SafeCacheWrapper(fib)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = cachedFib(30)
+	}
+}
+
+func BenchmarkConcurrentSafeCachedFib(b *testing.B) {
+	cachedFib := SafeCacheWrapper(fib)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_ = cachedFib(30)
+		}
+	})
+}

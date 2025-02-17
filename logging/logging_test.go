@@ -95,3 +95,16 @@ func TestLogger(t *testing.T) {
 		})
 	}
 }
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+func BenchmarkLogger(b *testing.B) {
+	logger := logging.NewLogger("Test", logging.INFO, nil)
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		logger.Info("This is an info message")
+	}
+}
