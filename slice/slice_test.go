@@ -71,6 +71,7 @@ func generateStrings(n int) []string {
 		}
 		data[i] = strBuilder.String()
 	}
+
 	return data
 }
 
@@ -81,6 +82,7 @@ func generateRandomInts(n int) []int {
 	for i := 0; i < n; i++ {
 		data[i] = r.Intn(1000)
 	}
+
 	return data
 }
 

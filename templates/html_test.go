@@ -189,6 +189,7 @@ func TestRenderHTML(t *testing.T) {
 			err = tmpl.Execute(&sb, tt.args.data)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Execute() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			got := sb.String()

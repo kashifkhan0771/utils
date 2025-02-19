@@ -14,6 +14,7 @@ func TestCacheWrapper(t *testing.T) {
 		for i := 2; i <= n; i++ {
 			result.Mul(result, big.NewInt(int64(i)))
 		}
+
 		return result
 	}
 
@@ -129,6 +130,7 @@ func fib(n int) int {
 	for i := 2; i <= n; i++ {
 		a, b = b, a+b
 	}
+
 	return b
 }
 

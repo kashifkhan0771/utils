@@ -366,6 +366,7 @@ func TestConvertToTimeZone(t *testing.T) {
 			got, err := ConvertToTimeZone(tt.args.t, tt.args.location)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ConvertToTimeZone() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if !tt.wantErr && !got.Equal(tt.want) {
@@ -483,6 +484,7 @@ func TestCalculateAge(t *testing.T) {
 				if now.Before(time.Date(now.Year(), 2, 29, 0, 0, 0, 0, time.UTC)) {
 					leapYearAge--
 				}
+
 				return leapYearAge
 			}(),
 		},
@@ -1022,6 +1024,7 @@ func TestGetMonthName(t *testing.T) {
 			got, err := GetMonthName(tt.args.monthNumber)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetMonthName() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if got != tt.want {
@@ -1087,6 +1090,7 @@ func TestGetDayName(t *testing.T) {
 			got, err := GetDayName(tt.args.dayNumber)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetDayName() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if got != tt.want {

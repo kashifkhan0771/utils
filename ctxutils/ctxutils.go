@@ -18,6 +18,7 @@ func SetStringValue(ctx context.Context, key ContextKeyString, value string) con
 
 func GetStringValue(ctx context.Context, key ContextKeyString) (string, bool) {
 	value, ok := ctx.Value(key).(string)
+
 	return value, ok
 }
 
@@ -27,5 +28,6 @@ func SetIntValue(ctx context.Context, key ContextKeyInt, value int) context.Cont
 
 func GetIntValue(ctx context.Context, key ContextKeyInt) (int, bool) {
 	value, ok := ctx.Value(key).(int)
+
 	return value, ok
 }

@@ -182,6 +182,7 @@ func AddQueryParams(urlStr string, params map[string]string) (string, error) {
 		queryParams.Add(key, value)
 	}
 	parsedURL.RawQuery = queryParams.Encode()
+
 	return parsedURL.String(), nil
 }
 
@@ -252,6 +253,7 @@ func IsValidURL(urlStr string, allowedReqSchemes []string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 

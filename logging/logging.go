@@ -55,6 +55,7 @@ func NewLogger(prefix string, minLevel LogLevel, output io.Writer) *Logger {
 	if output == nil {
 		output = os.Stdout // Default to standard output
 	}
+
 	return &Logger{
 		minLevel: minLevel,
 		prefix:   prefix,
