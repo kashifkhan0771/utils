@@ -8,6 +8,7 @@ func DefaultIfNil[T any](ptr *T, defaultVal T) T {
 	if ptr == nil {
 		return defaultVal
 	}
+
 	return *ptr
 }
 
@@ -17,6 +18,7 @@ func NullableBool(b *bool) bool {
 	if b == nil {
 		return false
 	}
+
 	return *b
 }
 
@@ -26,5 +28,6 @@ func NullableTime(t *time.Time) time.Time {
 	if t == nil {
 		return time.Time{}
 	}
+
 	return *t
 }

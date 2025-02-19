@@ -162,6 +162,7 @@ func TestRenderText(t *testing.T) {
 			got, err := RenderText(tt.args.tmpl, tt.args.data)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("RenderText() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if got != tt.want {

@@ -73,6 +73,7 @@ func TestNullableByteSlice(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := NullableByteSlice(tt.args.b)
 			if len(got) == 0 && len(tt.want) == 0 {
+
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {

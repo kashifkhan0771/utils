@@ -366,6 +366,7 @@ func setupNestedDirs() (string, string, error) {
 	tempDir2, err := os.MkdirTemp("", "nestedtestdir2_")
 	if err != nil {
 		os.RemoveAll(tempDir1)
+
 		return "", "", fmt.Errorf("failed to create tempDir2: %w", err)
 	}
 	defer func() {

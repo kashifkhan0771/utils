@@ -9,3 +9,11 @@ linters:
     - errcheck
     - goimports
     - gofmt
+    - nlreturn
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    - path: _test\.go
+      linters:
+          - nlreturn
+

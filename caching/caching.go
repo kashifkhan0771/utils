@@ -9,6 +9,7 @@ import "sync"
 // CacheWrapper is a non-thread-safe caching decorator.
 func CacheWrapper[T comparable, R any](fn func(T) R) func(T) R {
 	cache := make(map[T]R)
+
 	return func(input T) R {
 		// Check if the result is already cached
 		if result, exists := cache[input]; exists {
@@ -17,6 +18,7 @@ func CacheWrapper[T comparable, R any](fn func(T) R) func(T) R {
 		// Call the function and store the result in the cache
 		result := fn(input)
 		cache[input] = result
+
 		return result
 	}
 }
@@ -24,6 +26,7 @@ func CacheWrapper[T comparable, R any](fn func(T) R) func(T) R {
 // SafeCacheWrapper is a thread-safe caching decorator.
 func SafeCacheWrapper[T comparable, R any](fn func(T) R) func(T) R {
 	var cache sync.Map
+
 	return func(input T) R {
 		// Check if the result is already cached
 		if result, exists := cache.Load(input); exists {
@@ -32,6 +35,7 @@ func SafeCacheWrapper[T comparable, R any](fn func(T) R) func(T) R {
 		// Call the function and store the result in the cache
 		result := fn(input)
 		cache.Store(input, result)
+
 		return result
 	}
 }
