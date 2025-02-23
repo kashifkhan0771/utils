@@ -54,5 +54,6 @@ func (e *ErrorAggregator) Error() error {
 func (e *ErrorAggregator) ErrorList() []error {
 	result := make([]error, len(e.errors))
 	copy(result, e.errors)
+
 	return result
 }

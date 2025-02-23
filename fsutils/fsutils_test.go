@@ -1,6 +1,7 @@
 package fsutils
 
 import (
+	"crypto/rand"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -333,7 +334,11 @@ func TestDirsIdentical(t *testing.T) {
 	})
 
 	t.Run("nested directories", func(t *testing.T) {
-		dir1, dir2 := setupNestedDirs(t)
+		dir1, dir2, err := setupNestedDirs()
+		if err != nil {
+			t.Fatal(err)
+		}
+
 		defer os.RemoveAll(dir1)
 		defer os.RemoveAll(dir2)
 
@@ -347,54 +352,48 @@ func TestDirsIdentical(t *testing.T) {
 	})
 }
 
-func setupNestedDirs(t *testing.T) (string, string) {
-	// Create temporary directories for testing
-	tempDir1, err := os.MkdirTemp("", "nestedtestdir1")
+func setupNestedDirs() (string, string, error) {
+	tempDir1, err := os.MkdirTemp("", "nestedtestdir1_")
 	if err != nil {
-		t.Fatal(err)
+		return "", "", fmt.Errorf("failed to create tempDir1: %w", err)
 	}
+	defer func() {
+		if err != nil {
+			os.RemoveAll(tempDir1)
+		}
+	}()
 
-	tempDir2, err := os.MkdirTemp("", "nestedtestdir2")
+	tempDir2, err := os.MkdirTemp("", "nestedtestdir2_")
 	if err != nil {
-		t.Fatal(err)
-	}
+		os.RemoveAll(tempDir1)
 
-	// Create nested directory structure in both directories
-	nestedDirs := []string{
-		"dir1",
-		"dir1/dir2",
-		"dir1/dir2/dir3",
+		return "", "", fmt.Errorf("failed to create tempDir2: %w", err)
 	}
-
-	for _, dir := range nestedDirs {
-		if err := os.MkdirAll(filepath.Join(tempDir1, dir), 0755); err != nil {
-			t.Fatal(err)
+	defer func() {
+		if err != nil {
+			os.RemoveAll(tempDir2)
 		}
-		if err := os.MkdirAll(filepath.Join(tempDir2, dir), 0755); err != nil {
-			t.Fatal(err)
-		}
+	}()
+
+	files := map[string]string{
+		"dir1/file1.txt":           "file1",
+		"dir1/dir2/file2.txt":      "file2",
+		"dir1/dir2/dir3/file3.txt": "file3",
 	}
 
-	// Create some test files in the nested directories
-	files := []struct {
-		path     string
-		contents string
-	}{
-		{path: filepath.Join(tempDir1, "dir1/file1.txt"), contents: "file1"},
-		{path: filepath.Join(tempDir1, "dir1/dir2/file2.txt"), contents: "file2"},
-		{path: filepath.Join(tempDir1, "dir1/dir2/dir3/file3.txt"), contents: "file3"},
-	}
-
-	for _, file := range files {
-		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
-			t.Fatal(err)
-		}
-		if err := os.WriteFile(filepath.Join(tempDir2, file.path[len(tempDir1):]), []byte(file.contents), 0644); err != nil {
-			t.Fatal(err)
+	for _, base := range []string{tempDir1, tempDir2} {
+		for relPath, content := range files {
+			fullPath := filepath.Join(base, relPath)
+			if err = os.MkdirAll(filepath.Dir(fullPath), 0755); err != nil {
+				return "", "", fmt.Errorf("failed to create directory for %s: %w", fullPath, err)
+			}
+			if err = os.WriteFile(fullPath, []byte(content), 0644); err != nil {
+				return "", "", fmt.Errorf("failed to write file %s: %w", fullPath, err)
+			}
 		}
 	}
 
-	return tempDir1, tempDir2
+	return tempDir1, tempDir2, nil
 }
 
 func TestGetFileMetadata(t *testing.T) {
@@ -499,4 +498,126 @@ func TestGetFileMetadata(t *testing.T) {
 			t.Error("Expected symlink mode")
 		}
 	})
+}
+
+// ================================================================================
+// ### BENCMARKS
+// ================================================================================
+
+func BenchmarkFormatFileSize(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = FormatFileSize(int64(i))
+	}
+}
+
+func BenchmarkFindFiles(b *testing.B) {
+	tempDir, err := os.MkdirTemp("", "testdir")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	for i := 0; i < 100; i++ {
+		filePath := filepath.Join(tempDir, fmt.Sprintf("%d.txt", i))
+		if err := os.WriteFile(filePath, []byte{}, 0644); err != nil {
+			b.Fatal(err)
+		}
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = FindFiles(tempDir, ".txt")
+	}
+}
+
+func BenchmarkGetDirectorySize(b *testing.B) {
+	tempDir, err := os.MkdirTemp("", "testdir")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	for i := 0; i < 100; i++ {
+		filePath := filepath.Join(tempDir, fmt.Sprintf("%d.txt", i))
+		data := make([]byte, 1024) // 1 KB per file
+		if _, err := rand.Read(data); err != nil {
+			b.Fatal(err)
+		}
+		if err := os.WriteFile(filePath, data, 0644); err != nil {
+			b.Fatal(err)
+		}
+	}
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = GetDirectorySize(tempDir)
+	}
+}
+
+func BenchmarkFilesIdentical(b *testing.B) {
+	tempDir, err := os.MkdirTemp("", "testdir")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	file1 := filepath.Join(tempDir, "file1.txt")
+	file2 := filepath.Join(tempDir, "file2.txt")
+
+	data := make([]byte, 1024)
+	if _, err := rand.Read(data); err != nil {
+		b.Fatal(err)
+	}
+
+	if err := os.WriteFile(file1, data, 0644); err != nil {
+		b.Fatal(err)
+	}
+	if err := os.WriteFile(file2, data, 0644); err != nil {
+		b.Fatal(err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = FilesIdentical(file1, file2)
+	}
+}
+
+func BenchmarkDirsIdentical(b *testing.B) {
+	dir1, dir2, err := setupNestedDirs()
+	if err != nil {
+		b.Fatal(err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = DirsIdentical(dir1, dir2)
+	}
+}
+
+func BenchmarkGetFileMetadata(b *testing.B) {
+	tempDir, err := os.MkdirTemp("", "testdir")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	filePath := filepath.Join(tempDir, "testfile.txt")
+	if err := os.WriteFile(filePath, []byte("test"), 0644); err != nil {
+		b.Fatal(err)
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = GetFileMetadata(filePath)
+	}
 }

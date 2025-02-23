@@ -43,6 +43,7 @@ func AllTrue(values []bool) bool {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -63,6 +64,7 @@ func AnyTrue(values []bool) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -83,6 +85,7 @@ func NoneTrue(values []bool) bool {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -99,6 +102,7 @@ func CountTrue(values []bool) int {
 			count++ // Increment for each true value.
 		}
 	}
+
 	return count
 }
 
@@ -115,6 +119,7 @@ func CountFalse(values []bool) int {
 			count++ // Increment for each false value.
 		}
 	}
+
 	return count
 }
 
@@ -136,6 +141,7 @@ func Equal(values ...bool) bool {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -152,6 +158,7 @@ func And(values []bool) bool {
 			return false // Short-circuit if any value is false.
 		}
 	}
+
 	return len(values) > 0 // Ensure the slice is not empty.
 }
 
@@ -168,5 +175,6 @@ func Or(values []bool) bool {
 			return true // Short-circuit if any value is true.
 		}
 	}
+
 	return false // No true values found, or the slice is empty.
 }

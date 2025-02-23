@@ -23,6 +23,7 @@ func Abs[T signedNumber](x T) T {
 	if x < 0 {
 		return -x
 	}
+
 	return x
 }
 
@@ -34,6 +35,7 @@ func Sign[T signedNumber](x T) int {
 	} else if x < 0 {
 		return -1
 	}
+
 	return 0
 }
 
@@ -42,6 +44,7 @@ func Min[T number](x, y T) T {
 	if x < y {
 		return x
 	}
+
 	return y
 }
 
@@ -50,6 +53,7 @@ func Max[T number](x, y T) T {
 	if x > y {
 		return x
 	}
+
 	return y
 }
 
@@ -61,6 +65,7 @@ func Clamp[T number](min, max, value T) T {
 	} else if value > max {
 		return max
 	}
+
 	return value
 }
 
@@ -129,6 +134,7 @@ func Factorial(x int) (int, error) {
 	for i := 2; i <= x; i++ {
 		result *= i
 	}
+
 	return result, nil
 }
 
@@ -150,5 +156,6 @@ func LCM(x, y int) int {
 	if x == 0 || y == 0 {
 		return 0
 	}
+
 	return (x / GCD(x, y)) * y
 }

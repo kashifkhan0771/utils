@@ -620,3 +620,45 @@ func TestLCM(t *testing.T) {
 		})
 	}
 }
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+func BenchmarkIntPow(b *testing.B) {
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	bases := []int{2, 3, 4, 5}
+	exponents := []int{2, 3, 4}
+
+	for i := 0; i < b.N; i++ {
+		base := bases[i%len(bases)]
+		exp := exponents[i%len(exponents)]
+		IntPow(base, exp)
+	}
+}
+
+func BenchmarkFactorial(b *testing.B) {
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = Factorial(i % 20) // Factorial of numbers 0 to 19
+	}
+}
+
+func BenchmarkGCD(b *testing.B) {
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		GCD(i, i+1)
+	}
+}
+
+func BenchmarkLCM(b *testing.B) {
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		LCM(i, i+1)
+	}
+}

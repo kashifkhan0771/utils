@@ -1,6 +1,8 @@
 package rand
 
 import (
+	"math/rand"
+	randv2 "math/rand/v2"
 	"strings"
 	"testing"
 )
@@ -13,6 +15,7 @@ func TestNumber(t *testing.T) {
 		n, err := Number()
 		if err != nil {
 			t.Errorf("Number() error = %v", err)
+
 			return
 		}
 
@@ -60,6 +63,7 @@ func TestNumberInRange(t *testing.T) {
 			got, err := NumberInRange(tt.min, tt.max)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("NumberInRange() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 
@@ -76,12 +80,14 @@ func TestString(t *testing.T) {
 	s1, err := String()
 	if err != nil {
 		t.Errorf("String() error = %v", err)
+
 		return
 	}
 
 	s2, err := String()
 	if err != nil {
 		t.Errorf("String() error = %v", err)
+
 		return
 	}
 
@@ -126,6 +132,7 @@ func TestStringWithLength(t *testing.T) {
 			got, err := StringWithLength(tt.length)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("StringWithLength() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 
@@ -159,6 +166,7 @@ func TestPick(t *testing.T) {
 			got, err := Pick(tt.slice)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Pick() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 
@@ -200,6 +208,7 @@ func TestShuffle(t *testing.T) {
 			err := Shuffle(tt.slice)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Shuffle() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 
@@ -207,6 +216,7 @@ func TestShuffle(t *testing.T) {
 				// Check length hasn't changed
 				if len(tt.slice) != len(original) {
 					t.Errorf("Shuffle() changed slice length")
+
 					return
 				}
 
@@ -218,6 +228,7 @@ func TestShuffle(t *testing.T) {
 				for _, v := range original {
 					if !seen[v] {
 						t.Errorf("Shuffle() lost element %v", v)
+
 						return
 					}
 				}
@@ -262,6 +273,7 @@ func TestStringWithCharset(t *testing.T) {
 			got, err := StringWithCharset(tt.length, tt.charset)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("StringWithCharset() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 
@@ -288,5 +300,105 @@ func contains[T comparable](slice []T, item T) bool {
 			return true
 		}
 	}
+
 	return false
+}
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+// The crypto/rand package is secure but slow compared to math/rand and math/rand/v2
+
+func BenchmarkNumberCrypto(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = Number()
+	}
+}
+
+// Using math/rand
+func numberMathRand() (int64, error) {
+	return rand.Int63(), nil
+}
+
+func BenchmarkNumberMath(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = numberMathRand()
+	}
+}
+
+// Using math/rand/v2
+func numberMathRandV2() (int64, error) {
+	return randv2.Int64(), nil
+}
+
+func BenchmarkNumberMathV2(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = numberMathRandV2()
+	}
+}
+
+func BenchmarkNumberInRange(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = NumberInRange(0, 1000)
+	}
+}
+
+func BenchmarkString(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = String()
+	}
+}
+
+func BenchmarkStringWithLength(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = StringWithLength(100)
+	}
+}
+
+var benchArray = make([]int, 1000)
+
+func init() {
+	for i := 0; i < 1000; i++ {
+		benchArray[i] = i
+	}
+}
+
+func BenchmarkPick(b *testing.B) {
+	array := make([]int, len(benchArray))
+	copy(array, benchArray)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = Pick(array)
+	}
+}
+
+func BenchmarkShuffle(b *testing.B) {
+	array := make([]int, 1000)
+	for i := 0; i < 1000; i++ {
+		array[i] = i
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_ = Shuffle(array)
+	}
+}
+
+func BenchmarkStringWithCharset(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_, _ = StringWithCharset(1000, DefaultCharset)
+	}
 }

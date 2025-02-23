@@ -40,11 +40,13 @@ func TimeDifferenceHumanReadable(from, to time.Time) string {
 		if diff.Hours() > 24 {
 			return fmt.Sprintf("%d day(s) ago", int(diff.Hours()/24))
 		}
+
 		return fmt.Sprintf("in %d hour(s)", int(diff.Hours()))
 	}
 	if diff.Hours() > 24 {
 		return fmt.Sprintf("in %d day(s)", int(diff.Hours()/24))
 	}
+
 	return fmt.Sprintf("in %d hour(s)", int(diff.Hours()))
 }
 
@@ -58,6 +60,7 @@ func DurationUntilNext(day time.Weekday, t time.Time) time.Duration {
 	}
 
 	next := t.AddDate(0, 0, daysAhead)
+
 	return next.Sub(t)
 }
 
@@ -102,12 +105,14 @@ func NextOccurrence(hour, minute, second int, t time.Time) time.Time {
 	if !next.After(t) {
 		next = next.Add(24 * time.Hour)
 	}
+
 	return next
 }
 
 // WeekNumber returns the year and week number for the given time
 func WeekNumber(t time.Time) (int, int) {
 	year, week := t.ISOWeek()
+
 	return year, week
 }
 
@@ -115,6 +120,7 @@ func WeekNumber(t time.Time) (int, int) {
 func DaysBetween(start, end time.Time) int {
 	start = time.Date(start.Year(), start.Month(), start.Day(), 0, 0, 0, 0, start.Location())
 	end = time.Date(end.Year(), end.Month(), end.Day(), 0, 0, 0, 0, end.Location())
+
 	return int(end.Sub(start).Hours() / 24)
 }
 
@@ -134,6 +140,7 @@ func SplitDuration(d time.Duration) (days, hours, minutes, seconds int) {
 	hours = int(d.Hours()) % 24
 	minutes = int(d.Minutes()) % 60
 	seconds = int(d.Seconds()) % 60
+
 	return
 }
 
@@ -187,5 +194,6 @@ func FormatForDisplay(t time.Time) string {
 
 func IsToday(t time.Time) bool {
 	now := time.Now()
+
 	return t.Year() == now.Year() && t.YearDay() == now.YearDay()
 }

@@ -6,6 +6,7 @@ func NullableString(s *string) string {
 	if s == nil {
 		return ""
 	}
+
 	return *s
 }
 
@@ -15,5 +16,6 @@ func NullableByteSlice(b *[]byte) []byte {
 	if b == nil {
 		return []byte{}
 	}
+
 	return *b
 }

@@ -108,6 +108,7 @@ func Rot13Encode(input string) string {
 			encoded[i] = char
 		}
 	}
+
 	return string(encoded)
 }
 
@@ -131,6 +132,7 @@ func CaesarEncrypt(input string, shift int) string {
 
 		shifted[i] = shiftedChar
 	}
+
 	return string(shifted)
 }
 
@@ -249,6 +251,7 @@ func Reverse(input string) string {
 	for index, character := range runes {
 		result[lastCharacterIndex-index] = character
 	}
+
 	return string(result)
 }
 
@@ -284,6 +287,7 @@ func CommonPrefix(input ...string) string {
 		for j := 0; j < shortestTextLength; j++ {
 			if prefix[j] != item[j] {
 				prefix = prefix[:j]
+
 				break
 			}
 		}
@@ -331,6 +335,7 @@ func CommonSuffix(input ...string) string {
 		for j, k := suffixLength-1, itemLength-1; j >= 0 && k >= 0; j, k = j-1, k-1 {
 			if suffix[j] != item[k] {
 				suffix = suffix[j+1:]
+
 				break
 			}
 		}

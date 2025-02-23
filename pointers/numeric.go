@@ -6,6 +6,7 @@ func NullableInt(i *int) int {
 	if i == nil {
 		return 0
 	}
+
 	return *i
 }
 
@@ -15,6 +16,7 @@ func NullableInt8(i *int8) int8 {
 	if i == nil {
 		return 0
 	}
+
 	return *i
 }
 
@@ -24,6 +26,7 @@ func NullableInt16(i *int16) int16 {
 	if i == nil {
 		return 0
 	}
+
 	return *i
 }
 
@@ -33,6 +36,7 @@ func NullableInt32(i *int32) int32 {
 	if i == nil {
 		return 0
 	}
+
 	return *i
 }
 
@@ -42,6 +46,7 @@ func NullableInt64(i *int64) int64 {
 	if i == nil {
 		return 0
 	}
+
 	return *i
 }
 
@@ -51,6 +56,7 @@ func NullableUint(i *uint) uint {
 	if i == nil {
 		return 0
 	}
+
 	return *i
 }
 
@@ -60,6 +66,7 @@ func NullableUint8(i *uint8) uint8 {
 	if i == nil {
 		return 0
 	}
+
 	return *i
 }
 
@@ -69,6 +76,7 @@ func NullableUint16(i *uint16) uint16 {
 	if i == nil {
 		return 0
 	}
+
 	return *i
 }
 
@@ -78,6 +86,7 @@ func NullableUint32(i *uint32) uint32 {
 	if i == nil {
 		return 0
 	}
+
 	return *i
 }
 
@@ -87,6 +96,7 @@ func NullableUint64(i *uint64) uint64 {
 	if i == nil {
 		return 0
 	}
+
 	return *i
 }
 
@@ -96,6 +106,7 @@ func NullableFloat32(f *float32) float32 {
 	if f == nil {
 		return 0.0
 	}
+
 	return *f
 }
 
@@ -105,6 +116,7 @@ func NullableFloat64(f *float64) float64 {
 	if f == nil {
 		return 0.0
 	}
+
 	return *f
 }
 
@@ -114,6 +126,7 @@ func NullableComplex64(c *complex64) complex64 {
 	if c == nil {
 		return 0 + 0i
 	}
+
 	return *c
 }
 
@@ -123,5 +136,6 @@ func NullableComplex128(c *complex128) complex128 {
 	if c == nil {
 		return 0 + 0i
 	}
+
 	return *c
 }

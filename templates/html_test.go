@@ -189,6 +189,7 @@ func TestRenderHTML(t *testing.T) {
 			err = tmpl.Execute(&sb, tt.args.data)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Execute() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			got := sb.String()
@@ -205,5 +206,28 @@ func TestRenderHTML(t *testing.T) {
 				t.Errorf("Execute() = %v, want %v", gotUnescaped, wantUnescaped)
 			}
 		})
+	}
+}
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+func BenchmarkRenderHTML(b *testing.B) {
+	tmpl, _ := htmlTemplate.New("htmlTestTemplate").Funcs(GetCustomFuncMap()).Parse(normalizeWhitespace(htmlTestTemplate1))
+	data := struct {
+		Name string
+		Date time.Time
+	}{
+		Name: "alice",
+		Date: time.Date(2024, 10, 1, 0, 0, 0, 0, time.UTC),
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		var sb strings.Builder
+		_ = tmpl.Execute(&sb, data)
 	}
 }

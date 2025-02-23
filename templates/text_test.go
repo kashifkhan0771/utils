@@ -162,11 +162,30 @@ func TestRenderText(t *testing.T) {
 			got, err := RenderText(tt.args.tmpl, tt.args.data)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("RenderText() error = %v, wantErr %v", err, tt.wantErr)
+
 				return
 			}
 			if got != tt.want {
 				t.Errorf("RenderText() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+func BenchmarkRenderText(b *testing.B) {
+	data := struct {
+		Name string
+		Date time.Time
+	}{
+		Name: "alice",
+		Date: time.Date(2024, 10, 1, 0, 0, 0, 0, time.UTC),
+	}
+
+	for i := 0; i < b.N; i++ {
+		_, _ = RenderText(testTemplate1, data)
 	}
 }

@@ -1,7 +1,9 @@
 package slice
 
 import (
+	"math/rand"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -50,5 +52,58 @@ func TestRemoveDuplicateInt(t *testing.T) {
 				t.Errorf("RemoveDuplicateInt() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+func generateStrings(n int) []string {
+	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:,.<>?/~`"
+	data := make([]string, n)
+
+	for i := 0; i < n; i++ {
+		strLen := (i % 10) + 5 // Generate strings of length 5-14
+		var strBuilder strings.Builder
+		for j := 0; j < strLen; j++ {
+			strBuilder.WriteByte(charset[(i+j)%len(charset)])
+		}
+		data[i] = strBuilder.String()
+	}
+
+	return data
+}
+
+func generateRandomInts(n int) []int {
+	r := rand.New(rand.NewSource(99))
+
+	data := make([]int, n)
+	for i := 0; i < n; i++ {
+		data[i] = r.Intn(1000)
+	}
+
+	return data
+}
+
+func BenchmarkRemoveDuplicateStrings(b *testing.B) {
+	data := generateStrings(100000)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		RemoveDuplicateStr(data)
+	}
+}
+
+func BenchmarkRemoveDuplicateInts(b *testing.B) {
+	data := generateRandomInts(100000)
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		RemoveDuplicateInt(data)
 	}
 }

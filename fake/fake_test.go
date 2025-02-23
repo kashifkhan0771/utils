@@ -75,3 +75,31 @@ func TestRandomAddress(t *testing.T) {
 		t.Errorf("Generated address %v does not match the expected format", address)
 	}
 }
+
+// ================================================================================
+// ### BENCHMARKS
+// ================================================================================
+
+func BenchmarkGenerateUUID(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = RandomUUID()
+	}
+}
+
+func BenchmarkRandomDate(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = RandomDate()
+	}
+}
+
+func BenchmarkRandomPhoneNumber(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = RandomPhoneNumber()
+	}
+}
+
+func BenchmarkRandomAddress(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _ = RandomAddress()
+	}
+}

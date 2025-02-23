@@ -21,6 +21,7 @@ func Number() (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("failed to generate random number: %w", err)
 	}
+
 	return n.Int64(), nil
 }
 
@@ -90,6 +91,7 @@ func Shuffle[T any](slice []T) error {
 		}
 		slice[i], slice[int(j)] = slice[int(j)], slice[i]
 	}
+
 	return nil
 }
 
