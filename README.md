@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="/assets/logo.png" width="75%"/>
+</div>
+
 # Utils
 Common Utilities library for Go
 
