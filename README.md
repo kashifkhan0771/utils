@@ -292,3 +292,9 @@ Contributions to this project are welcome! If you would like to contribute, plea
 Please read the [Contribution Guide](/CONTRIBUTING.md) before opening any new pull request
 
 Together, we can make Utils even better for the Go community!
+
+---
+
+# Credits
+The image used in this project was sourced from **https://github.com/MariaLetta/free-gophers-pack**.  
+📷 Image by **[MariaLetta](https://github.com/MariaLetta)**, used under **[Creative Commons(CCO-1.0)](https://github.com/MariaLetta/free-gophers-pack?tab=CC0-1.0-1-ov-file) license.**.  
