@@ -87,7 +87,9 @@ func HumanReadableDuration(d time.Duration) string {
 func CalculateAge(birthDate time.Time) int {
 	today := time.Now()
 	age := today.Year() - birthDate.Year()
-	if today.YearDay() < birthDate.YearDay() {
+
+	// check if birthday has not occurred yet in this year
+	if today.Before(time.Date(today.Year(), birthDate.Month(), birthDate.Day(), 0, 0, 0, 0, time.UTC)) {
 		age--
 	}
 
