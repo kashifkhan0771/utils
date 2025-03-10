@@ -49,7 +49,7 @@ func TestSecureNumber(t *testing.T) {
 	for range iterations {
 		n, err := SecureNumber()
 		if err != nil {
-			t.Errorf("Number() error = %v", err)
+			t.Errorf("SecureNumber() error = %v", err)
 
 			return
 		}
