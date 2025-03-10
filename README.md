@@ -71,7 +71,9 @@ require github.com/kashifkhan0771/utils v0.3.0
 - **NullableString**: Returns the value of a string pointer or an empty string if nil.
 
 ### 6. Random (rand)
-- **Number**: Generates a random number.
+- **Int**: Generates a pseudo-random integer.
+- **Int64**: Generates a pseudo-random 63-bit integer.
+- **SecureNumber**: Generates a cryptographically secure random number.
 - **NumberInRange**: Generates a random number within a specified range.
 - **String**: Generates a random alphanumeric string.
 - **StringWithLength**: Generates a random string of a custom length.

@@ -22,12 +22,13 @@ func Int() int {
 	return randv2.Int()
 }
 
-// Int64 returns a pseudo-random 64-bit integer
+// Int64 returns a pseudo-random 63-bit integer
 func Int64() int64 {
 	return randv2.Int64()
 }
 
-// SecureNumber returns a cryptographically secure random number
+// SecureNumber returns a cryptographically secure random number.
+// Note: This function is significantly slower than Int() and Int64() due to the use of crypto/rand.
 func SecureNumber() (int64, error) {
 	n, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
 	if err != nil {
