@@ -438,8 +438,7 @@ func TestHumanReadableDuration(t *testing.T) {
 }
 
 func TestCalculateAge(t *testing.T) {
-	now := time.Now() // Fixed reference time
-
+	testTime := time.Now() // Fixed reference time
 	type args struct {
 		birthDate time.Time
 	}
