@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-
 func TestInt(t *testing.T) {
 	const iterations = 1000
 	seen := make(map[int]bool)
@@ -66,7 +65,6 @@ func TestSecureNumber(t *testing.T) {
 		t.Errorf("Expected mostly unique numbers, but got uniqueness ratio of %v", uniqueRatio)
 	}
 }
-
 
 func TestNumberInRange(t *testing.T) {
 	tests := []struct {
