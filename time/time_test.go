@@ -450,33 +450,33 @@ func TestCalculateAge(t *testing.T) {
 		{
 			name: "Birthday today, age remains the same",
 			args: args{
-				birthDate: time.Date(now.Year()-30, now.Month(), now.Day(), 0, 0, 0, 0, time.UTC),
+				birthDate: time.Date(testTime.Year()-30, testTime.Month(), testTime.Day(), 0, 0, 0, 0, time.UTC),
 			},
 			want: 30,
 		},
 		{
 			name: "Birthday not yet reached this year",
 			args: args{
-				birthDate: time.Date(now.Year()-25, now.Month()%12+1, now.Day(), 0, 0, 0, 0, time.UTC),
+				birthDate: time.Date(testTime.Year()-25, testTime.Month()%12+1, testTime.Day(), 0, 0, 0, 0, time.UTC),
 			},
 			want: 24,
 		},
 		{
 			name: "Birthday already passed this year",
 			args: args{
-				birthDate: time.Date(now.Year()-40, (now.Month()+11)%12+1, now.Day(), 0, 0, 0, 0, time.UTC),
+				birthDate: time.Date(testTime.Year()-40, (testTime.Month()+11)%12+1, testTime.Day(), 0, 0, 0, 0, time.UTC),
 			},
 			want: 40,
 		},
 		{
 			name: "Birthdate is exactly one year ago",
 			args: args{
-				birthDate: time.Date(now.Year()-1, now.Month(), now.Day(), 0, 0, 0, 0, time.UTC),
+				birthDate: time.Date(testTime.Year()-1, testTime.Month(), testTime.Day(), 0, 0, 0, 0, time.UTC),
 			},
 			want: func() int {
 				age := 1
 				// If the birthday hasn't passed yet this year, decrement the age
-				if now.Before(time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC)) {
+				if now.Before(time.Date(testTime.Year(), testTime.Month(), testTime.Day(), 0, 0, 0, 0, time.UTC)) {
 					age--
 				}
 				return age
@@ -488,11 +488,11 @@ func TestCalculateAge(t *testing.T) {
 				birthDate: time.Date(2000, 2, 29, 0, 0, 0, 0, time.UTC),
 			},
 			want: func() int {
-				leapYearAge := now.Year() - 2000
+				leapYearAge := testTime.Year() - 2000
 
 				// Check if the current year is not a leap year AND today is before March 1st
-				if !(now.Year()%4 == 0 && (now.Year()%100 != 0 || now.Year()%400 == 0)) &&
-					now.Before(time.Date(now.Year(), 3, 1, 0, 0, 0, 0, time.UTC)) {
+				if !(now.Year()%4 == 0 && (testTime.Year()%100 != 0 || testTime.Year()%400 == 0)) &&
+					testTime.Before(time.Date(testTime.Year(), 3, 1, 0, 0, 0, 0, time.UTC)) {
 					leapYearAge--
 				}
 
@@ -502,14 +502,14 @@ func TestCalculateAge(t *testing.T) {
 		{
 			name: "Future date, invalid age",
 			args: args{
-				birthDate: time.Date(now.Year()+5, now.Month(), now.Day(), 0, 0, 0, 0, time.UTC),
+				birthDate: time.Date(testTime.Year()+5, testTime.Month(), testTime.Day(), 0, 0, 0, 0, time.UTC),
 			},
 			want: -5,
 		},
 		{
 			name: "Birthdate today, zero age",
 			args: args{
-				birthDate: time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC),
+				birthDate: time.Date(testTime.Year(), testTime.Month(), testTime.Day(), 0, 0, 0, 0, time.UTC),
 			},
 			want: 0,
 		},
