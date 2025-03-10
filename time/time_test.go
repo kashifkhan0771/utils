@@ -476,7 +476,7 @@ func TestCalculateAge(t *testing.T) {
 			want: func() int {
 				age := 1
 				// If the birthday hasn't passed yet this year, decrement the age
-				if now.Before(time.Date(testTime.Year(), testTime.Month(), testTime.Day(), 0, 0, 0, 0, time.UTC)) {
+				if testTime.Before(time.Date(testTime.Year(), testTime.Month(), testTime.Day(), 0, 0, 0, 0, time.UTC)) {
 					age--
 				}
 				return age
