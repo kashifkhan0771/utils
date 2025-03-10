@@ -2,17 +2,53 @@ package rand
 
 import (
 	"math/rand"
-	randv2 "math/rand/v2"
 	"strings"
 	"testing"
 )
 
-func TestNumber(t *testing.T) {
+
+func TestInt(t *testing.T) {
+	const iterations = 1000
+	seen := make(map[int]bool)
+
+	for range iterations {
+		n := Int()
+		// Track unique numbers
+		seen[n] = true
+	}
+
+	// With true randomness, we expect a high percentage of unique numbers
+	// Given the massive range of int64, getting even 2 duplicates would be extremely unlikely
+	uniqueRatio := float64(len(seen)) / float64(iterations)
+	if uniqueRatio < 0.99 {
+		t.Errorf("Expected mostly unique numbers, but got uniqueness ratio of %v", uniqueRatio)
+	}
+}
+
+func TestInt64(t *testing.T) {
 	const iterations = 1000
 	seen := make(map[int64]bool)
 
-	for i := 0; i < iterations; i++ {
-		n, err := Number()
+	for range iterations {
+		n := Int64()
+		// Track unique numbers
+		seen[n] = true
+	}
+
+	// With true randomness, we expect a high percentage of unique numbers
+	// Given the massive range of int64, getting even 2 duplicates would be extremely unlikely
+	uniqueRatio := float64(len(seen)) / float64(iterations)
+	if uniqueRatio < 0.99 {
+		t.Errorf("Expected mostly unique numbers, but got uniqueness ratio of %v", uniqueRatio)
+	}
+}
+
+func TestSecureNumber(t *testing.T) {
+	const iterations = 1000
+	seen := make(map[int64]bool)
+
+	for range iterations {
+		n, err := SecureNumber()
 		if err != nil {
 			t.Errorf("Number() error = %v", err)
 
@@ -30,6 +66,7 @@ func TestNumber(t *testing.T) {
 		t.Errorf("Expected mostly unique numbers, but got uniqueness ratio of %v", uniqueRatio)
 	}
 }
+
 
 func TestNumberInRange(t *testing.T) {
 	tests := []struct {
@@ -313,7 +350,7 @@ func contains[T comparable](slice []T, item T) bool {
 func BenchmarkNumberCrypto(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_, _ = Number()
+		_, _ = SecureNumber()
 	}
 }
 
@@ -329,15 +366,17 @@ func BenchmarkNumberMath(b *testing.B) {
 	}
 }
 
-// Using math/rand/v2
-func numberMathRandV2() (int64, error) {
-	return randv2.Int64(), nil
-}
-
-func BenchmarkNumberMathV2(b *testing.B) {
+func BenchmarkIntMathV2(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
-		_, _ = numberMathRandV2()
+		_ = Int()
+	}
+}
+
+func BenchmarkInt64MathV2(b *testing.B) {
+	b.ReportAllocs()
+	for i := 0; i < b.N; i++ {
+		_ = Int64()
 	}
 }
 
