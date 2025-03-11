@@ -44,18 +44,7 @@ Here’s the completed table with descriptions, documentation, and examples for 
 | **caching**  | Cache management utilities                        | coming soon                  | coming soon                      |
 | **ctxutils** | Context utilities                                 | [README](ctxutils/README.md) | [EXAMPLES](ctxutils/EXAMPLES.md) |
 | **errutils** | Error aggregation and management utilities        | [README](errutils/README.md) | [EXAMPLES](errutils/EXAMPLES.md) |
-
-### 4. Maps
-
-- **NewStateMap**: Creates a new map for managing state flags.
-- **SetState**: Sets a specific state to true or false.
-- **IsState**: Checks the current value of a state.
-- **ToggleState**: Toggles the value of a state.
-- **HasState**: Checks if a state exists in the map.
-- **NewMetadata**: Creates a new metadata map for key-value storage.
-- **Update**: Updates or adds a key-value pair to the metadata map.
-- **Value**: Retrieves the value of a key from the metadata map.
-- **Has**: Checks if a key exists in the metadata map.
+| **maps**     | Utilities for state and metadata maps             | [README](maps/README.md)     | [EXAMPLES](maps/EXAMPLES.md)     |
 
 ### 5. Pointers
 
