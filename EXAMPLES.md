@@ -8,7 +8,7 @@ This document provides practical examples of how to use the library's features. 
 2. [Context (ctxutils)](/ctxutils/EXAMPLES.md)
 3. [Error (errutils)](/errutils/EXAMPLES.md)
 4. [Maps](/maps/EXAMPLES.md)
-5. [Pointers](#5-pointer)
+5. [Pointers](/pointers/EXAMPLES.md)
 6. [Random (rand)](#6-random)
 7. [Slice](#7-slice)
 8. [Strings](#8-strings)
@@ -23,137 +23,6 @@ This document provides practical examples of how to use the library's features. 
 17. [Loggin](#15-logging)
 18. [File System Utilities](#16-fsutils)
 19. [Caching](#15-caching)
-
-## 5. Pointer
-
-### DefaultIfNil Example - Return Default Value if Pointer is Nil
-
-```go
-package main
-
-import (
-	"fmt"
-
-	"github.com/kashifkhan0771/utils/pointers"
-)
-
-func main() {
-	// Example of DefaultIfNil for a string pointer
-	var str *string
-	defaultStr := "Default String"
-	result := pointers.DefaultIfNil(str, defaultStr)
-	fmt.Println(result)
-}
-```
-
-#### Output:
-
-```
-Default String
-```
-
-### NullableBool Example - Get Value from Bool Pointer
-
-```go
-package main
-
-import (
-	"fmt"
-
-	"github.com/kashifkhan0771/utils/pointers"
-)
-
-func main() {
-	// Example of NullableBool for a bool pointer
-	var flag *bool
-	result := pointers.NullableBool(flag)
-	fmt.Println(result)
-}
-```
-
-#### Output:
-
-```
-false
-```
-
-### NullableTime Example - Get Value from Time Pointer
-
-```go
-package main
-
-import (
-	"fmt"
-	"time"
-
-	"github.com/kashifkhan0771/utils/pointers"
-)
-
-func main() {
-	// Example of NullableTime for a time.Time pointer
-	var t *time.Time
-	result := pointers.NullableTime(t)
-	fmt.Println(result)
-}
-```
-
-#### Output:
-
-```
-0001-01-01 00:00:00 +0000 UTC
-```
-
-### NullableInt Example - Get Value from Int Pointer
-
-```go
-package main
-
-import (
-	"fmt"
-
-	"github.com/kashifkhan0771/utils/pointers"
-)
-
-func main() {
-	// Example of NullableInt for an int pointer
-	var num *int
-	result := pointers.NullableInt(num)
-	fmt.Println(result)
-}
-```
-
-#### Output:
-
-```
-0
-```
-
-### NullableString Example - Get Value from String Pointer
-
-```go
-package main
-
-import (
-	"fmt"
-
-	"github.com/kashifkhan0771/utils/pointers"
-)
-
-func main() {
-	// Example of NullableString for a string pointer
-	var str *string
-	result := pointers.NullableString(str)
-	fmt.Println(result)  // Output: ""
-}
-```
-
-#### Output:
-
-```
-""
-```
-
----
 
 ## 6. Random
 

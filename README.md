@@ -45,14 +45,7 @@ Here’s the completed table with descriptions, documentation, and examples for 
 | **ctxutils** | Context utilities                                 | [README](ctxutils/README.md) | [EXAMPLES](ctxutils/EXAMPLES.md) |
 | **errutils** | Error aggregation and management utilities        | [README](errutils/README.md) | [EXAMPLES](errutils/EXAMPLES.md) |
 | **maps**     | Utilities for state and metadata maps             | [README](maps/README.md)     | [EXAMPLES](maps/EXAMPLES.md)     |
-
-### 5. Pointers
-
-- **DefaultIfNil**: Returns a default value if the pointer is nil.
-- **NullableBool**: Returns the value of a boolean pointer or false if nil.
-- **NullableTime**: Returns the value of a time pointer or a zero time value if nil.
-- **NullableInt**: Returns the value of an integer pointer or zero if nil.
-- **NullableString**: Returns the value of a string pointer or an empty string if nil.
+| **pointers** | Helper functions for working with pointer values  | [README](pointers/README.md) | [EXAMPLES](pointers/EXAMPLES.md) |
 
 ### 6. Random (rand)
 
