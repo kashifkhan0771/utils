@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"math/big"
+	randv2 "math/rand/v2"
 	"strings"
 )
 
@@ -16,7 +17,19 @@ const (
 	DefaultLength = 10
 )
 
-func Number() (int64, error) {
+// Int returns a pseudo-random integer
+func Int() int {
+	return randv2.Int()
+}
+
+// Int64 returns a pseudo-random 63-bit integer
+func Int64() int64 {
+	return randv2.Int64()
+}
+
+// SecureNumber returns a cryptographically secure random number.
+// Note: This function is significantly slower than Int() and Int64() due to the use of crypto/rand.
+func SecureNumber() (int64, error) {
 	n, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
 	if err != nil {
 		return 0, fmt.Errorf("failed to generate random number: %w", err)
@@ -25,7 +38,7 @@ func Number() (int64, error) {
 	return n.Int64(), nil
 }
 
-// NumberInRange generates a random number between min and max
+// NumberInRange generates a pseudo-random number between min and max
 func NumberInRange(min, max int64) (int64, error) {
 	if min > max {
 		return 0, fmt.Errorf("min (%d) cannot be greater than max (%d)", min, max)
@@ -41,13 +54,10 @@ func NumberInRange(min, max int64) (int64, error) {
 	limit := math.MaxInt64 - (math.MaxInt64 % rangeSize)
 
 	for {
-		n, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
-		if err != nil {
-			return 0, fmt.Errorf("failed to generate random number in range: %w", err)
-		}
+		n := randv2.Int64N(math.MaxInt64)
 
-		if n.Int64() < limit {
-			return min + (n.Int64() % rangeSize), nil
+		if n < limit {
+			return min + (n % rangeSize), nil
 		}
 		// If we're above the limit, try again to ensure uniform distribution
 	}
@@ -107,14 +117,10 @@ func StringWithCharset(length int, charset string) (string, error) {
 	}
 
 	result := make([]byte, length)
-	charsetLength := big.NewInt(int64(len(trimmedCharset)))
 
-	for i := 0; i < length; i++ {
-		n, err := rand.Int(rand.Reader, charsetLength)
-		if err != nil {
-			return "", fmt.Errorf("failed to generate random string: %w", err)
-		}
-		result[i] = trimmedCharset[n.Int64()]
+	for i := range length {
+		n := randv2.Int64N(int64(len(trimmedCharset)))
+		result[i] = trimmedCharset[n]
 	}
 
 	return string(result), nil

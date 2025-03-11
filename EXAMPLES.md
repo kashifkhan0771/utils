@@ -660,7 +660,7 @@ func main() {
 ## 6. Random
 
 
-### Generate a Random Number
+### Generate a Pseudo-Random Number
 
 ```go
 package main
@@ -671,17 +671,41 @@ import (
 )
 
 func main() {
-	num, err := rand.Number()
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-	fmt.Println("Random Number:", num)
+	i := rand.Int()
+	i64 := rand.Int64()
+	fmt.Println("Random Number:", i)
+	fmt.Println("Random Number(63-bit):", i64)
 }
 ```
 #### Output:
 ```
-Random Number: 8507643814357583841
+Random Number: 1983964840637203872
+Random Number(63-bit): 8714503361527813617
+```
+
+### Generate a Cryptographically Secure Random Number
+
+```go
+package main
+
+import (
+	"fmt"
+	"github.com/kashifkhan0771/utils/rand"
+)
+
+func main() {
+	n, err := rand.SecureNumber()
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Println("Cryptographically Secure Random Number:", n)
+}
+```
+#### Output:
+```
+Cryptographically Secure Random Number: 5251369289452281710
 ```
 
 ### Generate a Random Number in a Range
