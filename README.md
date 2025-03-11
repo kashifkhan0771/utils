@@ -49,10 +49,7 @@ Here’s the completed table with descriptions, documentation, and examples for 
 | **rand**     | Random number and string generation utilities     | [README](rand/README.md)     | [EXAMPLES](rand/EXAMPLES.md)     |
 | **slice**    | Slice manipulation and de-duplication utilities   | [README](slice/README.md)    | [EXAMPLES](slice/EXAMPLES.md)    |
 | **strings**  | String manipulation and encoding utilities        | [README](strings/README.md)  | [EXAMPLES](strings/EXAMPLES.md)  |
-
-### 9. Structs
-
-- **CompareStructs**: Compares two structs and returns the differences between them.
+| **structs**  | Struct comparison utilities                       | [README](structs/README.md)  | [EXAMPLES](structs/EXAMPLES.md)  |
 
 ### 10. Templates
 
