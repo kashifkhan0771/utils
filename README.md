@@ -36,8 +36,6 @@ require github.com/kashifkhan0771/utils v0.3.0
 
 ## Utility Packages
 
-Here’s the completed table with descriptions, documentation, and examples for **errutils** and any missing parts:
-
 | Package Name  | Description                                        | Documentation                 | Examples                          |
 | ------------- | -------------------------------------------------- | ----------------------------- | --------------------------------- |
 | **boolean**   | Utilities for boolean value checking and toggling  | [README](boolean/README.md)   | [EXAMPLES](boolean/EXAMPLES.md)   |
