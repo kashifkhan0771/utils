@@ -47,11 +47,7 @@ Here’s the completed table with descriptions, documentation, and examples for 
 | **maps**     | Utilities for state and metadata maps             | [README](maps/README.md)     | [EXAMPLES](maps/EXAMPLES.md)     |
 | **pointers** | Helper functions for working with pointer values  | [README](pointers/README.md) | [EXAMPLES](pointers/EXAMPLES.md) |
 | **rand**     | Random number and string generation utilities     | [README](rand/README.md)     | [EXAMPLES](rand/EXAMPLES.md)     |
-
-### 7. Slice
-
-- **RemoveDuplicateStr**: Removes duplicate values from a slice of strings.
-- **RemoveDuplicateInt**: Removes duplicate values from a slice of integers.
+| **slice**    | Slice manipulation and de-duplication utilities   | [README](slice/README.md)    | [EXAMPLES](slice/EXAMPLES.md)    |
 
 ### 8. Strings
 

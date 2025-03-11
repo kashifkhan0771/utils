@@ -10,7 +10,7 @@ This document provides practical examples of how to use the library's features. 
 4. [Maps](/maps/EXAMPLES.md)
 5. [Pointers](/pointers/EXAMPLES.md)
 6. [Random (rand)](/rand/EXAMPLES.md)
-7. [Slice](#7-slice)
+7. [Slice](/slice/EXAMPLES.md)
 8. [Strings](#8-strings)
 9. [Structs](#9-structs)
 10. [Templates](#10-templates)
@@ -23,56 +23,6 @@ This document provides practical examples of how to use the library's features. 
 17. [Loggin](#15-logging)
 18. [File System Utilities](#16-fsutils)
 19. [Caching](#15-caching)
-
-## 7. Slice
-
-### Remove Duplicates from String Slices
-
-```go
-package main
-
-import (
-	"fmt"
-	"github.com/kashifkhan0771/utils/slice"
-)
-
-func main() {
-	strings := []string{"apple", "banana", "apple", "cherry", "banana", "date"}
-	uniqueStrings := slice.RemoveDuplicateStr(strings)
-	fmt.Println("Unique Strings:", uniqueStrings)
-}
-```
-
-#### Output:
-
-```
-Unique Strings: [apple banana cherry date]
-```
-
-### Remove Duplicates from Integer Slices
-
-```go
-package main
-
-import (
-	"fmt"
-	"github.com/kashifkhan0771/utils/slice"
-)
-
-func main() {
-	numbers := []int{1, 2, 3, 2, 1, 4, 5, 3, 4}
-	uniqueNumbers := slice.RemoveDuplicateInt(numbers)
-	fmt.Println("Unique Numbers:", uniqueNumbers)
-}
-```
-
-#### Output:
-
-```
-Unique Numbers: [1 2 3 4 5]
-```
-
----
 
 ## 8. Strings
 
