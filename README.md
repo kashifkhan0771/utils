@@ -51,16 +51,7 @@ Here’s the completed table with descriptions, documentation, and examples for 
 | **strings**   | String manipulation and encoding utilities        | [README](strings/README.md)   | [EXAMPLES](strings/EXAMPLES.md)   |
 | **structs**   | Struct comparison utilities                       | [README](structs/README.md)   | [EXAMPLES](structs/EXAMPLES.md)   |
 | **templates** | Template rendering utilities                      | [README](templates/README.md) | [EXAMPLES](templates/EXAMPLES.md) |
-
-### 11. URLs
-
-- **Parse a URL**: Parses a URL into its components like scheme, host, path, query, and fragment.
-
-- **Build a URL from Components**: Constructs a complete URL by combining base URL, path, and query parameters.
-
-- **Resolve Relative URLs**: Resolves a relative URL against a base URL to form an absolute URL.
-
-- **URL Encoding**: Encodes URL components to ensure they are properly formatted for inclusion in URLs.
+| **urls**      | URL parsing and manipulation utilities            | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
 
 ### 12. Math
 
