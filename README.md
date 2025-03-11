@@ -38,23 +38,19 @@ require github.com/kashifkhan0771/utils v0.3.0
 
 Here’s the completed table with descriptions, documentation, and examples for **errutils** and any missing parts:
 
-| Package Name | Description                                       | Documentation                | Examples                         |
-| ------------ | ------------------------------------------------- | ---------------------------- | -------------------------------- |
-| **boolean**  | Utilities for boolean value checking and toggling | [README](boolean/README.md)  | [EXAMPLES](boolean/EXAMPLES.md)  |
-| **caching**  | Cache management utilities                        | coming soon                  | coming soon                      |
-| **ctxutils** | Context utilities                                 | [README](ctxutils/README.md) | [EXAMPLES](ctxutils/EXAMPLES.md) |
-| **errutils** | Error aggregation and management utilities        | [README](errutils/README.md) | [EXAMPLES](errutils/EXAMPLES.md) |
-| **maps**     | Utilities for state and metadata maps             | [README](maps/README.md)     | [EXAMPLES](maps/EXAMPLES.md)     |
-| **pointers** | Helper functions for working with pointer values  | [README](pointers/README.md) | [EXAMPLES](pointers/EXAMPLES.md) |
-| **rand**     | Random number and string generation utilities     | [README](rand/README.md)     | [EXAMPLES](rand/EXAMPLES.md)     |
-| **slice**    | Slice manipulation and de-duplication utilities   | [README](slice/README.md)    | [EXAMPLES](slice/EXAMPLES.md)    |
-| **strings**  | String manipulation and encoding utilities        | [README](strings/README.md)  | [EXAMPLES](strings/EXAMPLES.md)  |
-| **structs**  | Struct comparison utilities                       | [README](structs/README.md)  | [EXAMPLES](structs/EXAMPLES.md)  |
-
-### 10. Templates
-
-- **RenderHTMLTemplate**: Renders an HTML template with dynamic values.
-- **RenderText**: Renders a text template with dynamic values.
+| Package Name  | Description                                       | Documentation                 | Examples                          |
+| ------------- | ------------------------------------------------- | ----------------------------- | --------------------------------- |
+| **boolean**   | Utilities for boolean value checking and toggling | [README](boolean/README.md)   | [EXAMPLES](boolean/EXAMPLES.md)   |
+| **caching**   | Cache management utilities                        | coming soon                   | coming soon                       |
+| **ctxutils**  | Context utilities                                 | [README](ctxutils/README.md)  | [EXAMPLES](ctxutils/EXAMPLES.md)  |
+| **errutils**  | Error aggregation and management utilities        | [README](errutils/README.md)  | [EXAMPLES](errutils/EXAMPLES.md)  |
+| **maps**      | Utilities for state and metadata maps             | [README](maps/README.md)      | [EXAMPLES](maps/EXAMPLES.md)      |
+| **pointers**  | Helper functions for working with pointer values  | [README](pointers/README.md)  | [EXAMPLES](pointers/EXAMPLES.md)  |
+| **rand**      | Random number and string generation utilities     | [README](rand/README.md)      | [EXAMPLES](rand/EXAMPLES.md)      |
+| **slice**     | Slice manipulation and de-duplication utilities   | [README](slice/README.md)     | [EXAMPLES](slice/EXAMPLES.md)     |
+| **strings**   | String manipulation and encoding utilities        | [README](strings/README.md)   | [EXAMPLES](strings/EXAMPLES.md)   |
+| **structs**   | Struct comparison utilities                       | [README](structs/README.md)   | [EXAMPLES](structs/EXAMPLES.md)   |
+| **templates** | Template rendering utilities                      | [README](templates/README.md) | [EXAMPLES](templates/EXAMPLES.md) |
 
 ### 11. URLs
 
