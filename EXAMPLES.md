@@ -5,8 +5,8 @@ This document provides practical examples of how to use the library's features. 
 ## Table of Contents
 
 1. [Boolean](/boolean/EXAMPLES.md)
-2. [Context (ctxutils)](#2-context-ctxutils)
-3. [Error (errutils)](#3-errors)
+2. [Context (ctxutils)](/ctxutils/EXAMPLES.md)
+3. [Error (errutils)](/errutils/EXAMPLES.md)
 4. [Maps](#4-map)
 5. [Pointers](#5-pointer)
 6. [Random (rand)](#6-random)
@@ -23,78 +23,6 @@ This document provides practical examples of how to use the library's features. 
 17. [Loggin](#15-logging)
 18. [File System Utilities](#16-fsutils)
 19. [Caching](#15-caching)
-
-## 3. Errors
-
-### Add Errors to Aggregator
-
-```go
-package main
-
-import (
-	"fmt"
-	"errors"
-
-    "github.com/kashifkhan0771/utils/errutils"
-)
-
-func main() {
-	// Create a new error aggregator
-	agg := errutils.NewErrorAggregator()
-
-	// Add errors to the aggregator
-	agg.Add(errors.New("First error"))
-	agg.Add(errors.New("Second error"))
-	agg.Add(errors.New("Third error"))
-
-	// Retrieve the aggregated error
-	if err := agg.Error(); err != nil {
-		fmt.Println("Aggregated Error:", err)
-	}
-}
-```
-
-#### Output:
-
-```
-Aggregated Error: First error; Second error; Third error
-```
-
-### Check if there are any errors
-
-```go
-package main
-
-import (
-	"fmt"
-	"errors"
-
-    "github.com/kashifkhan0771/utils/errutils"
-)
-
-func main() {
-	// Create a new error aggregator
-	agg := errutils.NewErrorAggregator()
-
-	// Add an error
-	agg.Add(errors.New("First error"))
-
-	// Check if there are any errors
-	if agg.HasErrors() {
-		fmt.Println("There are errors")
-	} else {
-		fmt.Println("No errors")
-	}
-}
-```
-
-#### Output:
-
-```
-There are errors
-```
-
----
 
 ## 4. Map
 

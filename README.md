@@ -36,19 +36,14 @@ require github.com/kashifkhan0771/utils v0.3.0
 
 ## Utility Packages
 
+Here’s the completed table with descriptions, documentation, and examples for **errutils** and any missing parts:
+
 | Package Name | Description                                       | Documentation                | Examples                         |
 | ------------ | ------------------------------------------------- | ---------------------------- | -------------------------------- |
 | **boolean**  | Utilities for boolean value checking and toggling | [README](boolean/README.md)  | [EXAMPLES](boolean/EXAMPLES.md)  |
 | **caching**  | Cache management utilities                        | coming soon                  | coming soon                      |
 | **ctxutils** | Context utilities                                 | [README](ctxutils/README.md) | [EXAMPLES](ctxutils/EXAMPLES.md) |
-| ...          | ...                                               | ...                          | ...                              |
-
-### 3. Errors (errutils)
-
-- **NewErrorAggregator**: Creates a new error aggregator to collect multiple errors.
-- **Add**: Adds an error to the aggregator.
-- **Error**: Retrieves the aggregated error message.
-- **HasErrors**: Checks if there are any errors in the aggregator.
+| **errutils** | Error aggregation and management utilities        | [README](errutils/README.md) | [EXAMPLES](errutils/EXAMPLES.md) |
 
 ### 4. Maps
 
