@@ -46,18 +46,7 @@ Here’s the completed table with descriptions, documentation, and examples for 
 | **errutils** | Error aggregation and management utilities        | [README](errutils/README.md) | [EXAMPLES](errutils/EXAMPLES.md) |
 | **maps**     | Utilities for state and metadata maps             | [README](maps/README.md)     | [EXAMPLES](maps/EXAMPLES.md)     |
 | **pointers** | Helper functions for working with pointer values  | [README](pointers/README.md) | [EXAMPLES](pointers/EXAMPLES.md) |
-
-### 6. Random (rand)
-
-- **Int**: Generates a pseudo-random integer.
-- **Int64**: Generates a pseudo-random 63-bit integer.
-- **SecureNumber**: Generates a cryptographically secure random number.
-- **NumberInRange**: Generates a random number within a specified range.
-- **String**: Generates a random alphanumeric string.
-- **StringWithLength**: Generates a random string of a custom length.
-- **StringWithCharset**: Generates a random string using a custom character set.
-- **Pick**: Picks a random element from a given slice.
-- **Shuffle**: Shuffles the elements of a slice randomly.
+| **rand**     | Random number and string generation utilities     | [README](rand/README.md)     | [EXAMPLES](rand/EXAMPLES.md)     |
 
 ### 7. Slice
 
