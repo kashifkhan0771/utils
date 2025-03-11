@@ -36,19 +36,12 @@ require github.com/kashifkhan0771/utils v0.3.0
 
 ## Utility Packages
 
-| Package Name | Description                                       | Documentation               | Examples                        |
-| ------------ | ------------------------------------------------- | --------------------------- | ------------------------------- |
-| **boolean**  | Utilities for boolean value checking and toggling | [README](boolean/README.md) | [EXAMPLES](boolean/EXAMPLES.md) |
-| **caching**  | Cache management utilities                        | ...                         | ...                             |
-| **ctxutils** | Context utilities                                 | ...                         | ...                             |
-| ...          | ...                                               | ...                         | ...                             |
-
-### 2. Context (ctxutils)
-
-- **SetStringValue**: Sets a string value in the context with a custom key.
-- **GetStringValue**: Retrieves a string value from the context using the specified key.
-- **SetIntValue**: Sets an integer value in the context with a custom key.
-- **GetIntValue**: Retrieves an integer value from the context using the specified key.
+| Package Name | Description                                       | Documentation                | Examples                         |
+| ------------ | ------------------------------------------------- | ---------------------------- | -------------------------------- |
+| **boolean**  | Utilities for boolean value checking and toggling | [README](boolean/README.md)  | [EXAMPLES](boolean/EXAMPLES.md)  |
+| **caching**  | Cache management utilities                        | coming soon                  | coming soon                      |
+| **ctxutils** | Context utilities                                 | [README](ctxutils/README.md) | [EXAMPLES](ctxutils/EXAMPLES.md) |
+| ...          | ...                                               | ...                          | ...                              |
 
 ### 3. Errors (errutils)
 
