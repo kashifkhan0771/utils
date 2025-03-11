@@ -3,56 +3,62 @@
 </div>
 
 # Utils
+
 Common Utilities library for Go
 
 ## Overview
+
 Utils is a lightweight, flexible, and reusable library providing utility functions and helpers for common operations in Go applications. With packages designed for managing boolean conversions, handling context values, map operations, slice utilities, string manipulations, and struct comparison, utils enhances Go projects with optimized, clean, and practical solutions.
 
 ### Prerequisites
+
 **Go**: The project is written in Golang, so you'll need Go installed (preferably Go 1.23.3 or later). You can download and install Go from [here](https://go.dev/doc/install).
 
 **Git**: For cloning the repository.
 
 ### Installation
+
 To use utils in your project, add it as a module dependency:
 
 #### Clone the Repository
+
 ```
 go get github.com/kashifkhan0771/utils
 ```
+
 Alternatively, include it directly in your go.mod file (use the latest release):
+
 ```
 require github.com/kashifkhan0771/utils v0.3.0
 ```
 
 ## Key Features
 
-### 1. Boolean
-- **IsTrue**: Checks if the provided string represents a true value (e.g., "T", "1", "TRUE").
-- **Toggle**: Toggles the given boolean value, returning its negation. (e.g., `true` becomes `false` and vice versa).
-- **AllTrue**: Checks if all the values in a slice of booleans are `true`. Returns `false` if the slice is empty.
-- **AnyTrue**: Checks if at least one value in a slice of booleans is `true`. Returns `false` if the slice is empty.
-- **NoneTrue**: Checks if none of the values in a slice of booleans are `true`. Returns `true` if the slice is empty.
-- **CountTrue**: Counts the number of `true` values in a slice of booleans. Returns `0` for an empty slice.
-- **CountFalse**: Counts the number of `false` values in a slice of booleans. Returns `0` for an empty slice.
-- **Equal**: Checks if all the values in a variadic boolean argument are equal. Returns `true` if the slice contains only one or no elements.
-- **And**: Performs a logical AND operation on all the values in a slice of booleans. Returns `true` only if all values are `true`. Returns `false` for an empty slice.
-- **Or**: Performs a logical OR operation on all the values in a slice of booleans. Returns `true` if at least one value is `true`. Returns `false` for an empty slice.
+## Utility Packages
 
+| Package Name | Description                                       | Documentation               | Examples                        |
+| ------------ | ------------------------------------------------- | --------------------------- | ------------------------------- |
+| **boolean**  | Utilities for boolean value checking and toggling | [README](boolean/README.md) | [EXAMPLES](boolean/EXAMPLES.md) |
+| **caching**  | Cache management utilities                        | ...                         | ...                             |
+| **ctxutils** | Context utilities                                 | ...                         | ...                             |
+| ...          | ...                                               | ...                         | ...                             |
 
 ### 2. Context (ctxutils)
+
 - **SetStringValue**: Sets a string value in the context with a custom key.
 - **GetStringValue**: Retrieves a string value from the context using the specified key.
 - **SetIntValue**: Sets an integer value in the context with a custom key.
 - **GetIntValue**: Retrieves an integer value from the context using the specified key.
 
 ### 3. Errors (errutils)
+
 - **NewErrorAggregator**: Creates a new error aggregator to collect multiple errors.
 - **Add**: Adds an error to the aggregator.
 - **Error**: Retrieves the aggregated error message.
 - **HasErrors**: Checks if there are any errors in the aggregator.
 
 ### 4. Maps
+
 - **NewStateMap**: Creates a new map for managing state flags.
 - **SetState**: Sets a specific state to true or false.
 - **IsState**: Checks the current value of a state.
@@ -64,6 +70,7 @@ require github.com/kashifkhan0771/utils v0.3.0
 - **Has**: Checks if a key exists in the metadata map.
 
 ### 5. Pointers
+
 - **DefaultIfNil**: Returns a default value if the pointer is nil.
 - **NullableBool**: Returns the value of a boolean pointer or false if nil.
 - **NullableTime**: Returns the value of a time pointer or a zero time value if nil.
@@ -71,6 +78,7 @@ require github.com/kashifkhan0771/utils v0.3.0
 - **NullableString**: Returns the value of a string pointer or an empty string if nil.
 
 ### 6. Random (rand)
+
 - **Int**: Generates a pseudo-random integer.
 - **Int64**: Generates a pseudo-random 63-bit integer.
 - **SecureNumber**: Generates a cryptographically secure random number.
@@ -82,10 +90,12 @@ require github.com/kashifkhan0771/utils v0.3.0
 - **Shuffle**: Shuffles the elements of a slice randomly.
 
 ### 7. Slice
+
 - **RemoveDuplicateStr**: Removes duplicate values from a slice of strings.
 - **RemoveDuplicateInt**: Removes duplicate values from a slice of integers.
 
 ### 8. Strings
+
 - **SubstringSearch**: Searches for substrings in a string with customizable options.
 - **Title**: Converts a string to title case (capitalizes the first letter of each word).
 - **ToTitle**: Converts a string to title case, ignoring specified words.
@@ -103,13 +113,16 @@ require github.com/kashifkhan0771/utils v0.3.0
 - **RunLengthDecode** Decodes a string that has been encoded using Run-length-encoding. Ruturns the original string and an error if the encoding failed
 
 ### 9. Structs
+
 - **CompareStructs**: Compares two structs and returns the differences between them.
 
 ### 10. Templates
+
 - **RenderHTMLTemplate**: Renders an HTML template with dynamic values.
 - **RenderText**: Renders a text template with dynamic values.
 
 ### 11. URLs
+
 - **Parse a URL**: Parses a URL into its components like scheme, host, path, query, and fragment.
 
 - **Build a URL from Components**: Constructs a complete URL by combining base URL, path, and query parameters.
@@ -119,6 +132,7 @@ require github.com/kashifkhan0771/utils v0.3.0
 - **URL Encoding**: Encodes URL components to ensure they are properly formatted for inclusion in URLs.
 
 ### 12. Math
+
 - **Abs**: Returns the absolute value of the given number. Works for both integers and floating-point numbers. If the input is negative, it returns its positive equivalent; otherwise, it returns the number as is.
 
 - **Sign**: Determines the sign of a signed number. Returns `1` if the number is positive, `-1` if negative, and `0` if the number is zero.
@@ -144,6 +158,7 @@ require github.com/kashifkhan0771/utils v0.3.0
 - **LCM**: Finds the least common multiple (LCM) of two integers.
 
 ### 13. Fake
+
 - **RandomUUID**: Generates a random UUID of version 4 and variant 2.
 
 - **RandomDate**: Generates a random date between 1st January 1970 and the current date.
@@ -199,54 +214,60 @@ require github.com/kashifkhan0771/utils v0.3.0
 The `logging` package provides a simple, flexible, and color-coded logging system for Golang. Below are the main features and methods of the package:
 
 #### **Logger Constructor**
+
 - **`NewLogger(prefix string, minLevel LogLevel, output io.Writer) *Logger`**:  
-  Creates a new logger instance.  
-  - **`prefix`**: A string prefix added to all log messages.  
-  - **`minLevel`**: The minimum log level to output (`DEBUG`, `INFO`, `WARN`, `ERROR`). Messages below this level are ignored.  
-  - **`output`**: The destination for log output (e.g., `os.Stdout`, `os.Stderr`, or any `io.Writer`). Defaults to `os.Stdout` if `nil`.  
+  Creates a new logger instance.
+  - **`prefix`**: A string prefix added to all log messages.
+  - **`minLevel`**: The minimum log level to output (`DEBUG`, `INFO`, `WARN`, `ERROR`). Messages below this level are ignored.
+  - **`output`**: The destination for log output (e.g., `os.Stdout`, `os.Stderr`, or any `io.Writer`). Defaults to `os.Stdout` if `nil`.
 
 #### **Log Levels**
+
 - **DEBUG**: Used for detailed debug information.
 - **INFO**: General informational messages.
 - **WARN**: Warnings about potential issues.
 - **ERROR**: Critical errors.
 
 #### **Logger Methods**
+
 - **`Info(message string)`**:  
-  Logs an informational message with the log level **INFO**.  
+  Logs an informational message with the log level **INFO**.
 
 - **`Debug(message string)`**:  
-  Logs a debug message with the log level **DEBUG**.  
+  Logs a debug message with the log level **DEBUG**.
 
 - **`Warn(message string)`**:  
-  Logs a warning message with the log level **WARN**.  
+  Logs a warning message with the log level **WARN**.
 
 - **`Error(message string)`**:  
-  Logs an error message with the log level **ERROR**.  
+  Logs an error message with the log level **ERROR**.
 
 #### **Key Features**
+
 - **Color-Coded Logs**:  
-  Log messages are color-coded based on the log level:  
-  - **DEBUG**: Green  
-  - **INFO**: Blue  
-  - **WARN**: Yellow  
-  - **ERROR**: Red  
+  Log messages are color-coded based on the log level:
+
+  - **DEBUG**: Green
+  - **INFO**: Blue
+  - **WARN**: Yellow
+  - **ERROR**: Red
 
 - **Timestamped Logs**:  
-  Each log message includes a timestamp in the format `YYYY-MM-DD HH:MM:SS`.  
+  Each log message includes a timestamp in the format `YYYY-MM-DD HH:MM:SS`.
 
 - **Log Filtering by Level**:  
-  Logs below the specified minimum level (`minLevel`) are ignored.  
+  Logs below the specified minimum level (`minLevel`) are ignored.
 
 - **Custom Output**:  
-  Logs can be directed to any `io.Writer`, allowing flexible output destinations (e.g., files, network connections).  
+  Logs can be directed to any `io.Writer`, allowing flexible output destinations (e.g., files, network connections).
 
 - **Disable Colors**:  
-  The `disableColors` field in the `Logger` struct can be set to `true` to disable color codes (useful for testing or plain-text logs).  
+  The `disableColors` field in the `Logger` struct can be set to `true` to disable color codes (useful for testing or plain-text logs).
 
 #### **Notes**
+
 - If the `minLevel` is set to `DEBUG`, all log messages will be displayed.
-- Logs are automatically flushed to the configured output as soon as they're written.  
+- Logs are automatically flushed to the configured output as soon as they're written.
 - To log without colors (e.g., for testing), set the `disableColors` field to `true` in the `Logger` instance.
 
 ### 16. File System Utilities
@@ -267,17 +288,18 @@ The `logging` package provides a simple, flexible, and color-coded logging syste
 
 The caching package provides utilities for creating caching decorators to enhance the performance of functions by storing computed results. It includes both thread-safe and non-thread-safe implementations.
 
-  - **SafeCacheWrapper**: A thread-safe caching decorator that safely memoizes function results in concurrent environments.
-    * Uses `sync.Map` to ensure thread-safety
-    * Caches all results indefinitely (no eviction)
-    * Best suited for pure functions with limited input domains
-    * Safe for concurrent access but may impact performance under high contention
+- **SafeCacheWrapper**: A thread-safe caching decorator that safely memoizes function results in concurrent environments.
 
-  - **CacheWrapper**: A non-thread-safe caching decorator that memoizes function results. 
-    * Caches all results indefinitely (no eviction)
-    * Best suited for pure functions with limited input domains
-    * Not safe for concurrent access
-    * Use SafeCacheWrapper for concurrent scenarios
+  - Uses `sync.Map` to ensure thread-safety
+  - Caches all results indefinitely (no eviction)
+  - Best suited for pure functions with limited input domains
+  - Safe for concurrent access but may impact performance under high contention
+
+- **CacheWrapper**: A non-thread-safe caching decorator that memoizes function results.
+  - Caches all results indefinitely (no eviction)
+  - Best suited for pure functions with limited input domains
+  - Not safe for concurrent access
+  - Use SafeCacheWrapper for concurrent scenarios
 
 ---
 
@@ -287,8 +309,8 @@ For examples of each function, please checkout [EXAMPLES.md](/EXAMPLES.md)
 
 ---
 
-
 # Contributions
+
 Contributions to this project are welcome! If you would like to contribute, please feel free to open a PR.
 
 Please read the [Contribution Guide](/CONTRIBUTING.md) before opening any new pull request
@@ -298,5 +320,6 @@ Together, we can make Utils even better for the Go community!
 ---
 
 # Credits
+
 The image used in this project was sourced from **https://github.com/MariaLetta/free-gophers-pack**.  
-📷 Image by **[MariaLetta](https://github.com/MariaLetta)**, used under **[Creative Commons(CCO-1.0)](https://github.com/MariaLetta/free-gophers-pack?tab=CC0-1.0-1-ov-file) license.**.  
+📷 Image by **[MariaLetta](https://github.com/MariaLetta)**, used under **[Creative Commons(CCO-1.0)](https://github.com/MariaLetta/free-gophers-pack?tab=CC0-1.0-1-ov-file) license.**.

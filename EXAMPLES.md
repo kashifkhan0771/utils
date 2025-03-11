@@ -1,8 +1,10 @@
 # Examples
+
 This document provides practical examples of how to use the library's features. Each section demonstrates a specific use case with clear, concise code snippets.
 
 ## Table of Contents
-1. [Boolean](#1-boolean-utilities)
+
+1. [Boolean](/boolean/EXAMPLES.md)
 2. [Context (ctxutils)](#2-context-ctxutils)
 3. [Error (errutils)](#3-errors)
 4. [Maps](#4-map)
@@ -18,246 +20,14 @@ This document provides practical examples of how to use the library's features. 
 14. [Time](#14-time)
 15. [Loggin](#15-logging)
 16. [File System Utilities](#16-fsutils)
-15. [Loggin](#15-logging)
-16. [File System Utilities](#16-fsutils)
-17. [Caching](#15-caching)
+17. [Loggin](#15-logging)
+18. [File System Utilities](#16-fsutils)
+19. [Caching](#15-caching)
 
-## 1. Boolean
-
-### Check if the provided string is a true
-```go
-package main
-
-import (
-	"fmt"
-
-	boolutils "github.com/kashifkhan0771/utils/boolean"
-)
-
-func main() {
-	fmt.Println(boolutils.IsTrue("T"))
-	fmt.Println(boolutils.IsTrue("1"))
-	fmt.Println(boolutils.IsTrue("TRUE"))
-}
-```
-#### Output:
-```
-true
-true
-true
-```
-
-### Toggle a boolean value
-```go
-package main
-
-import (
-	"fmt"
-
-	boolutils "github.com/kashifkhan0771/utils/boolean"
-)
-
-func main() {
-	fmt.Println(boolutils.Toggle(true))
-	fmt.Println(boolutils.Toggle(false))
-}
-```
-#### Output:
-```
-false
-true
-```
-
-### Check if all values in a slice are true
-```go
-package main
-
-import (
-	"fmt"
-
-	boolutils "github.com/kashifkhan0771/utils/boolean"
-)
-
-func main() {
-	fmt.Println(boolutils.AllTrue([]bool{true, true, true}))
-	fmt.Println(boolutils.AllTrue([]bool{true, false, true}))
-	fmt.Println(boolutils.AllTrue([]bool{}))
-}
-```
-#### Output:
-```
-true
-false
-false
-```
-
-### Check if any value in a slice is true
-```go
-package main
-
-import (
-	"fmt"
-
-	boolutils "github.com/kashifkhan0771/utils/boolean"
-)
-
-func main() {
-	fmt.Println(boolutils.AnyTrue([]bool{false, true, false}))
-	fmt.Println(boolutils.AnyTrue([]bool{false, false, false}))
-	fmt.Println(boolutils.AnyTrue([]bool{}))
-}
-```
-#### Output:
-```
-true
-false
-false
-```
-
-### Check if none of the values in a slice are true
-```go
-package main
-
-import (
-	"fmt"
-
-	boolutils "github.com/kashifkhan0771/utils/boolean"
-)
-
-func main() {
-	fmt.Println(boolutils.NoneTrue([]bool{false, false, false}))
-	fmt.Println(boolutils.NoneTrue([]bool{false, true, false}))
-	fmt.Println(boolutils.NoneTrue([]bool{}))
-}
-```
-#### Output:
-```
-true
-false
-true
-```
-
-### Count the number of true values in a slice
-```go
-package main
-
-import (
-	"fmt"
-
-	boolutils "github.com/kashifkhan0771/utils/boolean"
-)
-
-func main() {
-	fmt.Println(boolutils.CountTrue([]bool{true, false, true}))
-	fmt.Println(boolutils.CountTrue([]bool{false, false, false}))
-	fmt.Println(boolutils.CountTrue([]bool{}))
-}
-```
-#### Output:
-```
-2
-0
-0
-```
-
-### Count the number of false values in a slice
-```go
-package main
-
-import (
-	"fmt"
-
-	boolutils "github.com/kashifkhan0771/utils/boolean"
-)
-
-func main() {
-	fmt.Println(boolutils.CountFalse([]bool{true, false, true}))
-	fmt.Println(boolutils.CountFalse([]bool{false, false, false}))
-	fmt.Println(boolutils.CountFalse([]bool{}))
-}
-```
-#### Output:
-```
-1
-3
-0
-```
-
-### Check if all values in a slice are equal
-```go
-package main
-
-import (
-	"fmt"
-
-	boolutils "github.com/kashifkhan0771/utils/boolean"
-)
-
-func main() {
-	fmt.Println(boolutils.Equal(true, true, true))
-	fmt.Println(boolutils.Equal(false, false, false))
-	fmt.Println(boolutils.Equal(true, false, true))
-	fmt.Println(boolutils.Equal())
-}
-```
-#### Output:
-```
-true
-true
-false
-false
-```
-
-### Perform a logical AND operation on a slice
-```go
-package main
-
-import (
-	"fmt"
-
-	boolutils "github.com/kashifkhan0771/utils/boolean"
-)
-
-func main() {
-	fmt.Println(boolutils.And([]bool{true, true, true}))
-	fmt.Println(boolutils.And([]bool{true, false, true}))
-	fmt.Println(boolutils.And([]bool{}))
-}
-```
-#### Output:
-```
-true
-false
-false
-```
-
-### Perform a logical OR operation on a slice
-```go
-package main
-
-import (
-	"fmt"
-
-	boolutils "github.com/kashifkhan0771/utils/boolean"
-)
-
-func main() {
-	fmt.Println(boolutils.Or([]bool{false, true, false}))
-	fmt.Println(boolutils.Or([]bool{false, false, false}))
-	fmt.Println(boolutils.Or([]bool{}))
-}
-```
-#### Output:
-```
-true
-false
-false
-```
-
----
 ## 2. Context (ctxutils)
 
 ### Set and Get a String Value in Context
+
 ```go
 package main
 
@@ -282,12 +52,15 @@ func main() {
 	}
 }
 ```
+
 #### Output:
+
 ```
 JohnDoe
 ```
 
 ### Set and Get a Int Value in Context
+
 ```go
 package main
 
@@ -313,15 +86,19 @@ func main() {
 }
 
 ```
+
 #### Output:
+
 ```
 100
 ```
+
 ---
 
 ## 3. Errors
 
 ### Add Errors to Aggregator
+
 ```go
 package main
 
@@ -347,11 +124,15 @@ func main() {
 	}
 }
 ```
+
 #### Output:
+
 ```
 Aggregated Error: First error; Second error; Third error
 ```
+
 ### Check if there are any errors
+
 ```go
 package main
 
@@ -377,16 +158,19 @@ func main() {
 	}
 }
 ```
+
 #### Output:
+
 ```
 There are errors
 ```
----
 
+---
 
 ## 4. Map
 
 ### StateMap Example - Set and Get States
+
 ```go
 package main
 
@@ -411,12 +195,15 @@ func main() {
 	}
 }
 ```
+
 #### Output:
+
 ```
 The state 'isActive' is true.
 ```
 
 ### StateMap Example - Toggle a State
+
 ```go
 package main
 
@@ -442,12 +229,15 @@ func main() {
 	}
 }
 ```
+
 #### Output:
+
 ```
 The state 'isActive' has been toggled to false.
 ```
 
 ### StateMap Example - Check if State Exists
+
 ```go
 package main
 
@@ -473,12 +263,15 @@ func main() {
 	}
 }
 ```
+
 #### Output:
+
 ```
 State 'isVerified' exists.
 ```
 
 ### Metadata Example - Update and Retrieve Values
+
 ```go
 package main
 
@@ -501,13 +294,16 @@ func main() {
 	fmt.Println("Version:", meta.Value("version"))
 }
 ```
+
 #### Output:
+
 ```
 Author: John Doe
 Version: 1.0.0
 ```
 
 ### Metadata Example - Check if Key Exists
+
 ```go
 package main
 
@@ -545,6 +341,7 @@ func main() {
 ## 5. Pointer
 
 ### DefaultIfNil Example - Return Default Value if Pointer is Nil
+
 ```go
 package main
 
@@ -562,12 +359,15 @@ func main() {
 	fmt.Println(result)
 }
 ```
+
 #### Output:
+
 ```
 Default String
 ```
 
 ### NullableBool Example - Get Value from Bool Pointer
+
 ```go
 package main
 
@@ -584,12 +384,15 @@ func main() {
 	fmt.Println(result)
 }
 ```
+
 #### Output:
+
 ```
 false
 ```
 
 ### NullableTime Example - Get Value from Time Pointer
+
 ```go
 package main
 
@@ -607,12 +410,15 @@ func main() {
 	fmt.Println(result)
 }
 ```
+
 #### Output:
+
 ```
 0001-01-01 00:00:00 +0000 UTC
 ```
 
 ### NullableInt Example - Get Value from Int Pointer
+
 ```go
 package main
 
@@ -629,18 +435,21 @@ func main() {
 	fmt.Println(result)
 }
 ```
+
 #### Output:
+
 ```
 0
 ```
 
 ### NullableString Example - Get Value from String Pointer
+
 ```go
 package main
 
 import (
 	"fmt"
-    
+
 	"github.com/kashifkhan0771/utils/pointers"
 )
 
@@ -651,14 +460,16 @@ func main() {
 	fmt.Println(result)  // Output: ""
 }
 ```
+
 #### Output:
+
 ```
 ""
 ```
 
 ---
-## 6. Random
 
+## 6. Random
 
 ### Generate a Pseudo-Random Number
 
@@ -677,7 +488,9 @@ func main() {
 	fmt.Println("Random Number(63-bit):", i64)
 }
 ```
+
 #### Output:
+
 ```
 Random Number: 1983964840637203872
 Random Number(63-bit): 8714503361527813617
@@ -703,12 +516,15 @@ func main() {
 	fmt.Println("Cryptographically Secure Random Number:", n)
 }
 ```
+
 #### Output:
+
 ```
 Cryptographically Secure Random Number: 5251369289452281710
 ```
 
 ### Generate a Random Number in a Range
+
 ```go
 package main
 
@@ -726,13 +542,15 @@ func main() {
 	fmt.Println("Random Number in Range [10, 50]:", num)
 }
 ```
+
 #### Output:
+
 ```
 Random Number in Range [10, 50]: 37
 ```
 
-
 ### Generate a Random String
+
 ```go
 package main
 
@@ -750,12 +568,15 @@ func main() {
 	fmt.Println("Random String:", str)
 }
 ```
+
 #### Output:
+
 ```
 Random String: b5fG8TkWz1
 ```
 
 #### Generate a random string with a custom length (15)
+
 ```go
 package main
 
@@ -773,12 +594,15 @@ func main() {
 	fmt.Println("Random String (Length 15):", str)
 }
 ```
+
 #### Output:
+
 ```
 Random String (Length 15): J8fwkL2PvXM7NqZ
 ```
 
 #### Generate a random string using a custom character set
+
 ```go
 package main
 
@@ -797,7 +621,9 @@ func main() {
 	fmt.Println("Random String with Custom Charset:", str)
 }
 ```
+
 #### Output:
+
 ```
 Random String with Custom Charset: 1b2f3c4a
 ```
@@ -824,12 +650,15 @@ func main() {
 	fmt.Println("Random Word:", word)
 }
 ```
+
 #### Output:
+
 ```
 Random Word: cherry
 ```
 
 #### Pick a random integer from a slice
+
 ```go
 package main
 
@@ -848,7 +677,9 @@ func main() {
 	fmt.Println("Random Number:", num)
 }
 ```
+
 #### Output:
+
 ```
 Random Number: 40
 ```
@@ -875,12 +706,15 @@ func main() {
 	fmt.Println("Shuffled Numbers:", numbers)
 }
 ```
+
 #### Output:
+
 ```
 Shuffled Numbers: [3 1 5 4 2]
 ```
 
 #### Shuffle a slice of strings
+
 ```go
 package main
 
@@ -899,15 +733,19 @@ func main() {
 	fmt.Println("Shuffled Words:", words)
 }
 ```
+
 #### Output:
+
 ```
 Shuffled Words: [delta alpha gamma beta]
 ```
---- 
+
+---
 
 ## 7. Slice
 
 ### Remove Duplicates from String Slices
+
 ```go
 package main
 
@@ -924,11 +762,13 @@ func main() {
 ```
 
 #### Output:
+
 ```
 Unique Strings: [apple banana cherry date]
 ```
 
 ### Remove Duplicates from Integer Slices
+
 ```go
 package main
 
@@ -945,14 +785,17 @@ func main() {
 ```
 
 #### Output:
+
 ```
 Unique Numbers: [1 2 3 4 5]
 ```
+
 ---
 
 ## 8. Strings
 
 ### SubstringSearch
+
 ```go
 package main
 
@@ -972,6 +815,7 @@ func main() {
 ```
 
 ### Title
+
 ```go
 func main() {
 	title := strings.Title("hello world")
@@ -980,6 +824,7 @@ func main() {
 ```
 
 ### ToTitle
+
 ```go
 func main() {
 	title := strings.ToTitle("hello world of go", []string{"of", "go"})
@@ -988,6 +833,7 @@ func main() {
 ```
 
 ### Tokenize
+
 ```go
 func main() {
 	tokens := strings.Tokenize("hello,world;this is Go", ",;")
@@ -996,6 +842,7 @@ func main() {
 ```
 
 ### Rot13Encode
+
 ```go
 func main() {
 	encoded := strings.Rot13Encode("hello")
@@ -1004,6 +851,7 @@ func main() {
 ```
 
 ### Rot13Decode
+
 ```go
 func main() {
 	decoded := strings.Rot13Decode("uryyb")
@@ -1012,6 +860,7 @@ func main() {
 ```
 
 ### CaesarEncrypt
+
 ```go
 func main() {
 	encrypted := strings.CaesarEncrypt("hello", 3)
@@ -1020,6 +869,7 @@ func main() {
 ```
 
 ### CaesarDecrypt
+
 ```go
 func main() {
 	decrypted := strings.CaesarDecrypt("khoor", 3)
@@ -1028,6 +878,7 @@ func main() {
 ```
 
 ### RunLengthEncode
+
 ```go
 func main() {
 	encoded := strings.RunLengthEncode("aaabbbccc")
@@ -1036,6 +887,7 @@ func main() {
 ```
 
 ### RunLengthDecode
+
 ```go
 func main() {
 	decoded, _ := strings.RunLengthDecode("3a3b3c")
@@ -1044,6 +896,7 @@ func main() {
 ```
 
 ### IsValidEmail
+
 ```go
 func main() {
 	valid := strings.IsValidEmail("test@example.com")
@@ -1052,6 +905,7 @@ func main() {
 ```
 
 ### SanitizeEmail
+
 ```go
 func main() {
 	email := strings.SanitizeEmail("   test@example.com   ")
@@ -1060,6 +914,7 @@ func main() {
 ```
 
 ### Reverse
+
 ```go
 func main() {
 	reversed := strings.Reverse("hello")
@@ -1068,6 +923,7 @@ func main() {
 ```
 
 ### CommonPrefix
+
 ```go
 func main() {
 	prefix := strings.CommonPrefix("nation", "national", "nasty")
@@ -1076,12 +932,14 @@ func main() {
 ```
 
 ### CommonSuffix
+
 ```go
 func main() {
 	suffix := strings.CommonSuffix("testing", "running", "jumping")
 	fmt.Println(suffix) // Output: ing
 }
 ```
+
 ---
 
 ## 9. Structs
@@ -1137,6 +995,7 @@ func main() {
 ```
 
 ### Output:
+
 ```
 Field: Name, Old Value: Alice, New Value: Alice Johnson
 Field: email_field, Old Value: alice@example.com, New Value: alice.johnson@example.com
@@ -1144,7 +1003,6 @@ Field: Age, Old Value: 25, New Value: 26
 ```
 
 ---
-
 
 ## 10. Templates
 
@@ -1225,19 +1083,23 @@ func main() {
 ### Output:
 
 #### Rendered HTML Template:
+
 ```html
 <!DOCTYPE html>
 <html>
-	<head><title>Template Rendering Demo</title></head>
-	<body>
-		<h1>WELCOME TO THE DEMO</h1>
-		<p>This is a demonstration of the RenderHTMLTemplate function.</p>
-		<p>Generated at: 2024-11-19 14:45:00</p>
-	</body>
+  <head>
+    <title>Template Rendering Demo</title>
+  </head>
+  <body>
+    <h1>WELCOME TO THE DEMO</h1>
+    <p>This is a demonstration of the RenderHTMLTemplate function.</p>
+    <p>Generated at: 2024-11-19 14:45:00</p>
+  </body>
 </html>
 ```
 
 #### Rendered Text Template:
+
 ```text
 Welcome, ALICE!
 Today is Tuesday, November 19, 2024.
@@ -1245,9 +1107,11 @@ Note: You have a special message!
 ```
 
 ### Available Functions:
+
 Here's a list of all available custom functions from the `customFuncsMap`:
 
 ### String Functions:
+
 1. **`toUpper`**: Converts a string to uppercase.
 2. **`toLower`**: Converts a string to lowercase.
 3. **`title`**: Converts a string to title case (e.g., "hello world" → "Hello World").
@@ -1259,10 +1123,12 @@ Here's a list of all available custom functions from the `customFuncsMap`:
 9. **`toString`**: Converts a value of any type to its string representation.
 
 ### Date and Time Functions:
+
 10. **`formatDate`**: Formats a `time.Time` object using a custom layout.
 11. **`now`**: Returns the current date and time (`time.Time`).
 
 ### Numeric and Arithmetic Functions:
+
 12. **`add`**: Adds two integers.
 13. **`sub`**: Subtracts the second integer from the first.
 14. **`mul`**: Multiplies two integers.
@@ -1270,14 +1136,17 @@ Here's a list of all available custom functions from the `customFuncsMap`:
 16. **`mod`**: Returns the remainder of dividing the first integer by the second.
 
 ### Conditional and Logical Functions:
+
 17. **`isNil`**: Checks if a value is `nil`.
 18. **`not`**: Negates a boolean value (e.g., `true` → `false`).
 
 ### Debugging Functions:
+
 19. **`dump`**: Returns a detailed string representation of a value (useful for debugging).
 20. **`typeOf`**: Returns the type of a value as a string.
 
 ### Safe HTML Rendering:
+
 21. **`safeHTML`**: Marks a string as safe HTML, preventing escaping in templates.
 
 ---
@@ -1285,6 +1154,7 @@ Here's a list of all available custom functions from the `customFuncsMap`:
 ## 11. URLs
 
 ### Build a URL
+
 ```go
 url, err := BuildURL("https", "example.com", "search", map[string]string{"q": "golang"})
 if err != nil {
@@ -1296,6 +1166,7 @@ if err != nil {
 ```
 
 ### Add Query Params
+
 ```go
 url, err := AddQueryParams("http://example.com", map[string]string{"key": "value", "page": "2"})
 if err != nil {
@@ -1307,6 +1178,7 @@ if err != nil {
 ```
 
 ### Validate a URL
+
 ```go
 isValid := IsValidURL("https://example.com", []string{"http", "https"})
 fmt.Println("Is Valid:", isValid)
@@ -1314,6 +1186,7 @@ fmt.Println("Is Valid:", isValid)
 ```
 
 ### Extract Domain
+
 ```go
 domain, err := ExtractDomain("https://sub.example.com/path?query=value")
 if err != nil {
@@ -1325,6 +1198,7 @@ if err != nil {
 ```
 
 ### Get Query Parameter
+
 ```go
 value, err := GetQueryParam("https://example.com?foo=bar&baz=qux", "foo")
 if err != nil {
@@ -1334,6 +1208,7 @@ if err != nil {
 }
 // Output: bar
 ```
+
 ---
 
 ## 12. Math
@@ -1341,6 +1216,7 @@ if err != nil {
 ## `Abs`
 
 ### Calculate the absolute value of a number
+
 ```go
 import (
 	"fmt"
@@ -1354,7 +1230,9 @@ func main() {
 	fmt.Println(utils.Abs(0))
 }
 ```
+
 #### Output:
+
 ```
 5
 10
@@ -1366,6 +1244,7 @@ func main() {
 ## `Sign`
 
 ### Determine the sign of a number
+
 ```go
 package main
 
@@ -1381,7 +1260,9 @@ func main() {
 	fmt.Println(utils.Sign(0))   // Zero
 }
 ```
+
 #### Output:
+
 ```
 1
 -1
@@ -1409,7 +1290,9 @@ func main() {
 	fmt.Println(utils.Min(7, 7))
 }
 ```
+
 #### Output:
+
 ```
 10
 15
@@ -1421,6 +1304,7 @@ func main() {
 ## `Max`
 
 ### Find the larger of two numbers
+
 ```go
 package main
 
@@ -1436,7 +1320,9 @@ func main() {
 	fmt.Println(utils.Max(7, 7))
 }
 ```
+
 #### Output:
+
 ```
 20
 25
@@ -1448,6 +1334,7 @@ func main() {
 ## `Clamp`
 
 ### Clamp a value to stay within a range
+
 ```go
 package main
 
@@ -1463,7 +1350,9 @@ func main() {
 	fmt.Println(utils.Clamp(1, 10, 15)) // Value above range
 }
 ```
+
 #### Output:
+
 ```
 5
 1
@@ -1475,6 +1364,7 @@ func main() {
 ## `IntPow`
 
 ### Compute integer powers
+
 ```go
 package main
 
@@ -1491,7 +1381,9 @@ func main() {
 	fmt.Println(utils.IntPow(2, -3))  // 3^(-3)
 }
 ```
+
 #### Output:
+
 ```
 8
 1
@@ -1504,6 +1396,7 @@ func main() {
 ## `IsEven`
 
 ### Check if a number is even
+
 ```go
 package main
 
@@ -1519,7 +1412,9 @@ func main() {
 	fmt.Println(utils.IsEven(0))  // Zero
 }
 ```
+
 #### Output:
+
 ```
 true
 false
@@ -1531,6 +1426,7 @@ true
 ## `IsOdd`
 
 ### Check if a number is odd
+
 ```go
 package main
 
@@ -1546,7 +1442,9 @@ func main() {
 	fmt.Println(utils.IsOdd(0))  // Zero
 }
 ```
+
 #### Output:
+
 ```
 true
 false
@@ -1558,6 +1456,7 @@ false
 ## `Swap`
 
 ### Swap two variables
+
 ```go
 package main
 
@@ -1573,7 +1472,9 @@ func main() {
 	fmt.Println(x, y)
 }
 ```
+
 #### Output:
+
 ```
 20 10
 ```
@@ -1583,6 +1484,7 @@ func main() {
 ## `Factorial`
 
 ### Calculate the factorial of a number
+
 ```go
 package main
 
@@ -1601,7 +1503,9 @@ func main() {
     fmt.Println(result)
 }
 ```
+
 #### Output:
+
 ```
 120
 ```
@@ -1611,6 +1515,7 @@ func main() {
 ## `GCD`
 
 ### Find the greatest common divisor of two numbers
+
 ```go
 package main
 
@@ -1626,7 +1531,9 @@ func main() {
 	fmt.Println(utils.GCD(0, 5))   // Zero input
 }
 ```
+
 #### Output:
+
 ```
 6
 1
@@ -1638,6 +1545,7 @@ func main() {
 ## `LCM`
 
 ### Find the least common multiple of two numbers
+
 ```go
 package main
 
@@ -1653,17 +1561,21 @@ func main() {
 	fmt.Println(utils.LCM(0, 5))   // Zero input
 }
 ```
+
 #### Output:
+
 ```
 12
 91
 0
 ```
+
 ---
 
 ## 13. Fake
 
 ### Generate a random UUID of version 4 and variant 2
+
 ```go
 package main
 
@@ -1683,12 +1595,15 @@ func main() {
 }
 
 ```
+
 #### Output:
+
 ```
 93a540eb-46e4-4e52-b0d5-cb63a7c361f9
 ```
 
-###  Generate a random date between 1st January 1970 and the current date
+### Generate a random date between 1st January 1970 and the current date
+
 ```go
 package main
 
@@ -1708,12 +1623,15 @@ func main() {
 }
 
 ```
+
 #### Output:
+
 ```
 2006-06-13 21:31:17.312528419 +0200 CEST
 ```
 
-###  Generate a random US phone number
+### Generate a random US phone number
+
 ```go
 package main
 
@@ -1733,12 +1651,15 @@ func main() {
 }
 
 ```
+
 #### Output:
+
 ```
 +1 (965) 419-5534
 ```
 
-###  Generates a random US address
+### Generates a random US address
+
 ```go
 package main
 
@@ -1758,17 +1679,21 @@ func main() {
 }
 
 ```
+
 #### Output:
+
 ```
 81 Broadway, Rivertown, CT 12345, USA
 ```
+
 ---
 
-## 14. Time 
+## 14. Time
 
 ## 1. `StartOfDay`
 
 ### Get the start of the day for the given time
+
 ```go
 package main
 
@@ -1784,7 +1709,9 @@ func main() {
 	fmt.Println(utils.StartOfDay(t))
 }
 ```
+
 #### Output:
+
 ```
 2024-12-29 00:00:00 +0500 PKT
 ```
@@ -1794,6 +1721,7 @@ func main() {
 ## 2. `EndOfDay`
 
 ### Get the end of the day for the given time
+
 ```go
 package main
 
@@ -1809,7 +1737,9 @@ func main() {
     fmt.Println(utils.EndOfDay(t))
 }
 ```
+
 #### Output:
+
 ```
 2024-12-29 23:59:59.999999999 +0500 PKT
 ```
@@ -1819,6 +1749,7 @@ func main() {
 ## 3. `AddBusinessDays`
 
 ### Add business days to a date (skipping weekends)
+
 ```go
 package main
 
@@ -1836,7 +1767,9 @@ func main() {
     fmt.Println(result)
 }
 ```
+
 #### Output:
+
 ```
 2025-01-01 00:00:00 +0500 PKT
 ```
@@ -1846,6 +1779,7 @@ func main() {
 ## 4. `IsWeekend`
 
 ### Check if a given date is a weekend
+
 ```go
 package main
 
@@ -1859,12 +1793,14 @@ import (
 func main() {
     saturday := time.Date(2024, 12, 28, 0, 0, 0, 0, time.Local)
     monday := time.Date(2024, 12, 30, 0, 0, 0, 0, time.Local)
-    
+
     fmt.Printf("Is Saturday a weekend? %v\n", utils.IsWeekend(saturday))
     fmt.Printf("Is Monday a weekend? %v\n", utils.IsWeekend(monday))
 }
 ```
+
 #### Output:
+
 ```
 Is Saturday a weekend? true
 Is Monday a weekend? false
@@ -1875,6 +1811,7 @@ Is Monday a weekend? false
 ## 5. `TimeDifferenceHumanReadable`
 
 ### Get human-readable time difference
+
 ```go
 package main
 
@@ -1889,12 +1826,14 @@ func main() {
     now := time.Now()
     future := now.Add(72 * time.Hour)
     past := now.Add(-48 * time.Hour)
-    
+
     fmt.Println(utils.TimeDifferenceHumanReadable(now, future))
     fmt.Println(utils.TimeDifferenceHumanReadable(now, past))
 }
 ```
+
 #### Output:
+
 ```
 in 3 day(s)
 2 day(s) ago
@@ -1905,6 +1844,7 @@ in 3 day(s)
 ## 6. `DurationUntilNext`
 
 ### Calculate duration until next specified weekday
+
 ```go
 package main
 
@@ -1921,7 +1861,9 @@ func main() {
     fmt.Printf("Duration until next Monday: %v\n", nextMonday)
 }
 ```
+
 #### Output:
+
 ```
 Duration until next Monday: 24h0m0s
 ```
@@ -1931,6 +1873,7 @@ Duration until next Monday: 24h0m0s
 ## 7. `ConvertToTimeZone`
 
 ### Convert time to different timezone
+
 ```go
 package main
 
@@ -1951,7 +1894,9 @@ func main() {
     fmt.Println(nyTime)
 }
 ```
+
 #### Output:
+
 ```
 2024-12-29 14:00:00 -0500 EST
 ```
@@ -1961,6 +1906,7 @@ func main() {
 ## 8. `HumanReadableDuration`
 
 ### Format duration in human-readable format
+
 ```go
 package main
 
@@ -1976,7 +1922,9 @@ func main() {
     fmt.Println(utils.HumanReadableDuration(d))
 }
 ```
+
 #### Output:
+
 ```
 3h 25m 45s
 ```
@@ -1986,6 +1934,7 @@ func main() {
 ## 9. `CalculateAge`
 
 ### Calculate age from birthdate
+
 ```go
 package main
 
@@ -2002,7 +1951,9 @@ func main() {
     fmt.Printf("Age: %d years\n", age)
 }
 ```
+
 #### Output:
+
 ```
 Age: 34 years
 ```
@@ -2012,6 +1963,7 @@ Age: 34 years
 ## 10. `IsLeapYear`
 
 ### Check if a year is a leap year
+
 ```go
 package main
 
@@ -2026,7 +1978,9 @@ func main() {
     fmt.Printf("Is 2023 a leap year? %v\n", utils.IsLeapYear(2023))
 }
 ```
+
 #### Output:
+
 ```
 Is 2024 a leap year? true
 Is 2023 a leap year? false
@@ -2037,6 +1991,7 @@ Is 2023 a leap year? false
 ## 11. `NextOccurrence`
 
 ### Find next occurrence of a specific time
+
 ```go
 package main
 
@@ -2053,7 +2008,9 @@ func main() {
     fmt.Println("Next noon:", nextNoon)
 }
 ```
+
 #### Output:
+
 ```
 Next noon: 2024-12-30 12:00:00 +0500 PKT
 ```
@@ -2063,6 +2020,7 @@ Next noon: 2024-12-30 12:00:00 +0500 PKT
 ## 12. `WeekNumber`
 
 ### Get ISO year and week number
+
 ```go
 package main
 
@@ -2079,7 +2037,9 @@ func main() {
     fmt.Printf("Year: %d, Week: %d\n", year, week)
 }
 ```
+
 #### Output:
+
 ```
 Year: 2024, Week: 52
 ```
@@ -2089,6 +2049,7 @@ Year: 2024, Week: 52
 ## 13. `DaysBetween`
 
 ### Calculate days between two dates
+
 ```go
 package main
 
@@ -2106,7 +2067,9 @@ func main() {
     fmt.Printf("Days between: %d\n", days)
 }
 ```
+
 #### Output:
+
 ```
 Days between: 365
 ```
@@ -2116,6 +2079,7 @@ Days between: 365
 ## 14. `IsTimeBetween`
 
 ### Check if time is between two other times
+
 ```go
 package main
 
@@ -2133,7 +2097,9 @@ func main() {
     fmt.Printf("Is current time between? %v\n", utils.IsTimeBetween(now, start, end))
 }
 ```
+
 #### Output:
+
 ```
 Is current time between? true
 ```
@@ -2143,6 +2109,7 @@ Is current time between? true
 ## 15. `UnixMilliToTime`
 
 ### Convert Unix milliseconds to time
+
 ```go
 package main
 
@@ -2158,7 +2125,9 @@ func main() {
     fmt.Println(t)
 }
 ```
+
 #### Output:
+
 ```
 2024-12-29 00:00:00 +0000 UTC
 ```
@@ -2168,6 +2137,7 @@ func main() {
 ## 16. `SplitDuration`
 
 ### Split duration into components
+
 ```go
 package main
 
@@ -2181,11 +2151,13 @@ import (
 func main() {
     d := 50*time.Hour + 30*time.Minute + 15*time.Second
     days, hours, minutes, seconds := utils.SplitDuration(d)
-    fmt.Printf("Days: %d, Hours: %d, Minutes: %d, Seconds: %d\n", 
+    fmt.Printf("Days: %d, Hours: %d, Minutes: %d, Seconds: %d\n",
         days, hours, minutes, seconds)
 }
 ```
+
 #### Output:
+
 ```
 Days: 2, Hours: 2, Minutes: 30, Seconds: 15
 ```
@@ -2195,6 +2167,7 @@ Days: 2, Hours: 2, Minutes: 30, Seconds: 15
 ## 17. `GetMonthName`
 
 ### Get month name from number
+
 ```go
 package main
 
@@ -2213,7 +2186,9 @@ func main() {
     fmt.Printf("Month 12 is: %s\n", monthName)
 }
 ```
+
 #### Output:
+
 ```
 Month 12 is: December
 ```
@@ -2223,6 +2198,7 @@ Month 12 is: December
 ## 18. `GetDayName`
 
 ### Get day name from number
+
 ```go
 package main
 
@@ -2241,7 +2217,9 @@ func main() {
     fmt.Printf("Day 1 is: %s\n", dayName)
 }
 ```
+
 #### Output:
+
 ```
 Day 1 is: Monday
 ```
@@ -2251,6 +2229,7 @@ Day 1 is: Monday
 ## 19. `FormatForDisplay`
 
 ### Format time for display
+
 ```go
 package main
 
@@ -2267,7 +2246,9 @@ func main() {
     fmt.Println(formatted)
 }
 ```
+
 #### Output:
+
 ```
 Sunday, 29 Dec 2024
 ```
@@ -2277,25 +2258,28 @@ Sunday, 29 Dec 2024
 ## 20. `IsToday`
 
 ### Check if date is today
+
 ```go
 package main
 
 import (
     "fmt"
     "time"
-	
+
     utils "github.com/kashifkhan0771/utils/time"
 )
 
 func main() {
     now := time.Now()
     tomorrow := now.AddDate(0, 0, 1)
-    
+
     fmt.Printf("Is now today? %v\n", utils.IsToday(now))
     fmt.Printf("Is tomorrow today? %v\n", utils.IsToday(tomorrow))
 }
 ```
+
 #### Output:
+
 ```
 Is now today? true
 Is tomorrow today? false
@@ -2306,6 +2290,7 @@ Is tomorrow today? false
 ## 15. Logging
 
 ### Create and use a logger
+
 ```go
 package main
 
@@ -2325,7 +2310,9 @@ func main() {
 	logger.Error("Failed to connect to DB.") // Printed with red color
 }
 ```
+
 #### Output:
+
 ```
 [2025-01-09 12:34:56] [INFO] MyApp: Application started.
 [2025-01-09 12:34:56] [WARN] MyApp: Low disk space.
@@ -2333,6 +2320,7 @@ func main() {
 ```
 
 ### Log without colors (useful for plain text logs)
+
 ```go
 package main
 
@@ -2353,7 +2341,9 @@ func main() {
 	logger.Error("Error without colors.")
 }
 ```
+
 #### Output:
+
 ```
 [2025-01-09 12:34:56] [DEBUG] MyApp: Debugging without colors.
 [2025-01-09 12:34:56] [INFO] MyApp: Information without colors.
@@ -2362,6 +2352,7 @@ func main() {
 ```
 
 ### Log messages to a file
+
 ```go
 package main
 
@@ -2388,7 +2379,9 @@ func main() {
 	logger.Error("This is an error.")
 }
 ```
+
 #### Output (in `app.log` file):
+
 ```
 [2025-01-09 12:34:56] [DEBUG] MyApp: Writing debug logs to file.
 [2025-01-09 12:34:56] [INFO] MyApp: Application log stored in file.
@@ -2397,6 +2390,7 @@ func main() {
 ```
 
 ### Filter logs by minimum log level
+
 ```go
 package main
 
@@ -2416,13 +2410,16 @@ func main() {
 	logger.Error("This is an error.")        // Printed
 }
 ```
+
 #### Output:
+
 ```
 [2025-01-09 12:34:56] [WARN] MyApp: This is a warning.
 [2025-01-09 12:34:56] [ERROR] MyApp: This is an error.
 ```
 
 ### Customize log prefixes
+
 ```go
 package main
 
@@ -2439,7 +2436,9 @@ func main() {
 	logger.Info("This message has a custom prefix.")
 }
 ```
+
 #### Output:
+
 ```
 [2025-01-09 12:34:56] [INFO] CustomPrefix: This message has a custom prefix.
 ```
@@ -2447,6 +2446,7 @@ func main() {
 ## 16. Fsutils
 
 ### Format a file size given in bytes into a human-readable format
+
 ```go
 package main
 
@@ -2464,7 +2464,9 @@ func main() {
 	}
 }
 ```
+
 #### Output:
+
 ```
 0 B
 512 B
@@ -2475,6 +2477,7 @@ func main() {
 ```
 
 ### Search for files with the specified extension
+
 ```go
 package main
 
@@ -2492,7 +2495,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error finding .txt files: %v", err)
 	}
-	
+
 	fmt.Println("TXT Files:", txtFiles)
 
 	logFiles, err := fsutils.FindFiles(dir, ".log")
@@ -2511,7 +2514,9 @@ func main() {
 }
 
 ```
+
 #### Output:
+
 ```
 TXT Files: [/path/to/your/dir/file1.txt /path/to/your/dir/file2.txt /path/to/your/dir/file4.txt]
 LOG Files: [/path/to/your/dir/file3.log]
@@ -2519,6 +2524,7 @@ All Files: [/path/to/your/dir/file1.txt /path/to/your/dir/file2.txt /path/to/you
 ```
 
 ### Calculate the total size (in bytes) of all files in a directory
+
 ```go
 package main
 
@@ -2541,12 +2547,15 @@ func main() {
 }
 
 ```
+
 #### Output:
+
 ```
 The total size of directory "/path/to/your/dir" is 6406B
 ```
 
 ### Compare two files
+
 ```go
 package main
 
@@ -2574,12 +2583,15 @@ func main() {
 }
 
 ```
+
 #### Output:
+
 ```
 The files /path/to/your/file1.txt and /path/to/your/file2.txt are identical
 ```
 
 ### Compare two directories
+
 ```go
 package main
 
@@ -2607,12 +2619,15 @@ func main() {
 }
 
 ```
+
 #### Output:
+
 ```
 The directories /path/to/your/dir1 and /path/to/your/dir2 are identical.
 ```
 
 ### Get File Metadata
+
 ```go
 package main
 
@@ -2633,20 +2648,23 @@ func main() {
 
 	fmt.Printf(
 		"Name: %s, Size: %d, IsDir: %t, ModTime: %s, Mode: %v, Path: %s, Ext: %s, Owner: %s\n",
-		metadata.Name, metadata.Size, 
-		metadata.IsDir, metadata.ModTime.String(), 
-		metadata.Mode, metadata.Path, 
+		metadata.Name, metadata.Size,
+		metadata.IsDir, metadata.ModTime.String(),
+		metadata.Mode, metadata.Path,
 		metadata.Ext, metadata.Owner,
 	)
 }
 
 ```
+
 #### Output:
+
 ```
 Name: example.txt, Size: 172, IsDir: false, ModTime: 2025-01-20 15:03:00.189199994 +0100 CET, Mode: -rw-rw-r--, Path: /path/to/your/dir/example.txt, Ext: .txt, Owner: owner
 ```
 
 ### Get Directory Metadata
+
 ```go
 package main
 
@@ -2667,20 +2685,23 @@ func main() {
 
 	fmt.Printf(
 		"Name: %s, Size: %d, IsDir: %t, ModTime: %s, Mode: %v, Path: %s, Ext: %s, Owner: %s\n",
-		metadata.Name, metadata.Size, 
-		metadata.IsDir, metadata.ModTime.String(), 
-		metadata.Mode, metadata.Path, 
+		metadata.Name, metadata.Size,
+		metadata.IsDir, metadata.ModTime.String(),
+		metadata.Mode, metadata.Path,
 		metadata.Ext, metadata.Owner,
 	)
 }
 
 ```
+
 #### Output:
+
 ```
 Name: example, Size: 4096, IsDir: true, ModTime: 2025-01-20 15:06:23.057206656 +0100 CET, Mode: drwxrwxr-x, Path: /path/to/your/dir/example, Ext: , Owner: owner
 ```
 
 ### Marshal File's Metadata to JSON
+
 ```go
 package main
 
@@ -2710,22 +2731,24 @@ func main() {
 }
 
 ```
+
 #### Output:
+
 ```json
 {
-   "name": "example.txt",
-   "size": 172,
-   "is_dir": false,
-   "mod_time": "2025-01-20T15:06:34.812677487+01:00",
-   "mode": 436,
-   "path": "/path/to/your/dir/example.txt",
-   "ext": ".txt",
+  "name": "example.txt",
+  "size": 172,
+  "is_dir": false,
+  "mod_time": "2025-01-20T15:06:34.812677487+01:00",
+  "mode": 436,
+  "path": "/path/to/your/dir/example.txt",
+  "ext": ".txt"
 }
 ```
+
 # 17. Caching
 
 ## `CacheWrapper`
-
 
 ### A non-thread-safe caching decorator
 
@@ -2752,14 +2775,16 @@ func main() {
 	fmt.Println(cachedFactorial(10))
 }
 ```
+
 #### Output:
+
 ```
 3628800
 ```
+
 ---
 
 ## SafeCacheWrapper
-
 
 ### A thread-safe caching decorator
 
@@ -2786,7 +2811,9 @@ func main() {
 	fmt.Println(cachedFactorial(10))
 }
 ```
+
 #### Output:
+
 ```
 3628800
 ```
