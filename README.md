@@ -38,57 +38,25 @@ require github.com/kashifkhan0771/utils v0.3.0
 
 Here’s the completed table with descriptions, documentation, and examples for **errutils** and any missing parts:
 
-| Package Name  | Description                                       | Documentation                 | Examples                          |
-| ------------- | ------------------------------------------------- | ----------------------------- | --------------------------------- |
-| **boolean**   | Utilities for boolean value checking and toggling | [README](boolean/README.md)   | [EXAMPLES](boolean/EXAMPLES.md)   |
-| **caching**   | Cache management utilities                        | coming soon                   | coming soon                       |
-| **ctxutils**  | Context utilities                                 | [README](ctxutils/README.md)  | [EXAMPLES](ctxutils/EXAMPLES.md)  |
-| **errutils**  | Error aggregation and management utilities        | [README](errutils/README.md)  | [EXAMPLES](errutils/EXAMPLES.md)  |
-| **maps**      | Utilities for state and metadata maps             | [README](maps/README.md)      | [EXAMPLES](maps/EXAMPLES.md)      |
-| **pointers**  | Helper functions for working with pointer values  | [README](pointers/README.md)  | [EXAMPLES](pointers/EXAMPLES.md)  |
-| **rand**      | Random number and string generation utilities     | [README](rand/README.md)      | [EXAMPLES](rand/EXAMPLES.md)      |
-| **slice**     | Slice manipulation and de-duplication utilities   | [README](slice/README.md)     | [EXAMPLES](slice/EXAMPLES.md)     |
-| **strings**   | String manipulation and encoding utilities        | [README](strings/README.md)   | [EXAMPLES](strings/EXAMPLES.md)   |
-| **structs**   | Struct comparison utilities                       | [README](structs/README.md)   | [EXAMPLES](structs/EXAMPLES.md)   |
-| **templates** | Template rendering utilities                      | [README](templates/README.md) | [EXAMPLES](templates/EXAMPLES.md) |
-| **url**       | URL parsing and manipulation utilities            | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
-| **math**      | Mathematical utilities and helpers                | [README](math/README.md)      | [EXAMPLES](math/EXAMPLES.md)      |
-| **fake**      | Fake data generation (UUIDs, addresses, dates)    | [README](fake/README.md)      | [EXAMPLES](fake/EXAMPLES.md)      |
-| **timeutils** | Time and date manipulation utilities              | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
-| **logging**   | Flexible logging system for Golang                | [README](logging/README.md)   | [EXAMPLES](logging/EXAMPLES.md)   |
-
-### 16. File System Utilities
-
-- **FormatFileSize**: Formats a file size given in bytes into a human-readable string with appropriate units (B, KB, MB, GB, TB).
-
-- **FindFiles**: Searches for files with the specified extension in the given root directory and returns a slice of matching file paths.
-
-- **GetDirectorySize**: Calculates the total size (in bytes) of all files within the specified directory.
-
-- **FilesIdentical**: Compares two files byte by byte to determine if they are identical.
-
-- **DirsIdentical**: Compares two directories to determine if they are identical.
-
-- **GetFileMetadata**: Retrieves metadata for a specified file path. Returns a `FileMetadata` struct that can be marshaled to JSON.
-
-### 17. Caching
-
-The caching package provides utilities for creating caching decorators to enhance the performance of functions by storing computed results. It includes both thread-safe and non-thread-safe implementations.
-
-- **SafeCacheWrapper**: A thread-safe caching decorator that safely memoizes function results in concurrent environments.
-
-  - Uses `sync.Map` to ensure thread-safety
-  - Caches all results indefinitely (no eviction)
-  - Best suited for pure functions with limited input domains
-  - Safe for concurrent access but may impact performance under high contention
-
-- **CacheWrapper**: A non-thread-safe caching decorator that memoizes function results.
-  - Caches all results indefinitely (no eviction)
-  - Best suited for pure functions with limited input domains
-  - Not safe for concurrent access
-  - Use SafeCacheWrapper for concurrent scenarios
-
----
+| Package Name  | Description                                        | Documentation                 | Examples                          |
+| ------------- | -------------------------------------------------- | ----------------------------- | --------------------------------- |
+| **boolean**   | Utilities for boolean value checking and toggling  | [README](boolean/README.md)   | [EXAMPLES](boolean/EXAMPLES.md)   |
+| **caching**   | Cache management utilities                         | coming soon                   | coming soon                       |
+| **ctxutils**  | Context utilities                                  | [README](ctxutils/README.md)  | [EXAMPLES](ctxutils/EXAMPLES.md)  |
+| **errutils**  | Error aggregation and management utilities         | [README](errutils/README.md)  | [EXAMPLES](errutils/EXAMPLES.md)  |
+| **maps**      | Utilities for state and metadata maps              | [README](maps/README.md)      | [EXAMPLES](maps/EXAMPLES.md)      |
+| **pointers**  | Helper functions for working with pointer values   | [README](pointers/README.md)  | [EXAMPLES](pointers/EXAMPLES.md)  |
+| **rand**      | Random number and string generation utilities      | [README](rand/README.md)      | [EXAMPLES](rand/EXAMPLES.md)      |
+| **slice**     | Slice manipulation and de-duplication utilities    | [README](slice/README.md)     | [EXAMPLES](slice/EXAMPLES.md)     |
+| **strings**   | String manipulation and encoding utilities         | [README](strings/README.md)   | [EXAMPLES](strings/EXAMPLES.md)   |
+| **structs**   | Struct comparison utilities                        | [README](structs/README.md)   | [EXAMPLES](structs/EXAMPLES.md)   |
+| **templates** | Template rendering utilities                       | [README](templates/README.md) | [EXAMPLES](templates/EXAMPLES.md) |
+| **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
+| **math**      | Mathematical utilities and helpers                 | [README](math/README.md)      | [EXAMPLES](math/EXAMPLES.md)      |
+| **fake**      | Fake data generation (UUIDs, addresses, dates)     | [README](fake/README.md)      | [EXAMPLES](fake/EXAMPLES.md)      |
+| **timeutils** | Time and date manipulation utilities               | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
+| **logging**   | Flexible logging system for Golang                 | [README](logging/README.md)   | [EXAMPLES](logging/EXAMPLES.md)   |
+| **fsutils**   | File system utilities (size, metadata, comparison) | [README](fsutils/README.md)   | [EXAMPLES](fsutils/EXAMPLES.md)   |
 
 ## Examples:
 
