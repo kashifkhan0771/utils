@@ -53,16 +53,7 @@ Here’s the completed table with descriptions, documentation, and examples for 
 | **templates** | Template rendering utilities                      | [README](templates/README.md) | [EXAMPLES](templates/EXAMPLES.md) |
 | **url**       | URL parsing and manipulation utilities            | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
 | **math**      | Mathematical utilities and helpers                | [README](math/README.md)      | [EXAMPLES](math/EXAMPLES.md)      |
-
-### 13. Fake
-
-- **RandomUUID**: Generates a random UUID of version 4 and variant 2.
-
-- **RandomDate**: Generates a random date between 1st January 1970 and the current date.
-
-- **RandomPhoneNumber**: Generates a random US phone number in the format (XXX) XXX-XXXX.
-
-- **RandomAddress**: Generates a random US address including street, city, state, and ZIP code.
+| **fake**      | Fake data generation (UUIDs, addresses, dates)    | [README](fake/README.md)      | [EXAMPLES](fake/EXAMPLES.md)      |
 
 ### 14. Time Utilities
 
