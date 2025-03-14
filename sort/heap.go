@@ -21,6 +21,7 @@ func heapSort[T number](arr []T) []T {
 		arr[0], arr[i] = arr[i], arr[0] // Move current root to end
 		heapify(arr, i, 0)              // Call max heapify on the reduced heap
 	}
+
 	return arr
 }
 

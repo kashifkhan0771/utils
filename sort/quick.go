@@ -25,6 +25,7 @@ func quickSort[T number](arr []T, left, right int) []T {
 		quickSort(arr, left, pivot-1)
 		quickSort(arr, pivot+1, right)
 	}
+
 	return arr
 }
 
@@ -50,5 +51,6 @@ func partition[T number](arr []T, left, right int) int {
 		}
 	}
 	arr[i], arr[right] = arr[right], arr[i]
+
 	return i
 }

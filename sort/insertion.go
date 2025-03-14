@@ -18,5 +18,6 @@ func InsertionSort[T number](arr []T) []T {
 			}
 		}
 	}
+
 	return arr
 }

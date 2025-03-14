@@ -14,5 +14,6 @@ func BubbleSort[T number](arr []T) []T {
 			}
 		}
 	}
+
 	return arr
 }

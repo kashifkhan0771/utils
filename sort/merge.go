@@ -21,6 +21,7 @@ func mergeSort[T number](arr []T, left, right int) []T {
 		mergeSort(arr, mid+1, right)
 		merge(arr, left, mid, right)
 	}
+
 	return arr
 }
 

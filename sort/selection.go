@@ -21,5 +21,6 @@ func SelectionSort[T number](arr []T) []T {
 		}
 		arr[i], arr[minIndex] = arr[minIndex], arr[i]
 	}
+
 	return arr
 }
