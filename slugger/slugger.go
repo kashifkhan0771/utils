@@ -36,6 +36,8 @@ func (slugger *Slugger) Slug(s, separator string) string {
 		s = gomoji.ReplaceEmojisWithSlug(s)
 	}
 
+	s = strings.ToLower(s)
+
 	for old, new := range slugger.Substitutions {
 		s = strings.ReplaceAll(s, old, " "+new)
 	}

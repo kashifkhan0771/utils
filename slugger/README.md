@@ -13,10 +13,14 @@ The `slugger` package provides a simple and efficient way to generate URL-friend
 #### **Slugger Methods**
 
 - **`Slug(s, separator string) string`**:  
-    Generates a slugified version of the input string `s`. If `separator` is provided, it will be used to separate words in the slug; otherwise, a default separator is applied.
+    Generates a slugified version of the input string `s`. If `separator` is provided, it will be used to separate words in the slug; otherwise, a default separator(`-`) is applied.
+
+#### **Notes**
+
+- If a `substitutions` map is provided, it will replace all occurrences of the specified keys with their corresponding values. For example, given a substitution pair `{"the": ""}` and the input string `over there`, the resulting slug will be `over-re`.
 
 ## Examples:
 
-For examples of each function, please checkout [EXAMPLES.md](/slugger/EXAMPLES.md)
+For examples of each function, please check out [EXAMPLES.md](/slugger/EXAMPLES.md)
 
 ---

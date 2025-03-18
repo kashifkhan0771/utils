@@ -122,3 +122,26 @@ func main() {
 ```
 workspace/settings/2cf2653e-8ce3-4e88-aeef-a5f0c1cd1c7e
 ```
+
+### Remove stop words
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/kashifkhan0771/utils/slugger"
+)
+
+func main() {
+	s := slugger.New(map[string]string{"and": "", "the": "", "of": ""}, false, false)
+	fmt.Println(s.Slug("The Beauty and the Power of Nature", ""))
+}
+
+```
+
+#### Output:
+
+```
+beauty-power-nature
+```
