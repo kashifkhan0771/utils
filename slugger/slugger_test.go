@@ -87,3 +87,48 @@ func TestSlugger_Slug(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkSlugger_Slug(b *testing.B) {
+	slugger := &Slugger{
+		Separator: "-",
+		WithEmoji: false,
+		Substitutions: map[string]string{
+			"&": "and",
+		},
+		Unique: true,
+	}
+
+	for n := 0; n < b.N; n++ {
+		slugger.Slug("Wôrķšpáçè ~~sèťtïñğš~~", "")
+	}
+}
+
+func BenchmarkSlugger_Slug_WithEmoji(b *testing.B) {
+	slugger := &Slugger{
+		Separator: "-",
+		WithEmoji: true,
+		Substitutions: map[string]string{
+			"&": "and",
+		},
+		Unique: false,
+	}
+
+	for n := 0; n < b.N; n++ {
+		slugger.Slug("a 😺, 🐈‍⬛, and a 🦁 go to 🏞️", "")
+	}
+}
+
+func BenchmarkSlugger_Slug_CustomSeparator(b *testing.B) {
+	slugger := &Slugger{
+		Separator: "_",
+		WithEmoji: false,
+		Substitutions: map[string]string{
+			"&": "and",
+		},
+		Unique: false,
+	}
+
+	for n := 0; n < b.N; n++ {
+		slugger.Slug("Wôrķšpáçè ~~sèťtïñğš~~", "|")
+	}
+}
