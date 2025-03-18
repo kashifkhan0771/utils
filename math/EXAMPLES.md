@@ -358,3 +358,31 @@ func main() {
 ```
 
 ---
+
+## `Sqrt`
+
+### Find the square root of a given number.
+
+```go
+package main
+
+import (
+	"fmt"
+
+	utils "github.com/kashifkhan0771/utils/math"
+)
+
+func main() {
+	fmt.Println(utils.Sqrt(4))
+	fmt.Println(utils.Sqrt(2))
+}
+```
+
+#### Output:
+
+```
+2
+1.4142135623730951
+```
+
+---
