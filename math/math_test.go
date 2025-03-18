@@ -621,6 +621,76 @@ func TestLCM(t *testing.T) {
 	}
 }
 
+func TestSqrtForInts(t *testing.T) {
+	type args struct {
+		x int
+	}
+	tests := []struct {
+		name string
+		args args
+		want float64
+	}{
+		{
+			name: "success - square root of 4",
+			args: args{x: 4},
+			want: 2.0,
+		},
+		{
+			name: "success - square root of 0",
+			args: args{x: 0},
+			want: 0.0,
+		},
+		{
+			name: "success - square root of 2",
+			args: args{x: 2},
+			want: 1.414213562373095048801688724209698078569671875376,
+		},
+		{
+			name: "failure - square root of -1",
+			args: args{x: -1},
+			want: -1.0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, _ := Sqrt(tt.args.x)
+			if Abs(got-tt.want) > 1e-6 {
+				t.Errorf("Sqrt(%v) = %v, want %v", tt.args.x, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestSqrtForFloats(t *testing.T) {
+	type args struct {
+		x float64
+	}
+	tests := []struct {
+		name string
+		args args
+		want float64
+	}{
+		{
+			name: "success - square root of pi",
+			args: args{x: 3.14159265358979323846264338327950288419716939937510582097494459230781640628},
+			want: 1.77245385090551602729816748334114518279754945612238712821380778985291128458,
+		},
+		{
+			name: "success - square root of square root of 2",
+			args: args{x: 1.414213562373095048801688724209698078569671875376},
+			want: 1.189207115002721066717499970560475915292972092463,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, _ := Sqrt(tt.args.x)
+			if Abs(got-tt.want) > 1e-6 {
+				t.Errorf("Sqrt(%v) = %v, want %v", tt.args.x, got, tt.want)
+			}
+		})
+	}
+}
+
 // ================================================================================
 // ### BENCHMARKS
 // ================================================================================
@@ -660,5 +730,13 @@ func BenchmarkLCM(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		LCM(i, i+1)
+	}
+}
+
+func BenchmarkSqrt(b *testing.B) {
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		Sqrt(i)
 	}
 }

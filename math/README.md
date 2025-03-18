@@ -24,6 +24,8 @@
 
 - **LCM**: Finds the least common multiple (LCM) of two integers.
 
+- **Sqrt**: Finds square root of the given number. Works for both integers and floating-point numbers. If the input is negative, it returns the initial given number.
+
 ## Examples:
 
 For examples of each function, please checkout [EXAMPLES.md](/math/EXAMPLES.md)

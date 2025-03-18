@@ -19,7 +19,7 @@ type signedNumber interface {
 
 // Abs returns the absolute value of a number.
 // For negative inputs, it returns -x; otherwise, it returns x.
-func Abs[T signedNumber](x T) T {
+func Abs[T number](x T) T {
 	if x < 0 {
 		return -x
 	}
@@ -158,4 +158,25 @@ func LCM(x, y int) int {
 	}
 
 	return (x / GCD(x, y)) * y
+}
+
+// Sqrt computes the square root of a number using Newton's method.
+func Sqrt[T number](x T) (float64, error) {
+	if x < 0 {
+		return float64(x), errors.New("square root of a negative number is undefined")
+	} else if x == 0 {
+		return 0.0, nil
+	}
+
+	epsilon := 1e-10 // Precision threshold
+	z := float64(x)  // Initial guess
+
+	for {
+		nextZ := z - (z*z-float64(x))/(2*z)
+		if float64(Abs(nextZ-z)) < epsilon {
+			break
+		}
+		z = nextZ
+	}
+	return z, nil
 }
