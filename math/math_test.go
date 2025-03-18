@@ -737,6 +737,6 @@ func BenchmarkSqrt(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		Sqrt(i)
+		_, _ = Sqrt(i)
 	}
 }
