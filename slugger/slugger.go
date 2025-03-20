@@ -1,12 +1,10 @@
 package slugger
 
 import (
-	"fmt"
 	"strings"
 	"unicode"
 
 	"github.com/forPelevin/gomoji"
-	"github.com/google/uuid"
 	"golang.org/x/text/unicode/norm"
 )
 
@@ -14,15 +12,13 @@ type Slugger struct {
 	Separator     string            // Default character(s) used to separate words in the slug if not explicitly provided
 	Substitutions map[string]string // A map of string replacements to apply before generating the slug
 	WithEmoji     bool              // If true, emojis will be included in a slug-friendly format
-	Unique        bool              // If true, slugger will append a UUID to the end of the slug
 }
 
-func New(substitutions map[string]string, withEmoji, unique bool) *Slugger {
+func New(substitutions map[string]string, withEmoji bool) *Slugger {
 	return &Slugger{
 		Separator:     "-",
 		Substitutions: substitutions,
 		WithEmoji:     withEmoji,
-		Unique:        unique,
 	}
 }
 
@@ -54,12 +50,7 @@ func (slugger *Slugger) Slug(s, separator string) string {
 		}
 	}
 
-	slug := slugBuilder.String()
-	if slugger.Unique {
-		slug += fmt.Sprintf("%s%s", separator, uuid.New().String())
-	}
-
-	return slug
+	return slugBuilder.String()
 }
 
 func normalizeToSafeASCII(s string) string {

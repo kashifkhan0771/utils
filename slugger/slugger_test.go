@@ -1,7 +1,6 @@
 package slugger
 
 import (
-	"strings"
 	"testing"
 )
 
@@ -12,7 +11,6 @@ func TestSlugger_Slug(t *testing.T) {
 		separator     string
 		substitutions map[string]string
 		withEmoji     bool
-		unique        bool
 		expected      string
 	}{
 		{
@@ -48,20 +46,6 @@ func TestSlugger_Slug(t *testing.T) {
 			expected:  "hello-globe-showing-europe-africa",
 		},
 		{
-			name:      "With unique slug",
-			input:     "Hello World",
-			separator: "-",
-			unique:    true,
-			expected:  "hello-world-", // UUID will be appended
-		},
-		{
-			name:      "With unique slug and custom separator",
-			input:     "Hello World",
-			separator: "/",
-			unique:    true,
-			expected:  "hello/world/", // UUID will be appended
-		},
-		{
 			name:      "Normalize to safe ASCII",
 			input:     "Wôrķšpáçè ~~sèťtïñğš~~",
 			separator: "-",
@@ -71,18 +55,11 @@ func TestSlugger_Slug(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			slugger := New(tt.substitutions, tt.withEmoji, tt.unique)
+			slugger := New(tt.substitutions, tt.withEmoji)
 			result := slugger.Slug(tt.input, tt.separator)
 
-			if tt.unique {
-				// Check if the result starts with the expected prefix and ends with a UUID
-				if !strings.HasPrefix(result, tt.expected) || len(result) <= len(tt.expected) {
-					t.Errorf("expected slug to start with %q and include UUID, got %q", tt.expected, result)
-				}
-			} else {
-				if result != tt.expected {
-					t.Errorf("expected %q, got %q", tt.expected, result)
-				}
+			if result != tt.expected {
+				t.Errorf("expected %q, got %q", tt.expected, result)
 			}
 		})
 	}
@@ -95,7 +72,6 @@ func BenchmarkSlugger_Slug(b *testing.B) {
 		Substitutions: map[string]string{
 			"&": "and",
 		},
-		Unique: true,
 	}
 
 	for n := 0; n < b.N; n++ {
@@ -110,7 +86,6 @@ func BenchmarkSlugger_Slug_WithEmoji(b *testing.B) {
 		Substitutions: map[string]string{
 			"&": "and",
 		},
-		Unique: false,
 	}
 
 	for n := 0; n < b.N; n++ {
@@ -125,7 +100,6 @@ func BenchmarkSlugger_Slug_CustomSeparator(b *testing.B) {
 		Substitutions: map[string]string{
 			"&": "and",
 		},
-		Unique: false,
 	}
 
 	for n := 0; n < b.N; n++ {

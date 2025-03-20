@@ -100,29 +100,6 @@ func main() {
 a-grinning-cat-black-cat-and-a-lion-go-to-national-park
 ```
 
-### Generate a unique slug
-```go
-package main
-
-import (
-	"fmt"
-
-	"github.com/kashifkhan0771/utils/slugger"
-)
-
-func main() {
-	s := slugger.New(map[string]string{}, false, true)
-	fmt.Println(s.Slug("Wôrķšpáçè ~~sèťtïñğš~~", "/"))
-}
-
-```
-
-#### Output:
-
-```
-workspace/settings/2cf2653e-8ce3-4e88-aeef-a5f0c1cd1c7e
-```
-
 ### Remove stop words
 ```go
 package main

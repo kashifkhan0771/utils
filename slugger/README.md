@@ -4,11 +4,10 @@ The `slugger` package provides a simple and efficient way to generate URL-friend
 
 #### **Slugger Constructor**
 
-- **`New(substitutions map[string]string, withEmoji, unique bool) *Slugger`**:  
+- **`New(substitutions map[string]string, withEmoji bool) *Slugger`**:  
   Creates a new `Slugger` instance.
   - **`substitutions`**: A map of string replacements to apply before generating the slug.
   - **`withEmoji`**: If true, emojis will be included in a slug-friendly format.
-  - **`unique`**: If true, slugger will append a UUID to the end of the slug.
 
 #### **Slugger Methods**
 
