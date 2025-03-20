@@ -6,5 +6,8 @@ Explain the purpose of the PR.
 - [ ] **Golint Passing**: Confirm by running `make lint`.  
 
 #### If added a new utility function or updated existing function logic:
-* [ ] Updated [EXAMPLES.md](/EXAMPLES.md)
-* [ ] Updated [readME.md](/readME.md)
+* [ ] Updated the utility package `EXAMPLES.md`
+* [ ] Updated the utility package `README.md`
+
+#### If added a new utility package:
+* [ ] Updated the main `README.md` utility packages table
