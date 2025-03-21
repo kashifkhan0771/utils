@@ -9,6 +9,7 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"fmt"
+	"hash"
 )
 
 func EncryptAES(plaintext, key []byte) (ciphertext []byte, nonce []byte, err error) {
@@ -90,4 +91,50 @@ func ECDSAVerifyASN1(message, sig []byte, pubKey *ecdsa.PublicKey) bool {
 func HashSHA256(input string) string {
 	hash := sha256.Sum256([]byte(input))
 	return fmt.Sprintf("%x", hash)
+}
+
+const (
+	oKeyPadByte byte = 0x5c
+	iKeyPadByte byte = 0x36
+)
+
+func GenerateHMAC(key, message []byte, hash hash.Hash) string {
+	blockSizedKey := computeBlockSizedKey(key, hash, hash.BlockSize())
+	oKeyPad := make([]byte, hash.BlockSize())
+	iKeyPad := make([]byte, hash.BlockSize())
+
+	for i := range oKeyPad {
+		oKeyPad[i] = blockSizedKey[i] ^ oKeyPadByte
+		iKeyPad[i] = blockSizedKey[i] ^ iKeyPadByte
+	}
+
+	hash.Reset()
+	hash.Write(iKeyPad)
+	hash.Write(message)
+	innerHash := hash.Sum(nil)
+
+	hash.Reset()
+	hash.Write(oKeyPad)
+	hash.Write(innerHash)
+	hmac := hash.Sum(nil)
+	
+	return fmt.Sprintf("%x", hmac)
+}
+
+func computeBlockSizedKey(key []byte, hash hash.Hash, blockSize int) []byte {
+	if len(key) > blockSize {
+		hash.Reset()
+		hash.Write(key)
+		key = hash.Sum(nil)
+	}
+
+	for len(key) < blockSize {
+		key = append(key, 0)
+	}
+
+	return key
+}
+
+func VerifyHMAC(key, message []byte, hash hash.Hash, HMAC string) bool {
+	return GenerateHMAC(key, message, hash) == HMAC
 }
