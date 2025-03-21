@@ -60,13 +60,8 @@ func CompareStructs(old, new interface{}, prefix ...string) ([]Result, error) {
 			}
 			fullName := strings.Join(append(prefix, fieldName), ".")
 
-			// Handle nested structs or pointers to struct
-			ft := oldField.Type()
-			if ft.Kind() == reflect.Ptr {
-				ft = ft.Elem()
-			}
-
-			if ft.Kind() == reflect.Struct && ft.Name() != "Time" {
+			// Handle nested structs or pointers to struc
+			if oldField.Kind() == reflect.Struct && oldField.Type().Name() != "Time" {
 				// Recurse for nested structs (ignore time.Time)
 				nestedOld := oldField.Interface()
 				nestedNew := newField.Interface()
