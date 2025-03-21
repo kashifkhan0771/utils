@@ -3,6 +3,8 @@ package cryptoutils
 import (
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
@@ -63,4 +65,23 @@ func EncryptRSA(message []byte, publicKey *rsa.PublicKey) ([]byte, error) {
 
 func DecryptRSA(ciphertext []byte, privateKey *rsa.PrivateKey) ([]byte, error) {
 	return rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, ciphertext, nil)
+}
+
+func GenerateECDSAKeyPair(curve elliptic.Curve) (*ecdsa.PrivateKey, *ecdsa.PublicKey, error) {
+	privKey, err := ecdsa.GenerateKey(curve, rand.Reader)
+	if err != nil {
+		return &ecdsa.PrivateKey{}, &ecdsa.PublicKey{}, err
+	}
+
+	return privKey, &privKey.PublicKey, nil
+}
+
+func ECDSASignASN1(message []byte, privKey *ecdsa.PrivateKey) ([]byte, error) {
+	hash := sha256.Sum256(message)
+	return ecdsa.SignASN1(rand.Reader, privKey, hash[:])
+}
+
+func ECDSAVerifyASN1(message, sig []byte, pubKey *ecdsa.PublicKey) bool {
+	hash := sha256.Sum256(message)
+	return ecdsa.VerifyASN1(pubKey, hash[:], sig)
 }
