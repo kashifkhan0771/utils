@@ -138,3 +138,12 @@ func computeBlockSizedKey(key []byte, hash hash.Hash, blockSize int) []byte {
 func VerifyHMAC(key, message []byte, hash hash.Hash, HMAC string) bool {
 	return GenerateHMAC(key, message, hash) == HMAC
 }
+
+func GenerateSecureToken(length int) (string, error) {
+	token := make([]byte, length)
+	if _, err := rand.Read(token); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x", token), nil
+}
