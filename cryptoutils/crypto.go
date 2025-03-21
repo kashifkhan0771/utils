@@ -8,6 +8,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
+	"fmt"
 )
 
 func EncryptAES(plaintext, key []byte) (ciphertext []byte, nonce []byte, err error) {
@@ -84,4 +85,9 @@ func ECDSASignASN1(message []byte, privKey *ecdsa.PrivateKey) ([]byte, error) {
 func ECDSAVerifyASN1(message, sig []byte, pubKey *ecdsa.PublicKey) bool {
 	hash := sha256.Sum256(message)
 	return ecdsa.VerifyASN1(pubKey, hash[:], sig)
+}
+
+func HashSHA256(input string) string {
+	hash := sha256.Sum256([]byte(input))
+	return fmt.Sprintf("%x", hash)
 }
