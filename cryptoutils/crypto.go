@@ -55,35 +55,55 @@ func DecryptAES(ciphertext, key, nonce []byte) ([]byte, error) {
 func GenerateRSAKeyPair(bits int) (*rsa.PrivateKey, *rsa.PublicKey, error) {
 	privKey, err := rsa.GenerateKey(rand.Reader, bits)
 	if err != nil {
-		return &rsa.PrivateKey{}, &rsa.PublicKey{}, err
+		return nil, nil, err
 	}
 
 	return privKey, &privKey.PublicKey, nil
 }
 
-func EncryptRSA(message []byte, publicKey *rsa.PublicKey) ([]byte, error) {
-	return rsa.EncryptOAEP(sha256.New(), rand.Reader, publicKey, message, nil)
+func EncryptRSA(message []byte, pubKey *rsa.PublicKey) ([]byte, error) {
+	if pubKey == nil {
+		return []byte{}, fmt.Errorf("public key is required")
+	}
+
+	return rsa.EncryptOAEP(sha256.New(), rand.Reader, pubKey, message, nil)
 }
 
-func DecryptRSA(ciphertext []byte, privateKey *rsa.PrivateKey) ([]byte, error) {
-	return rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, ciphertext, nil)
+func DecryptRSA(ciphertext []byte, privKey *rsa.PrivateKey) ([]byte, error) {
+	if privKey == nil {
+		return []byte{}, fmt.Errorf("private key is required")
+	}
+
+	return rsa.DecryptOAEP(sha256.New(), rand.Reader, privKey, ciphertext, nil)
 }
 
 func GenerateECDSAKeyPair(curve elliptic.Curve) (*ecdsa.PrivateKey, *ecdsa.PublicKey, error) {
+	if curve == nil {
+		return nil, nil, fmt.Errorf("curve is required")
+	}
+
 	privKey, err := ecdsa.GenerateKey(curve, rand.Reader)
 	if err != nil {
-		return &ecdsa.PrivateKey{}, &ecdsa.PublicKey{}, err
+		return nil, nil, err
 	}
 
 	return privKey, &privKey.PublicKey, nil
 }
 
 func ECDSASignASN1(message []byte, privKey *ecdsa.PrivateKey) ([]byte, error) {
+	if privKey == nil {
+		return []byte{}, fmt.Errorf("private key is required")
+	}
+
 	hash := sha256.Sum256(message)
 	return ecdsa.SignASN1(rand.Reader, privKey, hash[:])
 }
 
 func ECDSAVerifyASN1(message, sig []byte, pubKey *ecdsa.PublicKey) bool {
+	if pubKey == nil {
+		return false
+	}
+
 	hash := sha256.Sum256(message)
 	return ecdsa.VerifyASN1(pubKey, hash[:], sig)
 }
@@ -117,7 +137,7 @@ func GenerateHMAC(key, message []byte, hash hash.Hash) string {
 	hash.Write(oKeyPad)
 	hash.Write(innerHash)
 	hmac := hash.Sum(nil)
-	
+
 	return fmt.Sprintf("%x", hmac)
 }
 
@@ -131,7 +151,7 @@ func computeBlockSizedKey(key []byte, hash hash.Hash, blockSize int) []byte {
 	for len(key) < blockSize {
 		key = append(key, 0)
 	}
-
+	
 	return key
 }
 
@@ -140,6 +160,10 @@ func VerifyHMAC(key, message []byte, hash hash.Hash, HMAC string) bool {
 }
 
 func GenerateSecureToken(length int) (string, error) {
+	if length < 0 {
+		return "", fmt.Errorf("length must be > 1")
+	}
+
 	token := make([]byte, length)
 	if _, err := rand.Read(token); err != nil {
 		return "", err
