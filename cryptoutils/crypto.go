@@ -4,6 +4,8 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
 )
 
 func EncryptAES(plaintext, key []byte) (ciphertext []byte, nonce []byte, err error) {
@@ -44,4 +46,21 @@ func DecryptAES(ciphertext, key, nonce []byte) ([]byte, error) {
 	}
 
 	return plaintext, nil
+}
+
+func GenerateRSAKeyPair(bits int) (*rsa.PrivateKey, *rsa.PublicKey, error) {
+	privKey, err := rsa.GenerateKey(rand.Reader, bits)
+	if err != nil {
+		return &rsa.PrivateKey{}, &rsa.PublicKey{}, err
+	}
+
+	return privKey, &privKey.PublicKey, nil
+}
+
+func EncryptRSA(message []byte, publicKey *rsa.PublicKey) ([]byte, error) {
+	return rsa.EncryptOAEP(sha256.New(), rand.Reader, publicKey, message, nil)
+}
+
+func DecryptRSA(ciphertext []byte, privateKey *rsa.PrivateKey) ([]byte, error) {
+	return rsa.DecryptOAEP(sha256.New(), rand.Reader, privateKey, ciphertext, nil)
 }
