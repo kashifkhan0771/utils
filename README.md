@@ -65,6 +65,7 @@ cd utils
 | **timeutils** | Time and date manipulation utilities               | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
 | **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
 | **slugger**       | A simple and efficient way to generate URL-friendly slugs from strings            | [README](slugger/README.md)       | [EXAMPLES](slugger/EXAMPLES.md)       |
+**cryptoutils**       | A set of cryptographic utility functions for various encryption, decryption, and cryptographic operations.            | [README](cryptoutils/README.md)       | [EXAMPLES](cryptoutils/EXAMPLES.md)       |
 
 ## Contributions
 
