@@ -532,3 +532,181 @@ func TestGenerateSecureToken(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkEncryptAES(b *testing.B) {
+	plaintext := []byte("This is a test plaintext message for encryption.")
+	key := []byte("thisis32bitlongpassphraseimusing")
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _, err := EncryptAES(plaintext, key)
+		if err != nil {
+			b.Fatalf("Error during encryption: %v", err)
+		}
+	}
+}
+
+func BenchmarkDecryptAES(b *testing.B) {
+	plaintext := []byte("This is a test plaintext message for encryption.")
+	key := []byte("thisis32bitlongpassphraseimusing")
+
+	ciphertext, nonce, err := EncryptAES(plaintext, key)
+	if err != nil {
+		b.Fatalf("Error during encryption for benchmarking decryption: %v", err)
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, err := DecryptAES(ciphertext, key, nonce)
+		if err != nil {
+			b.Fatalf("Error during decryption: %v", err)
+		}
+	}
+}
+
+func BenchmarkGenerateRSAKeyPair(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		_, _, err := GenerateRSAKeyPair(2048)
+		if err != nil {
+			b.Fatalf("Error during key pair generation: %v", err)
+		}
+	}
+}
+
+func BenchmarkEncryptRSA(b *testing.B) {
+	_, pubKey, err := GenerateRSAKeyPair(2048)
+	if err != nil {
+		b.Fatalf("Error generating key pair: %v", err)
+	}
+
+	message := []byte("This is a test message for RSA encryption.")
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, err := EncryptRSA(message, pubKey)
+		if err != nil {
+			b.Fatalf("Error during encryption: %v", err)
+		}
+	}
+}
+
+func BenchmarkDecryptRSA(b *testing.B) {
+	privKey, pubKey, err := GenerateRSAKeyPair(2048)
+	if err != nil {
+		b.Fatalf("Error generating key pair: %v", err)
+	}
+
+	message := []byte("This is a test message for RSA encryption.")
+	ciphertext, err := EncryptRSA(message, pubKey)
+	if err != nil {
+		b.Fatalf("Error during encryption: %v", err)
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, err := DecryptRSA(ciphertext, privKey)
+		if err != nil {
+			b.Fatalf("Error during decryption: %v", err)
+		}
+	}
+}
+
+func BenchmarkGenerateECDSAKeyPair(b *testing.B) {
+	curve := elliptic.P384()
+
+	for i := 0; i < b.N; i++ {
+		_, _, err := GenerateECDSAKeyPair(curve)
+		if err != nil {
+			b.Fatalf("Error during key pair generation: %v", err)
+		}
+	}
+}
+
+func BenchmarkECDSASignASN1(b *testing.B) {
+	curve := elliptic.P384()
+	privKey, _, err := GenerateECDSAKeyPair(curve)
+	if err != nil {
+		b.Fatalf("Error generating key pair: %v", err)
+	}
+
+	message := []byte("This is a test message for ECDSA signing.")
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, err := ECDSASignASN1(message, privKey)
+		if err != nil {
+			b.Fatalf("Error during signing: %v", err)
+		}
+	}
+}
+
+func BenchmarkECDSAVerifyASN1(b *testing.B) {
+	curve := elliptic.P384()
+	privKey, pubKey, err := GenerateECDSAKeyPair(curve)
+	if err != nil {
+		b.Fatalf("Error generating key pair: %v", err)
+	}
+
+	message := []byte("This is a test message for ECDSA signing.")
+	signature, err := ECDSASignASN1(message, privKey)
+	if err != nil {
+		b.Fatalf("Error during signing: %v", err)
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		if !ECDSAVerifyASN1(message, signature, pubKey) {
+			b.Fatalf("Error during verification")
+		}
+	}
+}
+
+func BenchmarkHashSHA256(b *testing.B) {
+	input := "This is a test string for SHA256 hashing."
+
+	for i := 0; i < b.N; i++ {
+		HashSHA256(input)
+	}
+}
+
+func BenchmarkGenerateHMAC(b *testing.B) {
+	key := []byte("testkey")
+	message := []byte("This is a test message for HMAC.")
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		GenerateHMAC(key, message, sha256.New())
+	}
+}
+
+func BenchmarkVerifyHMAC(b *testing.B) {
+	key := []byte("testkey")
+	message := []byte("This is a test message for HMAC.")
+	expectedHMAC := GenerateHMAC(key, message, sha256.New())
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		VerifyHMAC(key, message, sha256.New(), expectedHMAC)
+	}
+}
+
+func BenchmarkGenerateSecureToken(b *testing.B) {
+	length := 32
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, err := GenerateSecureToken(length)
+		if err != nil {
+			b.Fatalf("Error generating secure token: %v", err)
+		}
+	}
+}

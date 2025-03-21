@@ -12,6 +12,7 @@ import (
 	"hash"
 )
 
+// EncryptAES encrypts the given plaintext using AES-GCM with the provided key.
 func EncryptAES(plaintext, key []byte) (ciphertext []byte, nonce []byte, err error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
@@ -29,9 +30,11 @@ func EncryptAES(plaintext, key []byte) (ciphertext []byte, nonce []byte, err err
 	}
 
 	ciphertext = aesGCM.Seal(ciphertext, nonce, plaintext, nil)
+
 	return ciphertext, nonce, nil
 }
 
+// DecryptAES decrypts the given ciphertext using AES-GCM (Galois/Counter Mode).
 func DecryptAES(ciphertext, key, nonce []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
@@ -52,6 +55,7 @@ func DecryptAES(ciphertext, key, nonce []byte) ([]byte, error) {
 	return plaintext, nil
 }
 
+// GenerateRSAKeyPair generates an RSA key pair with the specified number of bits.
 func GenerateRSAKeyPair(bits int) (*rsa.PrivateKey, *rsa.PublicKey, error) {
 	privKey, err := rsa.GenerateKey(rand.Reader, bits)
 	if err != nil {
@@ -61,6 +65,8 @@ func GenerateRSAKeyPair(bits int) (*rsa.PrivateKey, *rsa.PublicKey, error) {
 	return privKey, &privKey.PublicKey, nil
 }
 
+// EncryptRSA encrypts a given message using RSA and the provided public key.
+// It uses the OAEP padding scheme.
 func EncryptRSA(message []byte, pubKey *rsa.PublicKey) ([]byte, error) {
 	if pubKey == nil {
 		return []byte{}, fmt.Errorf("public key is required")
@@ -69,6 +75,8 @@ func EncryptRSA(message []byte, pubKey *rsa.PublicKey) ([]byte, error) {
 	return rsa.EncryptOAEP(sha256.New(), rand.Reader, pubKey, message, nil)
 }
 
+// DecryptRSA decrypts the given ciphertext using the provided RSA private key.
+// It uses the OAEP padding scheme.
 func DecryptRSA(ciphertext []byte, privKey *rsa.PrivateKey) ([]byte, error) {
 	if privKey == nil {
 		return []byte{}, fmt.Errorf("private key is required")
@@ -77,6 +85,7 @@ func DecryptRSA(ciphertext []byte, privKey *rsa.PrivateKey) ([]byte, error) {
 	return rsa.DecryptOAEP(sha256.New(), rand.Reader, privKey, ciphertext, nil)
 }
 
+// GenerateECDSAKeyPair generates an ECDSA key pair.
 func GenerateECDSAKeyPair(curve elliptic.Curve) (*ecdsa.PrivateKey, *ecdsa.PublicKey, error) {
 	if curve == nil {
 		return nil, nil, fmt.Errorf("curve is required")
@@ -90,26 +99,33 @@ func GenerateECDSAKeyPair(curve elliptic.Curve) (*ecdsa.PrivateKey, *ecdsa.Publi
 	return privKey, &privKey.PublicKey, nil
 }
 
+// ECDSASignASN1 generates an ECDSA signature in ASN.1 format for the given message.
 func ECDSASignASN1(message []byte, privKey *ecdsa.PrivateKey) ([]byte, error) {
 	if privKey == nil {
 		return []byte{}, fmt.Errorf("private key is required")
 	}
 
 	hash := sha256.Sum256(message)
+
 	return ecdsa.SignASN1(rand.Reader, privKey, hash[:])
 }
 
+// ECDSAVerifyASN1 verifies an ECDSA signature in ASN.1 format for a given message and public key.
 func ECDSAVerifyASN1(message, sig []byte, pubKey *ecdsa.PublicKey) bool {
 	if pubKey == nil {
 		return false
 	}
 
 	hash := sha256.Sum256(message)
+
 	return ecdsa.VerifyASN1(pubKey, hash[:], sig)
 }
 
+// HashSHA256 computes the SHA-256 hash of the given input string and returns
+// the resulting hash as a hexadecimal-encoded string.
 func HashSHA256(input string) string {
 	hash := sha256.Sum256([]byte(input))
+
 	return fmt.Sprintf("%x", hash)
 }
 
@@ -118,6 +134,9 @@ const (
 	iKeyPadByte byte = 0x36
 )
 
+// GenerateHMAC generates a Hash-based Message Authentication Code (HMAC)
+// using the provided key, message, and hash function. It implements the
+// HMAC algorithm as defined in RFC 2104.
 func GenerateHMAC(key, message []byte, hash hash.Hash) string {
 	blockSizedKey := computeBlockSizedKey(key, hash, hash.BlockSize())
 	oKeyPad := make([]byte, hash.BlockSize())
@@ -151,14 +170,16 @@ func computeBlockSizedKey(key []byte, hash hash.Hash, blockSize int) []byte {
 	for len(key) < blockSize {
 		key = append(key, 0)
 	}
-	
+
 	return key
 }
 
+// VerifyHMAC verifies the integrity and authenticity of a message using HMAC.
 func VerifyHMAC(key, message []byte, hash hash.Hash, HMAC string) bool {
 	return GenerateHMAC(key, message, hash) == HMAC
 }
 
+// GenerateSecureToken generates a cryptographically secure random token of the specified length.
 func GenerateSecureToken(length int) (string, error) {
 	if length < 0 {
 		return "", fmt.Errorf("length must be > 1")
