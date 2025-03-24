@@ -1,7 +1,8 @@
 package slice
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"reflect"
 	"strings"
 	"testing"
@@ -76,11 +77,15 @@ func generateStrings(n int) []string {
 }
 
 func generateRandomInts(n int) []int {
-	r := rand.New(rand.NewSource(99))
-
+	max := big.NewInt(1000)
 	data := make([]int, n)
+
 	for i := 0; i < n; i++ {
-		data[i] = r.Intn(1000)
+		num, err := rand.Int(rand.Reader, max)
+		if err != nil {
+			panic(err)
+		}
+		data[i] = int(num.Int64())
 	}
 
 	return data

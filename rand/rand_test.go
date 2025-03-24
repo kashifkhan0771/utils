@@ -1,7 +1,8 @@
 package rand
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"strings"
 	"testing"
 )
@@ -352,9 +353,16 @@ func BenchmarkNumberCrypto(b *testing.B) {
 	}
 }
 
-// Using math/rand
+// Using crypto/rand
 func numberMathRand() (int64, error) {
-	return rand.Int63(), nil
+	max := big.NewInt(0).SetInt64(1<<63 - 1)
+
+	n, err := rand.Int(rand.Reader, max)
+	if err != nil {
+		return 0, err
+	}
+
+	return n.Int64(), nil
 }
 
 func BenchmarkNumberMath(b *testing.B) {

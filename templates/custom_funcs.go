@@ -44,7 +44,7 @@ var customFuncsMap = textTemplate.FuncMap{
 
 	// safe HTML rendering for trusted content
 	"safeHTML": func(s string) htmlTemplate.HTML {
-		return htmlTemplate.HTML(s)
+		return htmlTemplate.HTML(s) //nolint: gosec // assuming safe input
 	},
 }
 

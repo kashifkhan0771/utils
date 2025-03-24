@@ -19,12 +19,12 @@ const (
 
 // Int returns a pseudo-random integer
 func Int() int {
-	return randv2.Int()
+	return randv2.Int() //nolint: gosec // related to issue #107
 }
 
 // Int64 returns a pseudo-random 63-bit integer
 func Int64() int64 {
-	return randv2.Int64()
+	return randv2.Int64() //nolint: gosec // related to issue #107
 }
 
 // SecureNumber returns a cryptographically secure random number.
@@ -54,7 +54,7 @@ func NumberInRange(min, max int64) (int64, error) {
 	limit := math.MaxInt64 - (math.MaxInt64 % rangeSize)
 
 	for {
-		n := randv2.Int64N(math.MaxInt64)
+		n := randv2.Int64N(math.MaxInt64) //nolint: gosec // related to issue #107
 
 		if n < limit {
 			return min + (n % rangeSize), nil
@@ -119,7 +119,7 @@ func StringWithCharset(length int, charset string) (string, error) {
 	result := make([]byte, length)
 
 	for i := range length {
-		n := randv2.Int64N(int64(len(trimmedCharset)))
+		n := randv2.Int64N(int64(len(trimmedCharset))) //nolint: gosec // related to issue #107
 		result[i] = trimmedCharset[n]
 	}
 
