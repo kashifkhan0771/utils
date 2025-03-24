@@ -1,8 +1,6 @@
 package rand
 
 import (
-	"crypto/rand"
-	"math/big"
 	"strings"
 	"testing"
 )
@@ -344,31 +342,12 @@ func contains[T comparable](slice []T, item T) bool {
 // ### BENCHMARKS
 // ================================================================================
 
-// The crypto/rand package is secure but slow compared to math/rand and math/rand/v2
+// The crypto/rand package is secure but slow compared to math/rand/v2
 
 func BenchmarkNumberCrypto(b *testing.B) {
 	b.ReportAllocs()
 	for i := 0; i < b.N; i++ {
 		_, _ = SecureNumber()
-	}
-}
-
-// Using crypto/rand
-func numberMathRand() (int64, error) {
-	max := big.NewInt(0).SetInt64(1<<63 - 1)
-
-	n, err := rand.Int(rand.Reader, max)
-	if err != nil {
-		return 0, err
-	}
-
-	return n.Int64(), nil
-}
-
-func BenchmarkNumberMath(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		_, _ = numberMathRand()
 	}
 }
 
