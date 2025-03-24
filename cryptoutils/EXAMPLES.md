@@ -51,7 +51,7 @@ import (
 )
 
 func main() {
-	privKey, pubKey, err := cryptoutils.GenerateRSAKeyPair(2048)
+	privKey, pubKey, err := cryptoutils.GenerateRSAKeyPair(cryptoutils.StandardRSAKeyBits)
 	if err != nil {
 		log.Fatal(err)
 	}

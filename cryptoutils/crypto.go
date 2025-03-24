@@ -12,21 +12,23 @@ import (
 	"hash"
 )
 
+const StandardRSAKeyBits int = 2048
+
 // EncryptAES encrypts the given plaintext using AES-GCM with the provided key.
 func EncryptAES(plaintext, key []byte) (ciphertext []byte, nonce []byte, err error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return []byte{}, []byte{}, err
+		return nil, nil, err
 	}
 
 	aesGCM, err := cipher.NewGCM(block)
 	if err != nil {
-		return []byte{}, []byte{}, err
+		return nil, nil, err
 	}
 
 	nonce = make([]byte, aesGCM.NonceSize())
 	if _, err := rand.Read(nonce); err != nil {
-		return []byte{}, []byte{}, err
+		return nil, nil, err
 	}
 
 	ciphertext = aesGCM.Seal(ciphertext, nonce, plaintext, nil)
@@ -38,18 +40,18 @@ func EncryptAES(plaintext, key []byte) (ciphertext []byte, nonce []byte, err err
 func DecryptAES(ciphertext, key, nonce []byte) ([]byte, error) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 
 	aesGCM, err := cipher.NewGCM(block)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 
 	plaintext := make([]byte, 0)
 	plaintext, err = aesGCM.Open(plaintext, nonce, ciphertext, nil)
 	if err != nil {
-		return []byte{}, err
+		return nil, err
 	}
 
 	return plaintext, nil
@@ -69,7 +71,7 @@ func GenerateRSAKeyPair(bits int) (*rsa.PrivateKey, *rsa.PublicKey, error) {
 // It uses the OAEP padding scheme.
 func EncryptRSA(message []byte, pubKey *rsa.PublicKey) ([]byte, error) {
 	if pubKey == nil {
-		return []byte{}, fmt.Errorf("public key is required")
+		return nil, fmt.Errorf("public key is required")
 	}
 
 	return rsa.EncryptOAEP(sha256.New(), rand.Reader, pubKey, message, nil)
@@ -79,7 +81,7 @@ func EncryptRSA(message []byte, pubKey *rsa.PublicKey) ([]byte, error) {
 // It uses the OAEP padding scheme.
 func DecryptRSA(ciphertext []byte, privKey *rsa.PrivateKey) ([]byte, error) {
 	if privKey == nil {
-		return []byte{}, fmt.Errorf("private key is required")
+		return nil, fmt.Errorf("private key is required")
 	}
 
 	return rsa.DecryptOAEP(sha256.New(), rand.Reader, privKey, ciphertext, nil)
@@ -102,7 +104,7 @@ func GenerateECDSAKeyPair(curve elliptic.Curve) (*ecdsa.PrivateKey, *ecdsa.Publi
 // ECDSASignASN1 generates an ECDSA signature in ASN.1 format for the given message.
 func ECDSASignASN1(message []byte, privKey *ecdsa.PrivateKey) ([]byte, error) {
 	if privKey == nil {
-		return []byte{}, fmt.Errorf("private key is required")
+		return nil, fmt.Errorf("private key is required")
 	}
 
 	hash := sha256.Sum256(message)
@@ -181,8 +183,8 @@ func VerifyHMAC(key, message []byte, hash hash.Hash, HMAC string) bool {
 
 // GenerateSecureToken generates a cryptographically secure random token of the specified length.
 func GenerateSecureToken(length int) (string, error) {
-	if length < 0 {
-		return "", fmt.Errorf("length must be > 1")
+	if length <= 0 {
+		return "", fmt.Errorf("length must be > 0")
 	}
 
 	token := make([]byte, length)

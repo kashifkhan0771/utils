@@ -122,7 +122,7 @@ func TestGenerateRSAKeyPair(t *testing.T) {
 }
 
 func TestEncryptRSA(t *testing.T) {
-	_, pubKey, err := GenerateRSAKeyPair(2048)
+	_, pubKey, err := GenerateRSAKeyPair(StandardRSAKeyBits)
 	if err != nil {
 		t.Errorf("GenerateRSAKeyPair() error = %v", err)
 	}
@@ -167,7 +167,7 @@ func TestEncryptRSA(t *testing.T) {
 }
 
 func TestDecryptRSA(t *testing.T) {
-	privKey, pubKey, err := GenerateRSAKeyPair(2048)
+	privKey, pubKey, err := GenerateRSAKeyPair(StandardRSAKeyBits)
 	if err != nil {
 		t.Errorf("GenerateRSAKeyPair() error = %v", err)
 	}
@@ -568,7 +568,7 @@ func BenchmarkDecryptAES(b *testing.B) {
 
 func BenchmarkGenerateRSAKeyPair(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		_, _, err := GenerateRSAKeyPair(2048)
+		_, _, err := GenerateRSAKeyPair(StandardRSAKeyBits)
 		if err != nil {
 			b.Fatalf("Error during key pair generation: %v", err)
 		}
@@ -576,7 +576,7 @@ func BenchmarkGenerateRSAKeyPair(b *testing.B) {
 }
 
 func BenchmarkEncryptRSA(b *testing.B) {
-	_, pubKey, err := GenerateRSAKeyPair(2048)
+	_, pubKey, err := GenerateRSAKeyPair(StandardRSAKeyBits)
 	if err != nil {
 		b.Fatalf("Error generating key pair: %v", err)
 	}
@@ -594,7 +594,7 @@ func BenchmarkEncryptRSA(b *testing.B) {
 }
 
 func BenchmarkDecryptRSA(b *testing.B) {
-	privKey, pubKey, err := GenerateRSAKeyPair(2048)
+	privKey, pubKey, err := GenerateRSAKeyPair(StandardRSAKeyBits)
 	if err != nil {
 		b.Fatalf("Error generating key pair: %v", err)
 	}
