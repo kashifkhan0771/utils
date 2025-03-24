@@ -69,7 +69,7 @@ func TestFindFiles(t *testing.T) {
 	}
 
 	for _, file := range files {
-		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
+		if err := os.WriteFile(file.path, []byte(file.contents), 0600); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -179,7 +179,7 @@ func TestGetDirectorySize(t *testing.T) {
 
 	var expectedSize int64 = 0
 	for _, file := range files {
-		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
+		if err := os.WriteFile(file.path, []byte(file.contents), 0600); err != nil {
 			t.Fatal(err)
 		}
 		expectedSize += file.size
@@ -218,7 +218,7 @@ func TestFilesIdentical(t *testing.T) {
 	}
 
 	for _, file := range files {
-		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
+		if err := os.WriteFile(file.path, []byte(file.contents), 0600); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -281,13 +281,13 @@ func TestDirsIdentical(t *testing.T) {
 	}
 
 	for _, file := range files1 {
-		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
+		if err := os.WriteFile(file.path, []byte(file.contents), 0600); err != nil {
 			t.Fatal(err)
 		}
 	}
 
 	for _, file := range files2 {
-		if err := os.WriteFile(file.path, []byte(file.contents), 0644); err != nil {
+		if err := os.WriteFile(file.path, []byte(file.contents), 0600); err != nil {
 			t.Fatal(err)
 		}
 	}
@@ -303,7 +303,7 @@ func TestDirsIdentical(t *testing.T) {
 		}
 	})
 
-	if err := os.WriteFile(filepath.Join(tempDir2, "file2.txt"), []byte("modified"), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(tempDir2, "file2.txt"), []byte("modified"), 0600); err != nil {
 		t.Fatal(err)
 	}
 
@@ -318,7 +318,7 @@ func TestDirsIdentical(t *testing.T) {
 		}
 	})
 
-	if err := os.WriteFile(filepath.Join(tempDir2, "file4.txt"), []byte("file4"), 0644); err != nil {
+	if err := os.WriteFile(filepath.Join(tempDir2, "file4.txt"), []byte("file4"), 0600); err != nil {
 		t.Fatal(err)
 	}
 
@@ -387,7 +387,7 @@ func setupNestedDirs() (string, string, error) {
 			if err = os.MkdirAll(filepath.Dir(fullPath), 0755); err != nil {
 				return "", "", fmt.Errorf("failed to create directory for %s: %w", fullPath, err)
 			}
-			if err = os.WriteFile(fullPath, []byte(content), 0644); err != nil {
+			if err = os.WriteFile(fullPath, []byte(content), 0600); err != nil {
 				return "", "", fmt.Errorf("failed to write file %s: %w", fullPath, err)
 			}
 		}
@@ -407,7 +407,7 @@ func TestGetFileMetadata(t *testing.T) {
 	// Create a test file
 	filePath := filepath.Join(tempDir, "testfile.txt")
 	contents := "test file contents"
-	if err := os.WriteFile(filePath, []byte(contents), 0644); err != nil {
+	if err := os.WriteFile(filePath, []byte(contents), 0600); err != nil {
 		t.Fatal(err)
 	}
 
@@ -480,7 +480,7 @@ func TestGetFileMetadata(t *testing.T) {
 
 		// Create a file and a symlink to it
 		filePath := filepath.Join(tempDir, "testfile.txt")
-		if err := os.WriteFile(filePath, []byte("test"), 0644); err != nil {
+		if err := os.WriteFile(filePath, []byte("test"), 0600); err != nil {
 			t.Fatal(err)
 		}
 
@@ -520,7 +520,7 @@ func BenchmarkFindFiles(b *testing.B) {
 
 	for i := 0; i < 100; i++ {
 		filePath := filepath.Join(tempDir, fmt.Sprintf("%d.txt", i))
-		if err := os.WriteFile(filePath, []byte{}, 0644); err != nil {
+		if err := os.WriteFile(filePath, []byte{}, 0600); err != nil {
 			b.Fatal(err)
 		}
 	}
@@ -546,7 +546,7 @@ func BenchmarkGetDirectorySize(b *testing.B) {
 		if _, err := rand.Read(data); err != nil {
 			b.Fatal(err)
 		}
-		if err := os.WriteFile(filePath, data, 0644); err != nil {
+		if err := os.WriteFile(filePath, data, 0600); err != nil {
 			b.Fatal(err)
 		}
 	}
@@ -573,10 +573,10 @@ func BenchmarkFilesIdentical(b *testing.B) {
 		b.Fatal(err)
 	}
 
-	if err := os.WriteFile(file1, data, 0644); err != nil {
+	if err := os.WriteFile(file1, data, 0600); err != nil {
 		b.Fatal(err)
 	}
-	if err := os.WriteFile(file2, data, 0644); err != nil {
+	if err := os.WriteFile(file2, data, 0600); err != nil {
 		b.Fatal(err)
 	}
 
@@ -610,7 +610,7 @@ func BenchmarkGetFileMetadata(b *testing.B) {
 	defer os.RemoveAll(tempDir)
 
 	filePath := filepath.Join(tempDir, "testfile.txt")
-	if err := os.WriteFile(filePath, []byte("test"), 0644); err != nil {
+	if err := os.WriteFile(filePath, []byte("test"), 0600); err != nil {
 		b.Fatal(err)
 	}
 
