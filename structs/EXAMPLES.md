@@ -10,13 +10,13 @@ import (
 	"github.com/kashifkhan0771/utils/structs"
 )
 
-// Define a struct with fields tagged as `updateable`.
+// User Define a struct with fields tagged as `updatable`.
 type User struct {
-	ID        int    `updateable:"false"`       // Not updateable
-	Name      string `updateable:"true"`        // Updateable, uses default field name
-	Email     string `updateable:"email_field"` // Updateable, uses a custom tag name
-	Age       int    `updateable:"true"`        // Updateable, uses default field name
-	IsAdmin   bool   // Not tagged, so not updateable
+	ID      int    `updatable:"false"`       // Not updatable
+	Name    string `updatable:"true"`        // updatable, uses default field name
+	Email   string `updatable:"email_field"` // updatable, uses a custom tag name
+	Age     int    `updatable:"true"`        // updatable, uses default field name
+	IsAdmin bool   // Not tagged, so not updatable
 }
 
 func main() {

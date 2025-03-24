@@ -1,24 +1,41 @@
 package sort
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"strconv"
 	"testing"
 )
 
 func generateRandomSliceInt(size int) []int {
+	max := big.NewInt(1000)
 	slice := make([]int, size)
+
 	for i := 0; i < size; i++ {
-		slice[i] = rand.Intn(1000)
+		num, err := rand.Int(rand.Reader, max)
+		if err != nil {
+			panic(err)
+		}
+		slice[i] = int(num.Int64())
 	}
+
 	return slice
 }
 
 func generateRandomSliceFloat(size int) []float64 {
+	maxUint64 := new(big.Int).Lsh(big.NewInt(1), 53) // 2^53 for float64 precision
 	slice := make([]float64, size)
+
 	for i := 0; i < size; i++ {
-		slice[i] = rand.Float64() * 1000
+		n, err := rand.Int(rand.Reader, maxUint64)
+		if err != nil {
+			panic(err)
+		}
+		// Convert to float64 in range [0, 1), then scale to [0, 1000)
+		f := float64(n.Int64()) / float64(1<<53)
+		slice[i] = f * 1000
 	}
+
 	return slice
 }
 
