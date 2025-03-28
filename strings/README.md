@@ -15,6 +15,7 @@
 - **CommonSuffix**: Finds the longest common suffix of a set of strings.
 - **RunLengthEncode** Encodes a string using Run-length-encoding.
 - **RunLengthDecode** Decodes a string that has been encoded using Run-length-encoding. Ruturns the original string and an error if the encoding failed
+- **Truncate** Shortens a string to a maximum length and appends an omission suffix if truncated.
 
 ## Examples:
 

@@ -583,3 +583,51 @@ func BenchmarkCommonSuffix(b *testing.B) {
 		CommonSuffix("testing", "running", "jumping")
 	}
 }
+
+func TestTruncate(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		options *TruncateOptions
+		want    string
+	}{
+		{
+			name:    "truncate with default options",
+			input:   "This is a long string",
+			options: nil,
+			want:    "This is a lo...",
+		},
+		{
+			name:    "truncate with custom length and omission",
+			input:   "Hello World from Go",
+			options: &TruncateOptions{Length: 5, Omission: "--"},
+			want:    "Hello--",
+		},
+		{
+			name:    "no truncation needed (short string)",
+			input:   "Short",
+			options: nil,
+			want:    "Short",
+		},
+		{
+			name:    "truncate with custom omission only",
+			input:   "Custom omission example",
+			options: &TruncateOptions{Length: 10, Omission: "[cut]"},
+			want:    "Custom omi[cut]",
+		},
+		{
+			name:    "truncate with length only",
+			input:   "Length only test",
+			options: &TruncateOptions{Length: 6},
+			want:    "Length...",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Truncate(tt.input, tt.options); got != tt.want {
+				t.Errorf("Truncate() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
