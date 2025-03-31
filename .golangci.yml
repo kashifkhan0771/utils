@@ -1,5 +1,4 @@
-linters-settings:
-  version: "2"
+version: "2"
 
 run:
   timeout: 5m
@@ -10,8 +9,6 @@ linters:
     - govet
     - staticcheck
     - errcheck
-    - goimports
-    - gofmt
     - nlreturn
     - gosec
 issues:

@@ -26,4 +26,3 @@ jobs:
         with:
           version: v2.0
           skip-cache: true
-          args: --config=.golangci.yml --issues-exit-code=0
