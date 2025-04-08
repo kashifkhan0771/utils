@@ -595,13 +595,13 @@ func TestTruncate(t *testing.T) {
 			name:    "truncate with default options",
 			input:   "This is a long string",
 			options: nil,
-			want:    "This is a lo...",
+			want:    "This is a...",
 		},
 		{
 			name:    "truncate with custom length and omission",
 			input:   "Hello World from Go",
 			options: &TruncateOptions{Length: 5, Omission: "--"},
-			want:    "Hello--",
+			want:    "Hel--",
 		},
 		{
 			name:    "no truncation needed (short string)",
@@ -613,13 +613,13 @@ func TestTruncate(t *testing.T) {
 			name:    "truncate with custom omission only",
 			input:   "Custom omission example",
 			options: &TruncateOptions{Length: 10, Omission: "[cut]"},
-			want:    "Custom omi[cut]",
+			want:    "Custo[cut]",
 		},
 		{
 			name:    "truncate with length only",
 			input:   "Length only test",
 			options: &TruncateOptions{Length: 6},
-			want:    "Length...",
+			want:    "Len...",
 		},
 	}
 
