@@ -360,10 +360,6 @@ func Truncate(input string, opts *TruncateOptions) string {
 	length := 12
 	omission := "..."
 
-	if len(input) <= length {
-		return input
-	}
-
 	if opts != nil {
 		if opts.Length > 0 {
 			length = opts.Length
@@ -373,10 +369,15 @@ func Truncate(input string, opts *TruncateOptions) string {
 		}
 	}
 
+	if len(input) <= length {
+		return input
+	}
+
 	// Consider omission length in the final string length
 	effectiveLength := length - len(omission)
 	if effectiveLength <= 0 {
 		effectiveLength = 1  // Ensure at least one character from input if possible
 	}
+
 	return input[:effectiveLength] + omission
 }
