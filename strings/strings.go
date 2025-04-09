@@ -20,6 +20,12 @@ type SubstringSearchOptions struct {
 	ReturnIndexes   bool // Return the starting indexes of found substrings
 }
 
+// TruncateOptions represents optional parameters for the Truncate function.
+type TruncateOptions struct {
+	Length   int
+	Omission string
+}
+
 // SubstringSearch performs substring search in a string and optionally returns indexes.
 func SubstringSearch(input, substring string, options SubstringSearchOptions) []string {
 	var result []string
@@ -342,4 +348,36 @@ func CommonSuffix(input ...string) string {
 	}
 
 	return string(suffix)
+}
+
+// Truncate shortens a given input string based on provided options.
+// Parameters:
+// - input: the original string to truncate.
+// - opts: optional settings to specify truncation length and omission suffix.
+// If opts is nil or certain fields are unspecified, defaults are applied:
+// Length defaults to 12 and Omission defaults to "...".
+func Truncate(input string, opts *TruncateOptions) string {
+	length := 12
+	omission := "..."
+
+	if opts != nil {
+		if opts.Length > 0 {
+			length = opts.Length
+		}
+		if opts.Omission != "" {
+			omission = opts.Omission
+		}
+	}
+
+	if len(input) <= length {
+		return input
+	}
+
+	// Consider omission length in the final string length
+	effectiveLength := length - len(omission)
+	if effectiveLength <= 0 {
+		effectiveLength = 1 // Ensure at least one character from input if possible
+	}
+
+	return input[:effectiveLength] + omission
 }

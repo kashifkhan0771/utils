@@ -146,4 +146,16 @@ func main() {
 }
 ```
 
+### Truncate
+
+```go
+func main() {
+	short := Truncate("This is a long string that needs to be truncated", &TruncateOptions{Length: 20, Omission: "°°°"})
+	fmt.Println(short) // Output: This is a long strin°°°
+
+	defaultShort := Truncate("Short example", nil)
+fmt.Println(defaultShort) // Output: Short examp...
+}
+```
+
 ---
