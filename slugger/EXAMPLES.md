@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	s := slugger.New(map[string]string{}, false, false)
+	s := slugger.New(map[string]string{}, false)
 	fmt.Println(s.Slug("Wôrķšpáçè ~~sèťtïñğš~~", ""))
 }
 
@@ -36,7 +36,7 @@ import (
 )
 
 func main() {
-	s := slugger.New(map[string]string{}, false, false)
+	s := slugger.New(map[string]string{}, false)
 	// Will use the default separator
 	fmt.Println(s.Slug("Wôrķšpáçè ~~sèťtïñğš~~", ""))
 	// Will use the custom separator
@@ -64,7 +64,7 @@ import (
 )
 
 func main() {
-	s := slugger.New(map[string]string{"%": "percent", "€": "euro"}, false, false)
+	s := slugger.New(map[string]string{"%": "percent", "€": "euro"}, false)
 	fmt.Println(s.Slug("10% or 5€", ""))
 }
 
@@ -88,7 +88,7 @@ import (
 )
 
 func main() {
-	s := slugger.New(map[string]string{}, true, false)
+	s := slugger.New(map[string]string{}, true)
 	fmt.Println(s.Slug("a 😺, 🐈‍⬛, and a 🦁 go to 🏞️", ""))
 }
 
@@ -111,7 +111,7 @@ import (
 )
 
 func main() {
-	s := slugger.New(map[string]string{"and": "", "the": "", "of": ""}, false, false)
+	s := slugger.New(map[string]string{"and": "", "the": "", "of": ""}, false)
 	fmt.Println(s.Slug("The Beauty and the Power of Nature", ""))
 }
 
