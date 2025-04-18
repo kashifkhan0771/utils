@@ -48,6 +48,7 @@ cd utils
 | ------------- | -------------------------------------------------- | ----------------------------- | --------------------------------- |
 | **boolean**   | Utilities for boolean value checking and toggling  | [README](boolean/README.md)   | [EXAMPLES](boolean/EXAMPLES.md)   |
 | **caching**   | Cache management utilities                         | [README](caching/README.md)   | [EXAMPLES](caching/EXAMPLES.md)   |
+| **cryptoutils** | A set of cryptographic utility functions for various cryptographic operations            | [README](cryptoutils/README.md)       | [EXAMPLES](cryptoutils/EXAMPLES.md)       |
 | **ctxutils**  | Context utilities                                  | [README](ctxutils/README.md)  | [EXAMPLES](ctxutils/EXAMPLES.md)  |
 | **errutils**  | Error aggregation and management utilities         | [README](errutils/README.md)  | [EXAMPLES](errutils/EXAMPLES.md)  |
 | **fake**      | Fake data generation (UUIDs, addresses, dates)     | [README](fake/README.md)      | [EXAMPLES](fake/EXAMPLES.md)      |
@@ -58,14 +59,13 @@ cd utils
 | **pointers**  | Helper functions for working with pointer values   | [README](pointers/README.md)  | [EXAMPLES](pointers/EXAMPLES.md)  |
 | **rand**      | Random number and string generation utilities      | [README](rand/README.md)      | [EXAMPLES](rand/EXAMPLES.md)      |
 | **slice**     | Slice manipulation and de-duplication utilities    | [README](slice/README.md)     | [EXAMPLES](slice/EXAMPLES.md)     |
+| **slugger**   | A simple and efficient way to generate URL-friendly slugs from strings             | [README](slugger/README.md)       | [EXAMPLES](slugger/EXAMPLES.md)       |
 | **sort**      | Sorting algorithms                                 | [README](sort/README.md)      | [EXAMPLES](sort/EXAMPLES.md)      |
 | **strings**   | String manipulation and encoding utilities         | [README](strings/README.md)   | [EXAMPLES](strings/EXAMPLES.md)   |
 | **structs**   | Struct comparison utilities                        | [README](structs/README.md)   | [EXAMPLES](structs/EXAMPLES.md)   |
 | **templates** | Template rendering utilities                       | [README](templates/README.md) | [EXAMPLES](templates/EXAMPLES.md) |
 | **timeutils** | Time and date manipulation utilities               | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
 | **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
-| **slugger**       | A simple and efficient way to generate URL-friendly slugs from strings            | [README](slugger/README.md)       | [EXAMPLES](slugger/EXAMPLES.md)       |
-**cryptoutils**       | A set of cryptographic utility functions for various encryption, decryption, and cryptographic operations.            | [README](cryptoutils/README.md)       | [EXAMPLES](cryptoutils/EXAMPLES.md)       |
 
 ## Contributions
 
