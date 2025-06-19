@@ -67,6 +67,44 @@ func FindFiles(root string, extension string) ([]string, error) {
 	return files, nil
 }
 
+// FindFilesWithFilter searches for files in the given root directory using a custom filter function.
+// The filterFn parameter allows you to define arbitrary logic for file selection (e.g., size, mod time, type).
+// If filterFn is nil, all non-directory, non-symlink files are returned.
+func FindFilesWithFilter(root string, filterFn func(fs.FileInfo) bool) ([]string, error) {
+	root = filepath.Clean(root)
+	files := make([]string, 0)
+
+	err := filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Skip symlinks for safety and consistency
+		if info.Mode()&os.ModeSymlink != 0 {
+			return nil
+		}
+
+		// If filterFn is nil, default to non-directory, non-symlink files
+		if filterFn == nil {
+			if !info.IsDir() {
+				files = append(files, path)
+			}
+			return nil
+		}
+
+		if filterFn(info) {
+			files = append(files, path)
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return files, nil
+}
+
 // GetDirectorySize calculates the total size (in bytes) of all files within the specified directory
 func GetDirectorySize(path string) (int64, error) {
 	var size int64 = 0
