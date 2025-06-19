@@ -89,12 +89,14 @@ func FindFilesWithFilter(root string, filterFn func(fs.FileInfo) bool) ([]string
 			if !info.IsDir() {
 				files = append(files, path)
 			}
+
 			return nil
 		}
 
 		if filterFn(info) {
 			files = append(files, path)
 		}
+
 		return nil
 	})
 
