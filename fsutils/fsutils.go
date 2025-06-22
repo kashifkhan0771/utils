@@ -41,30 +41,10 @@ func FormatFileSize(size int64) string {
 // FindFiles searches for files with the specified extension in the given root directory
 // and returns a slice of matching file paths.
 func FindFiles(root string, extension string) ([]string, error) {
-	root = filepath.Clean(root)
-	files := make([]string, 0)
-
-	err := filepath.Walk(root, func(path string, info fs.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		if info.Mode()&os.ModeSymlink != 0 {
-			return nil
-		}
-
-		if !info.IsDir() && (filepath.Ext(path) == extension || extension == "") {
-			files = append(files, path)
-		}
-
-		return nil
-	})
-
-	if err != nil {
-		return nil, err
+	filter := func(info fs.FileInfo) bool {
+		return !info.IsDir() && (filepath.Ext(info.Name()) == extension || extension == "")
 	}
-
-	return files, nil
+	return FindFilesWithFilter(root, filter)
 }
 
 // FindFilesWithFilter searches for files in the given root directory using a custom filter function.
