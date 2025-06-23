@@ -41,6 +41,17 @@ func FormatFileSize(size int64) string {
 // FindFiles searches for files with the specified extension in the given root directory
 // and returns a slice of matching file paths.
 func FindFiles(root string, extension string) ([]string, error) {
+	filter := func(info fs.FileInfo) bool {
+		return !info.IsDir() && (filepath.Ext(info.Name()) == extension || extension == "")
+	}
+
+	return FindFilesWithFilter(root, filter)
+}
+
+// FindFilesWithFilter searches for files in the given root directory using a custom filter function.
+// The filterFn parameter allows you to define arbitrary logic for file selection (e.g., size, mod time, type).
+// If filterFn is nil, all non-directory, non-symlink files are returned.
+func FindFilesWithFilter(root string, filterFn func(fs.FileInfo) bool) ([]string, error) {
 	root = filepath.Clean(root)
 	files := make([]string, 0)
 
@@ -49,11 +60,21 @@ func FindFiles(root string, extension string) ([]string, error) {
 			return err
 		}
 
+		// Skip symlinks for safety and consistency
 		if info.Mode()&os.ModeSymlink != 0 {
 			return nil
 		}
 
-		if !info.IsDir() && (filepath.Ext(path) == extension || extension == "") {
+		// If filterFn is nil, default to non-directory, non-symlink files
+		if filterFn == nil {
+			if !info.IsDir() {
+				files = append(files, path)
+			}
+
+			return nil
+		}
+
+		if filterFn(info) {
 			files = append(files, path)
 		}
 

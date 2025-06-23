@@ -4,6 +4,8 @@
 
 - **FindFiles**: Searches for files with the specified extension in the given root directory and returns a slice of matching file paths.
 
+- **FindFilesWithFilter**: Searches for files in the given root directory using a custom filter function, allowing flexible filtering based on file attributes (size, modification time, name, etc.).
+
 - **GetDirectorySize**: Calculates the total size (in bytes) of all files within the specified directory.
 
 - **FilesIdentical**: Compares two files byte by byte to determine if they are identical.
