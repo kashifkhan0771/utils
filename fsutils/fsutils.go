@@ -44,6 +44,7 @@ func FindFiles(root string, extension string) ([]string, error) {
 	filter := func(info fs.FileInfo) bool {
 		return !info.IsDir() && (filepath.Ext(info.Name()) == extension || extension == "")
 	}
+
 	return FindFilesWithFilter(root, filter)
 }
 
