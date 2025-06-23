@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 func TestFormatFileSize(t *testing.T) {
@@ -500,6 +501,95 @@ func TestGetFileMetadata(t *testing.T) {
 	})
 }
 
+func TestFindFilesWithFilter(t *testing.T) {
+	tempDir, err := os.MkdirTemp("", "testdir")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	// Create test files with different sizes and mod times
+	testFiles := []struct {
+		name     string
+		content  string
+		modDelta time.Duration
+	}{
+		{"file1.txt", "abc", -48 * time.Hour},
+		{"file2.log", "def", -2 * time.Hour},
+		{"bigfile.log", string(make([]byte, 2*1024*1024)), -1 * time.Hour}, // 2MB
+		{".hiddenfile", "hidden", -3 * time.Hour},
+	}
+
+	for _, tf := range testFiles {
+		path := filepath.Join(tempDir, tf.name)
+		if err := os.WriteFile(path, []byte(tf.content), 0600); err != nil {
+			t.Fatal(err)
+		}
+		if tf.modDelta != 0 {
+			modTime := time.Now().Add(tf.modDelta)
+			if err := os.Chtimes(path, modTime, modTime); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+
+	t.Run("filter by extension and size", func(t *testing.T) {
+		files, err := FindFilesWithFilter(tempDir, func(info os.FileInfo) bool {
+			return !info.IsDir() && info.Size() > int64(1*MB) && filepath.Ext(info.Name()) == ".log"
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(files) != 1 || filepath.Base(files[0]) != "bigfile.log" {
+			t.Errorf("Expected only bigfile.log, got %v", files)
+		}
+	})
+
+	t.Run("filter by mod time (last 24h)", func(t *testing.T) {
+		files, err := FindFilesWithFilter(tempDir, func(info os.FileInfo) bool {
+			return !info.IsDir() && time.Since(info.ModTime()) < 24*time.Hour && (len(info.Name()) == 0 || info.Name()[0] != '.')
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		var found []string
+		for _, f := range files {
+			found = append(found, filepath.Base(f))
+		}
+		want := map[string]bool{"file2.log": true, "bigfile.log": true}
+		for _, f := range found {
+			if !want[f] {
+				t.Errorf("Unexpected file: %s", f)
+			}
+		}
+		if len(found) != len(want) {
+			t.Errorf("Expected %d files, got %d: %v", len(want), len(found), found)
+		}
+	})
+
+	t.Run("filter hidden files", func(t *testing.T) {
+		files, err := FindFilesWithFilter(tempDir, func(info os.FileInfo) bool {
+			return !info.IsDir() && len(info.Name()) > 0 && info.Name()[0] == '.'
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(files) != 1 || filepath.Base(files[0]) != ".hiddenfile" {
+			t.Errorf("Expected only .hiddenfile, got %v", files)
+		}
+	})
+
+	t.Run("nil filterFn returns all files", func(t *testing.T) {
+		files, err := FindFilesWithFilter(tempDir, nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(files) != len(testFiles) {
+			t.Errorf("Expected %d files, got %d", len(testFiles), len(files))
+		}
+	})
+}
+
 // ================================================================================
 // ### BENCMARKS
 // ================================================================================
@@ -619,5 +709,45 @@ func BenchmarkGetFileMetadata(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		_, _ = GetFileMetadata(filePath)
+	}
+}
+
+func BenchmarkFindFilesWithFilter(b *testing.B) {
+	tempDir, err := os.MkdirTemp("", "benchdir")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir)
+
+	// Create a mix of files: .log, .txt, .md, some large, some small
+	for i := 0; i < 100; i++ {
+		ext := ".txt"
+		if i%3 == 0 {
+			ext = ".log"
+		} else if i%5 == 0 {
+			ext = ".md"
+		}
+		filePath := filepath.Join(tempDir, fmt.Sprintf("file%d%s", i, ext))
+		var data []byte
+		if i%10 == 0 {
+			data = make([]byte, 2048) // 2KB
+		} else {
+			data = make([]byte, 512) // 512B
+		}
+		if _, err := rand.Read(data); err != nil {
+			b.Fatal(err)
+		}
+		if err := os.WriteFile(filePath, data, 0600); err != nil {
+			b.Fatal(err)
+		}
+	}
+
+	b.ReportAllocs()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_, _ = FindFilesWithFilter(tempDir, func(info os.FileInfo) bool {
+			return !info.IsDir() && info.Size() > 1024 && filepath.Ext(info.Name()) == ".log"
+		})
 	}
 }

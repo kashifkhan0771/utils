@@ -300,3 +300,58 @@ func main() {
   "ext": ".txt"
 }
 ```
+
+### Search for files with a custom filter function (FindFilesWithFilter)
+
+```go
+package main
+
+import (
+	"fmt"
+	"io/fs"
+	"log"
+	"path/filepath"
+	"time"
+
+	"github.com/kashifkhan0771/utils/fsutils"
+)
+
+func main() {
+	dir := "/path/to/your/dir"
+
+	// Example 1: Find all .log files larger than 1MB
+	files, err := fsutils.FindFilesWithFilter(dir, func(info fs.FileInfo) bool {
+		return !info.IsDir() && info.Size() > 1*fsutils.MB && filepath.Ext(info.Name()) == ".log"
+	})
+	if err != nil {
+		log.Fatalf("Error finding large .log files: %v", err)
+	}
+	fmt.Println("Large .log Files:", files)
+
+	// Example 2: Find all files modified in the last 24 hours
+	files, err = fsutils.FindFilesWithFilter(dir, func(info fs.FileInfo) bool {
+		return !info.IsDir() && time.Since(info.ModTime()) < 24*time.Hour
+	})
+	if err != nil {
+		log.Fatalf("Error finding recently modified files: %v", err)
+	}
+	fmt.Println("Recently Modified Files:", files)
+
+	// Example 3: Find all hidden files (starting with a dot)
+	files, err = fsutils.FindFilesWithFilter(dir, func(info fs.FileInfo) bool {
+		return !info.IsDir() && len(info.Name()) > 0 && info.Name()[0] == '.'
+	})
+	if err != nil {
+		log.Fatalf("Error finding hidden files: %v", err)
+	}
+	fmt.Println("Hidden Files:", files)
+}
+```
+
+#### Output:
+
+```
+Large .log Files: [/path/to/your/dir/bigfile.log]
+Recently Modified Files: [/path/to/your/dir/file1.txt /path/to/your/dir/file2.log]
+Hidden Files: [/path/to/your/dir/.hiddenfile]
+```
