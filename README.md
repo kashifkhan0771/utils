@@ -88,3 +88,13 @@ Powered by coffee, code, and these legends ☕💻:
 <a href="https://github.com/kashifkhan0771/utils/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=kashifkhan0771/utils" />
 </a>
+
+## Star History
+
+<a href="https://www.star-history.com/#kashifkhan0771/utils&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=kashifkhan0771/utils&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=kashifkhan0771/utils&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=kashifkhan0771/utils&type=Date" />
+ </picture>
+</a>
