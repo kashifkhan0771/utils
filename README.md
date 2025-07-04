@@ -67,7 +67,7 @@ cd utils
 | **timeutils** | Time and date manipulation utilities               | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
 | **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
 
-### Comparaison
+### Comparison
 
 | Feature / Utility Area     | `kashifkhan0771/utils`      | `go-commons-lang`                 | `gookit/goutil`                   |
 |---------------------------|-----------------------------|----------------------------------|----------------------------------|
