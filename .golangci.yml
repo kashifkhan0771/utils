@@ -1,20 +1,19 @@
-version: "2"
-
-linters:
-  enable:
-    - errcheck
-    - gosec
-    - govet
-    - nlreturn
-    - staticcheck
-
-issues:
-  exclude:
-    - path: _test\.go
-      linters:
-        - nlreturn
-        - errcheck
-        - gosec
-
 run:
   timeout: 5m
+
+linters:
+  disable-all: true
+  enable:
+    - govet
+    - staticcheck
+    - errcheck
+    - goimports
+    - gofmt
+    - nlreturn
+    - gosec
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    - path: _test\.go
+      linters:
+          - nlreturn
