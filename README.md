@@ -61,13 +61,15 @@ cd utils
 | **slice**     | Slice manipulation and de-duplication utilities    | [README](slice/README.md)     | [EXAMPLES](slice/EXAMPLES.md)     |
 | **slugger**   | A simple and efficient way to generate URL-friendly slugs from strings             | [README](slugger/README.md)       | [EXAMPLES](slugger/EXAMPLES.md)       |
 | **sort**      | Sorting algorithms                                 | [README](sort/README.md)      | [EXAMPLES](sort/EXAMPLES.md)      |
+| **stack**     | Stack data structure                               | [README](stack/README.md)     | [EXAMPLES](stack/EXAMPLES.md)     |
 | **strings**   | String manipulation and encoding utilities         | [README](strings/README.md)   | [EXAMPLES](strings/EXAMPLES.md)   |
 | **structs**   | Struct comparison utilities                        | [README](structs/README.md)   | [EXAMPLES](structs/EXAMPLES.md)   |
 | **templates** | Template rendering utilities                       | [README](templates/README.md) | [EXAMPLES](templates/EXAMPLES.md) |
 | **timeutils** | Time and date manipulation utilities               | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
 | **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
+| **conversion** | Conversion of data types, time, and temperatues   | [README](conversion/README.md) | [EXAMPLES](conversion/EXAMPLES.md)
 
-### Comparison
+## Comparison
 
 | Feature / Utility Area     | `kashifkhan0771/utils`      | `go-commons-lang`                 | `gookit/goutil`                   |
 |---------------------------|-----------------------------|----------------------------------|----------------------------------|
@@ -82,6 +84,7 @@ cd utils
 | Maps / Metadata Helpers   | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
 | Math Utilities            | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
 | Pointer Utilities         | ✅ Yes                      | ❌ No                            | ❌ No                            |
+| Conversion Utilities      | ✅ Yes                      | ❌ No                            | ❌ No                            |
 | Random Utilities          | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
 | Slice Utilities           | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
 | Slugify                   | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
