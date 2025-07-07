@@ -5,7 +5,7 @@ go 1.23.3
 require golang.org/x/text v0.26.0
 
 require (
-	github.com/forPelevin/gomoji v1.3.0
+	github.com/forPelevin/gomoji v1.3.1
 	golang.org/x/net v0.41.0
 )
 
