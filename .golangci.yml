@@ -7,10 +7,9 @@ linters:
     - govet
     - nlreturn
     - staticcheck
-  disable-all: true
 
 issues:
-  exclude-rules:
+  exclude:
     - path: _test\.go
       linters:
         - nlreturn
