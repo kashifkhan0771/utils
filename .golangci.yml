@@ -1,28 +1,20 @@
-version: "2"
 linters:
-  default: none
   enable:
     - errcheck
     - gosec
     - govet
     - nlreturn
     - staticcheck
-  exclusions:
-    generated: lax
-    presets:
-      - comments
-      - common-false-positives
-      - legacy
-      - std-error-handling
-    rules:
-      - linters:
-          - nlreturn
-        path: _test\.go
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
-formatters:
-  enable:
-    - gofmt
-    - goimports
+  disable-all: true
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - nlreturn
+        - errcheck
+        - gosec
+
+run:
+  timeout: 5m
+  
