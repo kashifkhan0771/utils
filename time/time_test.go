@@ -491,7 +491,7 @@ func TestCalculateAge(t *testing.T) {
 				leapYearAge := testTime.Year() - 2000
 
 				// Check if the current year is not a leap year AND today is before March 1st
-				if !(now.Year()%4 == 0 && (testTime.Year()%100 != 0 || testTime.Year()%400 == 0)) &&
+				if (testTime.Year()%4 != 0 || (testTime.Year()%100 == 0 && testTime.Year()%400 != 0)) &&
 					testTime.Before(time.Date(testTime.Year(), 3, 1, 0, 0, 0, 0, time.UTC)) {
 					leapYearAge--
 				}

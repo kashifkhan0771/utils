@@ -98,7 +98,7 @@ Returns:
 func CountTrue(values []bool) int {
 	count := 0
 	for _, b := range values {
-		if b == true {
+		if b {
 			count++ // Increment for each true value.
 		}
 	}
@@ -115,7 +115,7 @@ Returns:
 func CountFalse(values []bool) int {
 	count := 0
 	for _, b := range values {
-		if b == false {
+		if !b {
 			count++ // Increment for each false value.
 		}
 	}

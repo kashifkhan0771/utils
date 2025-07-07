@@ -29,7 +29,7 @@ func (s StateMap) IsState(stateType string) bool {
 
 // HasState check if particular state is present in the StateMap
 func (s StateMap) HasState(stateType string) bool {
-	ok, _ := s[stateType]
+	ok := s[stateType]
 
 	return ok
 }

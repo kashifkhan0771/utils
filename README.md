@@ -67,6 +67,34 @@ cd utils
 | **timeutils** | Time and date manipulation utilities               | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
 | **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
 
+### Comparison
+
+| Feature / Utility Area     | `kashifkhan0771/utils`      | `go-commons-lang`                 | `gookit/goutil`                   |
+|---------------------------|-----------------------------|----------------------------------|----------------------------------|
+| Boolean Utilities         | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| Caching                   | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
+| Cryptographic Utilities   | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| Context Utilities         | ✅ Yes                      | ❌ No                            | ❌ No                            |
+| Error Aggregation         | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
+| Fake Data (UUID, etc.)    | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| Filesystem Utilities      | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| Logging                   | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
+| Maps / Metadata Helpers   | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| Math Utilities            | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| Pointer Utilities         | ✅ Yes                      | ❌ No                            | ❌ No                            |
+| Random Utilities          | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| Slice Utilities           | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| Slugify                   | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
+| Sorting                   | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| String Utilities          | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| Struct Comparison         | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
+| Template Helpers          | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
+| Time Utilities            | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| URL Utilities             | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
+| Dependency-Free           | ✅ Yes                      | ❌ No                            | ❌ No                            |
+| Small API Surface         | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
+
+
 ## Contributions
 
 Contributions are welcome! If you'd like to contribute, feel free to open a pull request.
@@ -87,4 +115,14 @@ Powered by coffee, code, and these legends ☕💻:
 
 <a href="https://github.com/kashifkhan0771/utils/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=kashifkhan0771/utils" />
+</a>
+
+## Star History
+
+<a href="https://www.star-history.com/#kashifkhan0771/utils&Date">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=kashifkhan0771/utils&type=Date&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=kashifkhan0771/utils&type=Date" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=kashifkhan0771/utils&type=Date" />
+ </picture>
 </a>
