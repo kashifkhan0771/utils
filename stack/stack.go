@@ -29,6 +29,7 @@ func (s *Stack[T]) Pop() (T, bool) {
 
 	if len(s.data) == 0 {
 		var zero T
+
 		return zero, false
 	}
 
