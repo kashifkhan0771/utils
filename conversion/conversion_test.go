@@ -569,7 +569,7 @@ func TestFahrenheitToKelvin(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := conversion.FahrenheitToKelvin(tt.arg)
 			if got != tt.want {
-				t.Errorf("FahrenheitToCelsius(%v) = %v, want %v", tt.arg, got, tt.want)
+				t.Errorf("FahrenheitToKelvin(%v) = %v, want %v", tt.arg, got, tt.want)
 			}
 		})
 	}
