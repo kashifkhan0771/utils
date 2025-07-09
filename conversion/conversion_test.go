@@ -6,7 +6,7 @@ import (
 	"github.com/kashifkhan0771/utils/conversion"
 )
 
-func TestBytesToK(t *testing.T) {
+func TestBytesToKB(t *testing.T) {
 	tests := []struct {
 		name string
 		arg  int64
