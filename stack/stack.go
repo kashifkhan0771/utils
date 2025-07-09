@@ -47,6 +47,7 @@ func (s *Stack[T]) Peek() (T, bool) {
 
 	if len(s.data) == 0 {
 		var zero T
+
 		return zero, false
 	}
 
