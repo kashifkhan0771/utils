@@ -41,17 +41,17 @@ func (s *Stack[T]) Pop() (T, bool) {
 
 // Peek returns the top element without removing it.
 // Returns the zero value and false if the stack is empty.
-func (s *Stack[T]) Peek() (T, bool) {
+func (s *Stack[T]) Peek(n int) (T, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	if len(s.data) == 0 {
+	if (len(s.data) - n - 1) < 0 {
 		var zero T
 
 		return zero, false
 	}
 
-	return s.data[len(s.data)-1], true
+	return s.data[len(s.data)-n-1], true
 }
 
 // IsEmpty returns true if the stack is empty.
