@@ -67,7 +67,7 @@ cd utils
 | **templates** | Template rendering utilities                       | [README](templates/README.md) | [EXAMPLES](templates/EXAMPLES.md) |
 | **timeutils** | Time and date manipulation utilities               | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
 | **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
-
+| **conversion** | Conversion of data types, time, and temperatues   | [README](conversion/README.md) | [EXAMPLES](conversion/EXAMPLES.md)
 
 ## Comparison
 
@@ -84,6 +84,7 @@ cd utils
 | Maps / Metadata Helpers   | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
 | Math Utilities            | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
 | Pointer Utilities         | ✅ Yes                      | ❌ No                            | ❌ No                            |
+| Conversion Utilities      | ✅ Yes                      | ❌ No                            | ❌ No                            |
 | Random Utilities          | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
 | Slice Utilities           | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
 | Slugify                   | ✅ Yes                      | ❌ No                            | ✅ Yes                           |

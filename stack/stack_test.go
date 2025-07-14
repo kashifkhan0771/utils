@@ -29,6 +29,11 @@ func TestStackBasic(t *testing.T) {
 		t.Errorf("Peek() = %v, %v; want 20, true", val, ok)
 	}
 
+	val, ok = stack.PeekNthElement(2)
+	if !ok || val != 10 {
+		t.Errorf("Peek() = %v, %v; want 10, true", val, ok)
+	}
+
 	val, ok = stack.Peek()
 	if !ok || val != 30 {
 		t.Errorf("Peek() = %v, %v; want 30, true", val, ok)
