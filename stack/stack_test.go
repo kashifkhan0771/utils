@@ -19,24 +19,24 @@ func TestStackBasic(t *testing.T) {
 		t.Errorf("Expected stack size 3, got %d", stack.Size())
 	}
 
-	val, ok := stack.Peek(0)
+	val, ok := stack.Peek()
 	if !ok || val != 30 {
-		t.Errorf("Peek(0) = %v, %v; want 30, true", val, ok)
+		t.Errorf("Peek() = %v, %v; want 30, true", val, ok)
 	}
 
-	val, ok = stack.Peek(1)
+	val, ok = stack.PeekNthElement(1)
 	if !ok || val != 20 {
-		t.Errorf("Peek(1) = %v, %v; want 20, true", val, ok)
+		t.Errorf("Peek() = %v, %v; want 20, true", val, ok)
 	}
 
-	val, ok = stack.Peek(2)
-	if !ok || val != 10 {
-		t.Errorf("Peek(2) = %v, %v; want 10, true", val, ok)
+	val, ok = stack.Peek()
+	if !ok || val != 30 {
+		t.Errorf("Peek() = %v, %v; want 30, true", val, ok)
 	}
 
-	val, ok = stack.Peek(3)
-	if ok {
-		t.Errorf("Peek(3) = %v, %v; want 0, false", val, ok)
+	val, ok = stack.Peek()
+	if !ok || val != 30 {
+		t.Errorf("Peek() = %v, %v; want 30, true", val, ok)
 	}
 
 	val, ok = stack.Pop()
@@ -74,7 +74,7 @@ func TestStackWithStrings(t *testing.T) {
 		t.Errorf("Pop() = %v, %v; want 'b', true", val, ok)
 	}
 
-	val, ok = stack.Peek(0)
+	val, ok = stack.Peek()
 	if !ok || val != "a" {
 		t.Errorf("Peek(0) = %v, %v; want 'a', true", val, ok)
 	}
@@ -118,7 +118,7 @@ func TestStackWithStructs(t *testing.T) {
 		t.Errorf("Pop() = %v, %v; want %v, true", val, ok, p2)
 	}
 
-	val, ok = stack.Peek(0)
+	val, ok = stack.Peek()
 	if !ok || val != p1 {
 		t.Errorf("Peek(0) = %v, %v; want %v, true", val, ok, p1)
 	}
