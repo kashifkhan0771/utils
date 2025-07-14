@@ -22,19 +22,19 @@ func TestStackBasic(t *testing.T) {
 		t.Errorf("Expected stack size 3, got %d", stack.Size())
 	}
 
-	val, ok := stack.Peek(0)
+	val, ok := stack.PeekNthElement(0)
 	if !ok || val != 30 {
-		t.Errorf("Peek(0) = %v, %v; want 30, true", val, ok)
+		t.Errorf("PeekNthElement(0) = %v, %v; want 30, true", val, ok)
 	}
 
-	val, ok = stack.Peek(1)
+	val, ok = stack.PeekNthElement(1)
 	if !ok || val != 20 {
-		t.Errorf("Peek(1) = %v, %v; want 20, true", val, ok)
+		t.Errorf("PeekNthElement(1) = %v, %v; want 20, true", val, ok)
 	}
 
-	val, ok = stack.Peek(2)
+	val, ok = stack.PeekNthElement(2)
 	if !ok || val != 10 {
-		t.Errorf("Peek(2) = %v, %v; want 10, true", val, ok)
+		t.Errorf("PeekNthElement(2) = %v, %v; want 10, true", val, ok)
 	}
 
 	val, ok = stack.Pop()
