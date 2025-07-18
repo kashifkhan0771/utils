@@ -1,6 +1,7 @@
 package image
 
 import (
+	"bytes"
 	"fmt"
 	"image"
 	"image/color"
@@ -42,12 +43,7 @@ func LoadFromFile(path string) (*Image, error) {
 	defer f.Close()
 
 	format := ImageFormat(filepath.Ext(path)[1:])
-	img, err := decodeImage(format, f)
-	if err != nil {
-		return nil, err
-	}
-
-	return new(format, img), nil
+	return LoadFromReader(format, f)
 }
 
 func LoadFromURL(url string) (*Image, error) {
@@ -67,7 +63,16 @@ func LoadFromURL(url string) (*Image, error) {
 	}
 
 	format := ImageFormat(extensions[0][1:])
-	img, err := decodeImage(format, resp.Body)
+	return LoadFromReader(format, resp.Body)
+}
+
+func LoadFromBytes(format ImageFormat, data []byte) (*Image, error) {
+	buf := bytes.NewBuffer(data)
+	return LoadFromReader(format, buf)
+}
+
+func LoadFromReader(format ImageFormat, r io.Reader) (*Image, error) {
+	img, err := decodeImage(format, r)
 	if err != nil {
 		return nil, err
 	}
