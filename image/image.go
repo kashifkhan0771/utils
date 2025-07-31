@@ -2,6 +2,7 @@ package image
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"image"
 	"image/color"
@@ -80,7 +81,7 @@ func LoadFromBytes(format ImageFormat, data []byte) (*Image, error) {
 }
 
 func LoadFromReader(format ImageFormat, r io.Reader) (*Image, error) {
-	img, err := decodeImage(format, r)
+	img, err := decodeTo(format, r)
 	if err != nil {
 		return nil, err
 	}
@@ -96,14 +97,33 @@ func (img *Image) SaveToFile(path string) error {
 	}
 	defer f.Close()
 
-	return img.encodeImage(f)
+	return img.encodeTo(f)
 }
 
 func (img *Image) SaveToWriter(writer io.Writer) error {
-	return img.encodeImage(writer)
+	return img.encodeTo(writer)
 }
 
-func decodeImage(format ImageFormat, r io.Reader) (image.Image, error) {
+func (img *Image) ToBytes() ([]byte, error) {
+	var buf bytes.Buffer
+	err := img.encodeTo(&buf)
+	if err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
+}
+
+func (img *Image) ToBase64() (string, error) {
+	b, err := img.ToBytes()
+	if err != nil {
+		return "", err
+	}
+
+	return base64.StdEncoding.EncodeToString(b), nil
+}
+
+func decodeTo(format ImageFormat, r io.Reader) (image.Image, error) {
 	switch format {
 	case FormatJPG, FormatJPEG, FormatJFIF, FormatJPE:
 		return jpeg.Decode(r)
@@ -114,7 +134,7 @@ func decodeImage(format ImageFormat, r io.Reader) (image.Image, error) {
 	}
 }
 
-func (img *Image) encodeImage(w io.Writer) error {
+func (img *Image) encodeTo(w io.Writer) error {
 	switch img.Format {
 	case FormatJPG, FormatJPEG, FormatJFIF, FormatJPE:
 		return jpeg.Encode(w, img.Image, nil)
