@@ -43,11 +43,17 @@ func LoadFromFile(path string) (*Image, error) {
 	defer f.Close()
 
 	format := ImageFormat(filepath.Ext(path)[1:])
+
 	return LoadFromReader(format, f)
 }
 
 func LoadFromURL(url string) (*Image, error) {
-	resp, err := http.Get(url)
+	req, err := http.NewRequest(http.MethodPost, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -63,11 +69,13 @@ func LoadFromURL(url string) (*Image, error) {
 	}
 
 	format := ImageFormat(extensions[0][1:])
+
 	return LoadFromReader(format, resp.Body)
 }
 
 func LoadFromBytes(format ImageFormat, data []byte) (*Image, error) {
 	buf := bytes.NewBuffer(data)
+
 	return LoadFromReader(format, buf)
 }
 
@@ -80,6 +88,21 @@ func LoadFromReader(format ImageFormat, r io.Reader) (*Image, error) {
 	return new(format, img), nil
 }
 
+func (img *Image) SaveToFile(path string) error {
+	path = filepath.Clean(path)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0664)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	return img.encodeImage(f)
+}
+
+func (img *Image) SaveToWriter(writer io.Writer) error {
+	return img.encodeImage(writer)
+}
+
 func decodeImage(format ImageFormat, r io.Reader) (image.Image, error) {
 	switch format {
 	case FormatJPG, FormatJPEG, FormatJFIF, FormatJPE:
@@ -88,6 +111,17 @@ func decodeImage(format ImageFormat, r io.Reader) (image.Image, error) {
 		return png.Decode(r)
 	default:
 		return nil, fmt.Errorf("invalid or unsupported image format: %s", format)
+	}
+}
+
+func (img *Image) encodeImage(w io.Writer) error {
+	switch img.Format {
+	case FormatJPG, FormatJPEG, FormatJFIF, FormatJPE:
+		return jpeg.Encode(w, img.Image, nil)
+	case FormatPNG:
+		return png.Encode(w, img.Image)
+	default:
+		return fmt.Errorf("invalid or unsupported image format: %s", img.Format)
 	}
 }
 
