@@ -146,6 +146,43 @@ func (img *Image) ResizeSelf(width, height uint, interp resize.InterpolationFunc
 	img.ColorModel = img.Image.ColorModel()
 }
 
+func (img *Image) Scale(factor float64, interp resize.InterpolationFunction) (*Image, error) {
+	if factor <= 0 {
+		return nil, fmt.Errorf("factor must be positive")
+	}
+
+	w := uint(float64(img.Width) * factor)
+	h := uint(float64(img.Height) * factor)
+
+	return img.Resize(w, h, interp), nil
+}
+
+func (img *Image) ScaleSelf(factor float64, interp resize.InterpolationFunction) error {
+	if factor <= 0 {
+		return fmt.Errorf("factor must be positive")
+	}
+
+	w := uint(float64(img.Width) * factor)
+	h := uint(float64(img.Height) * factor)
+	img.ResizeSelf(w, h, interp)
+
+	return nil
+}
+
+func (img *Image) ScaleDown(maxWidth, maxHeight uint, interp resize.InterpolationFunction) (*Image, error) {
+	w, h := img.Width, img.Height
+	if w <= maxWidth && h <= maxHeight {
+		// No need to scale down
+		return img, nil
+	}
+
+	ratioW := float64(maxWidth) / float64(w)
+	ratioH := float64(maxHeight) / float64(h)
+	scale := min(ratioW, ratioH)
+
+	return img.Scale(scale, interp)
+}
+
 func decodeTo(format ImageFormat, r io.Reader) (image.Image, error) {
 	switch format {
 	case FormatJPG, FormatJPEG, FormatJFIF, FormatJPE:
