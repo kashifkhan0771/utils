@@ -13,13 +13,15 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/nfnt/resize"
 )
 
 type Image struct {
 	Image  image.Image
 	Format ImageFormat
-	Width  int
-	Height int
+	Width  uint
+	Height uint
 
 	// Metadata
 	ColorModel color.Model
@@ -49,7 +51,7 @@ func LoadFromFile(path string) (*Image, error) {
 }
 
 func LoadFromURL(url string) (*Image, error) {
-	req, err := http.NewRequest(http.MethodPost, url, nil)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +88,7 @@ func LoadFromReader(format ImageFormat, r io.Reader) (*Image, error) {
 		return nil, err
 	}
 
-	return new(format, img), nil
+	return newImage(format, img), nil
 }
 
 func (img *Image) SaveToFile(path string) error {
@@ -123,6 +125,27 @@ func (img *Image) ToBase64() (string, error) {
 	return base64.StdEncoding.EncodeToString(b), nil
 }
 
+func (img *Image) Resize(width, height uint, interp resize.InterpolationFunction) *Image {
+	resized := resize.Resize(width, height, img.Image, interp)
+
+	return newImage(img.Format, resized)
+}
+
+func (img *Image) ResizeToWidth(width uint, interp resize.InterpolationFunction) *Image {
+	return img.Resize(width, img.Height, interp)
+}
+
+func (img *Image) ResizeToHeight(height uint, interp resize.InterpolationFunction) *Image {
+	return img.Resize(img.Width, height, interp)
+}
+
+func (img *Image) ResizeSelf(width, height uint, interp resize.InterpolationFunction) {
+	img.Image = resize.Resize(width, height, img.Image, interp)
+	img.Width = width
+	img.Height = height
+	img.ColorModel = img.Image.ColorModel()
+}
+
 func decodeTo(format ImageFormat, r io.Reader) (image.Image, error) {
 	switch format {
 	case FormatJPG, FormatJPEG, FormatJFIF, FormatJPE:
@@ -145,12 +168,20 @@ func (img *Image) encodeTo(w io.Writer) error {
 	}
 }
 
-func new(format ImageFormat, img image.Image) *Image {
+func newImage(format ImageFormat, img image.Image) *Image {
+	bounds := img.Bounds()
+	width := bounds.Max.X - bounds.Min.X
+	height := bounds.Max.Y - bounds.Min.Y
+
+	if width < 0 || height < 0 {
+		panic("invalid image bounds: negative width or height")
+	}
+
 	return &Image{
 		Image:      img,
 		Format:     format,
-		Width:      img.Bounds().Max.X - img.Bounds().Min.X,
-		Height:     img.Bounds().Max.Y - img.Bounds().Min.Y,
+		Width:      uint(width),
+		Height:     uint(height),
 		ColorModel: img.ColorModel(),
 	}
 }
