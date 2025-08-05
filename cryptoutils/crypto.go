@@ -8,6 +8,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
+	"crypto/subtle"
 	"fmt"
 	"hash"
 )
@@ -178,7 +179,9 @@ func computeBlockSizedKey(key []byte, hash hash.Hash, blockSize int) []byte {
 
 // VerifyHMAC verifies the integrity and authenticity of a message using HMAC.
 func VerifyHMAC(key, message []byte, hashFn hash.Hash, HMAC string) bool {
-	return GenerateHMAC(key, message, hashFn) == HMAC
+	expected := GenerateHMAC(key, message, hashFn)
+
+	return subtle.ConstantTimeCompare([]byte(expected), []byte(HMAC)) == 1
 }
 
 // GenerateSecureToken generates a cryptographically secure random token of the specified length.
