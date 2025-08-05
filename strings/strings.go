@@ -28,31 +28,29 @@ type TruncateOptions struct {
 
 // SubstringSearch performs substring search in a string and optionally returns indexes.
 func SubstringSearch(input, substring string, options SubstringSearchOptions) []string {
-	var result []string
-	var lowerInput, lowerSubstring string
+	var (
+		searchInput  = input
+		searchSubstr = substring
+
+		result []string
+	)
 
 	if options.CaseInsensitive {
-		lowerInput = strings.ToLower(input)
-		lowerSubstring = strings.ToLower(substring)
-	} else {
-		lowerInput = input
-		lowerSubstring = substring
+		searchInput = strings.ToLower(searchInput)
+		searchSubstr = strings.ToLower(searchSubstr)
 	}
 
-	startIndex := 0
-	for {
-		index := strings.Index(lowerInput[startIndex:], lowerSubstring)
-		if index == -1 {
+	for start, idx := 0, 0; ; start += idx + 1 {
+		idx = strings.Index(searchInput[start:], searchSubstr)
+		if idx == -1 {
 			break
 		}
 
 		if options.ReturnIndexes {
-			result = append(result, input[index+startIndex:])
+			result = append(result, input[start+idx:])
 		} else {
-			result = append(result, input[startIndex+index:startIndex+index+len(substring)])
+			result = append(result, input[start+idx:start+idx+len(substring)])
 		}
-
-		startIndex += index + 1
 	}
 
 	return result
@@ -66,25 +64,49 @@ func Title(input string) string {
 // ToTitle converts a string to title case, capitalizing the first letter of each word.
 // It excludes exceptions specified in the exceptions slice.
 func ToTitle(input string, exceptions []string) string {
-	// Split the input string into words
-	words := strings.Fields(input)
-
-	// Create a maps of exceptions for faster lookup
-	exceptionMap := make(map[string]bool)
-	for _, exception := range exceptions {
-		exceptionMap[exception] = true
+	if input = strings.TrimSpace(input); len(input) == 0 {
+		return ""
 	}
 
-	// Iterate through words and capitalize the first letter if not in exceptions
-	for i, word := range words {
-		if !exceptionMap[word] {
-			// Convert the first character to uppercase.
-			words[i] = firstLetterToUpper(strings.ToLower(word))
+	// O(1) lookup map for exceptions
+	exc := make(map[string]struct{}, len(exceptions))
+	for _, e := range exceptions {
+		exc[e] = struct{}{}
+	}
+
+	// pre-allocate slice to avoid growth
+	var res strings.Builder
+	res.Grow(len(input)) // pre-allocate builder to avoid growth
+
+	for i, w := range strings.Fields(input) {
+		if i > 0 {
+			res.WriteByte(' ')
+		}
+
+		if _, skip := exc[w]; skip {
+			res.WriteString(w)
+
+			continue
+		}
+
+		f := w[0]
+		if 'a' <= f && f <= 'z' {
+			f -= 32
+		}
+		res.WriteByte(f)
+
+		if len(w) > 1 {
+			for j := 1; j < len(w); j++ {
+				wr := w[j]
+				if 'A' <= wr && wr <= 'Z' {
+					wr += 32
+				}
+				res.WriteByte(wr)
+			}
 		}
 	}
 
-	// Join the words back together into a single string
-	return strings.Join(words, " ")
+	return res.String()
 }
 
 // Tokenize splits a given string into words based on whitespace and custom delimiters.
@@ -95,13 +117,15 @@ func Tokenize(input string, customDelimiters string) []string {
 	}
 
 	// Split the string using the custom split function.
-	tokens := strings.FieldsFunc(input, customSplit)
-
-	return tokens
+	return strings.FieldsFunc(input, customSplit)
 }
 
 // Rot13Encode encodes a string using the ROT13 cipher.
 func Rot13Encode(input string) string {
+	if len(input) == 0 {
+		return ""
+	}
+
 	encoded := make([]byte, len(input))
 	for i := 0; i < len(input); i++ {
 		char := input[i]
@@ -125,6 +149,10 @@ func Rot13Decode(input string) string {
 
 // CaesarEncrypt encrypts a string using the Caesar cipher with a given shift.
 func CaesarEncrypt(input string, shift int) string {
+	if len(input) == 0 {
+		return ""
+	}
+
 	shifted := make([]byte, len(input))
 	for i := 0; i < len(input); i++ {
 		char := input[i]
@@ -185,11 +213,10 @@ func RunLengthDecode(encoded string) (string, error) {
 	var decoded strings.Builder
 	runes := []rune(encoded)
 	length := len(runes)
-	i := 0
 
-	for i < length {
+	for i, j := 0, 0; i < length; i = j {
 		char := runes[i]
-		j := i + 1
+		j = i + 1
 
 		// Check if a number follows the character
 		for j < length && runes[j] >= '0' && runes[j] <= '9' {
@@ -210,9 +237,6 @@ func RunLengthDecode(encoded string) (string, error) {
 			// If no number follows, treat the character as unencoded
 			decoded.WriteRune(char)
 		}
-
-		// Move to the next character group
-		i = j
 	}
 
 	return decoded.String(), nil
@@ -226,19 +250,15 @@ func CaesarDecrypt(input string, shift int) string {
 // IsValidEmail checks if a given string is a valid email address.
 func IsValidEmail(email string) bool {
 	// Regular expression for basic email validation
-	pattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	const pattern = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
 
 	isValid, err := regexp.MatchString(pattern, email)
-	if err != nil {
-		return false
-	}
 
-	return isValid
+	return err == nil && isValid
 }
 
 // SanitizeEmail removes leading and trailing whitespace from an email address.
 func SanitizeEmail(email string) string {
-
 	return strings.TrimSpace(email)
 }
 
@@ -249,13 +269,14 @@ func SanitizeEmail(email string) string {
 //	Reverse("hello") returns "olleh"
 //	Reverse("世界") returns "界世"
 func Reverse(input string) string {
-	runes := []rune(input)
-	inputLength := len(runes)
-	result := make([]rune, inputLength)
-	lastCharacterIndex := inputLength - 1
+	var (
+		runes   = []rune(input)
+		result  = make([]rune, len(runes))
+		lastIdx = len(runes) - 1
+	)
 
-	for index, character := range runes {
-		result[lastCharacterIndex-index] = character
+	for idx := range runes {
+		result[lastIdx-idx] = runes[idx]
 	}
 
 	return string(result)
