@@ -27,7 +27,7 @@ func EncryptAES(plaintext, key []byte) (ciphertext []byte, nonce []byte, err err
 	}
 
 	nonce = make([]byte, aesGCM.NonceSize())
-	if _, err := rand.Read(nonce); err != nil {
+	if _, err = rand.Read(nonce); err != nil {
 		return nil, nil, err
 	}
 
@@ -107,9 +107,9 @@ func ECDSASignASN1(message []byte, privKey *ecdsa.PrivateKey) ([]byte, error) {
 		return nil, fmt.Errorf("private key is required")
 	}
 
-	hash := sha256.Sum256(message)
+	checksum := sha256.Sum256(message)
 
-	return ecdsa.SignASN1(rand.Reader, privKey, hash[:])
+	return ecdsa.SignASN1(rand.Reader, privKey, checksum[:])
 }
 
 // ECDSAVerifyASN1 verifies an ECDSA signature in ASN.1 format for a given message and public key.
@@ -118,17 +118,17 @@ func ECDSAVerifyASN1(message, sig []byte, pubKey *ecdsa.PublicKey) bool {
 		return false
 	}
 
-	hash := sha256.Sum256(message)
+	checksum := sha256.Sum256(message)
 
-	return ecdsa.VerifyASN1(pubKey, hash[:], sig)
+	return ecdsa.VerifyASN1(pubKey, checksum[:], sig)
 }
 
 // HashSHA256 computes the SHA-256 hash of the given input string and returns
 // the resulting hash as a hexadecimal-encoded string.
 func HashSHA256(input string) string {
-	hash := sha256.Sum256([]byte(input))
+	checksum := sha256.Sum256([]byte(input))
 
-	return fmt.Sprintf("%x", hash)
+	return fmt.Sprintf("%x", checksum)
 }
 
 const (
@@ -139,25 +139,25 @@ const (
 // GenerateHMAC generates a Hash-based Message Authentication Code (HMAC)
 // using the provided key, message, and hash function. It implements the
 // HMAC algorithm as defined in RFC 2104.
-func GenerateHMAC(key, message []byte, hash hash.Hash) string {
-	blockSizedKey := computeBlockSizedKey(key, hash, hash.BlockSize())
-	oKeyPad := make([]byte, hash.BlockSize())
-	iKeyPad := make([]byte, hash.BlockSize())
+func GenerateHMAC(key, message []byte, hashFn hash.Hash) string {
+	blockSizedKey := computeBlockSizedKey(key, hashFn, hashFn.BlockSize())
+	oKeyPad := make([]byte, hashFn.BlockSize())
+	iKeyPad := make([]byte, hashFn.BlockSize())
 
 	for i := range oKeyPad {
 		oKeyPad[i] = blockSizedKey[i] ^ oKeyPadByte
 		iKeyPad[i] = blockSizedKey[i] ^ iKeyPadByte
 	}
 
-	hash.Reset()
-	hash.Write(iKeyPad)
-	hash.Write(message)
-	innerHash := hash.Sum(nil)
+	hashFn.Reset()
+	hashFn.Write(iKeyPad)
+	hashFn.Write(message)
+	innerHash := hashFn.Sum(nil)
 
-	hash.Reset()
-	hash.Write(oKeyPad)
-	hash.Write(innerHash)
-	hmac := hash.Sum(nil)
+	hashFn.Reset()
+	hashFn.Write(oKeyPad)
+	hashFn.Write(innerHash)
+	hmac := hashFn.Sum(nil)
 
 	return fmt.Sprintf("%x", hmac)
 }
@@ -177,8 +177,8 @@ func computeBlockSizedKey(key []byte, hash hash.Hash, blockSize int) []byte {
 }
 
 // VerifyHMAC verifies the integrity and authenticity of a message using HMAC.
-func VerifyHMAC(key, message []byte, hash hash.Hash, HMAC string) bool {
-	return GenerateHMAC(key, message, hash) == HMAC
+func VerifyHMAC(key, message []byte, hashFn hash.Hash, HMAC string) bool {
+	return GenerateHMAC(key, message, hashFn) == HMAC
 }
 
 // GenerateSecureToken generates a cryptographically secure random token of the specified length.
