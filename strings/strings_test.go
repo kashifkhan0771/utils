@@ -1,7 +1,8 @@
 package strings
 
 import (
-	"reflect"
+	"slices"
+	"strconv"
 	"testing"
 )
 
@@ -18,6 +19,11 @@ func TestTitleCase(t *testing.T) {
 		{
 			name: "success - convert a fully lower case string to title case without exceptions",
 			args: args{input: "lower case", exceptions: []string{}},
+			want: "Lower Case",
+		},
+		{
+			name: "success - convert a fully lower case string to title case with nil exceptions",
+			args: args{input: "lower case", exceptions: nil},
 			want: "Lower Case",
 		},
 		{
@@ -42,14 +48,16 @@ func TestTitleCase(t *testing.T) {
 		},
 		{
 			name: "success - convert a upper case string to title case with exceptions",
-			args: args{input: "UPPER CASE WITH exception", exceptions: []string{"exception"}},
-			want: "Upper Case With exception",
+			args: args{input: "UPPER CASE WITH a single exception", exceptions: []string{"exception"}},
+			want: "Upper Case With A Single exception",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := ToTitle(tt.args.input, tt.args.exceptions); got != tt.want {
-				t.Errorf("ToTitle() = %v, want %v", got, tt.want)
+				t.Errorf("ToTitle() = %q, want %q", got, tt.want)
 			}
 		})
 	}
@@ -73,7 +81,9 @@ func TestTokenize(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Tokenize(tt.args.input, tt.args.customDelimiters); !reflect.DeepEqual(got, tt.want) {
+			t.Parallel()
+
+			if got := Tokenize(tt.args.input, tt.args.customDelimiters); !slices.Equal(got, tt.want) {
 				t.Errorf("Tokenize() = %v, want %v", got, tt.want)
 			}
 		})
@@ -108,12 +118,28 @@ func TestSubstringSearch(t *testing.T) {
 			want: []string{"THIS"},
 		},
 		{
-			name: "success - search a substring without case insensitivity and with indexes",
+			name: "success - search a substring without case insensitivity and return indexes",
 			args: args{input: "find this in a string", substring: "this", options: SubstringSearchOptions{
 				CaseInsensitive: false,
 				ReturnIndexes:   true,
 			}},
-			want: []string{"this in a string"},
+			want: []string{"5"},
+		},
+		{
+			name: "success - search a substring without case insensitivity and return multiple indexes",
+			args: args{input: "find this in a StrInG, but not just a regular string", substring: "string", options: SubstringSearchOptions{
+				CaseInsensitive: false,
+				ReturnIndexes:   true,
+			}},
+			want: []string{"46"},
+		},
+		{
+			name: "success - search a substring with case insensitivity and return multiple indexes",
+			args: args{input: "find this in a StrInG, but not just a regular string", substring: "StrinG", options: SubstringSearchOptions{
+				CaseInsensitive: true,
+				ReturnIndexes:   true,
+			}},
+			want: []string{"15", "46"},
 		},
 		{
 			name: "success - search a multiple substring without case insensitivity and indexes",
@@ -126,7 +152,9 @@ func TestSubstringSearch(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := SubstringSearch(tt.args.input, tt.args.substring, tt.args.options); !reflect.DeepEqual(got, tt.want) {
+			t.Parallel()
+
+			if got := SubstringSearch(tt.args.input, tt.args.substring, tt.args.options); !slices.Equal(got, tt.want) {
 				t.Errorf("SubstringSearch() = %v, want %v", got, tt.want)
 			}
 		})
@@ -150,6 +178,8 @@ func TestRot13Encode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := Rot13Encode(tt.args.input); got != tt.want {
 				t.Errorf("Rot13Encode() = %v, want %v", got, tt.want)
 			}
@@ -174,6 +204,8 @@ func TestRot13Decode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := Rot13Decode(tt.args.input); got != tt.want {
 				t.Errorf("Rot13Decode() = %v, want %v", got, tt.want)
 			}
@@ -208,6 +240,8 @@ func TestRunLengthEncode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := RunLengthEncode(tt.args.input); got != tt.want {
 				t.Errorf("RunLengthEncode() = %v, want %v", got, tt.want)
 			}
@@ -247,6 +281,8 @@ func TestRunLengthDecode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got, _ := RunLengthDecode(tt.args.input); got != tt.want {
 				t.Errorf("RunLengthDecode() = %v, want %v", got, tt.want)
 			}
@@ -271,6 +307,8 @@ func TestCaesarEncrypt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := CaesarEncrypt(tt.args.input, tt.args.shift); got != tt.want {
 				t.Errorf("CaesarEncrypt() = %v, want %v", got, tt.want)
 			}
@@ -296,6 +334,8 @@ func TestCaesarDecrypt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := CaesarDecrypt(tt.args.input, tt.args.shift); got != tt.want {
 				t.Errorf("CaesarDecrypt() = %v, want %v", got, tt.want)
 			}
@@ -330,6 +370,8 @@ func TestIsValidEmail(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := IsValidEmail(tt.args.email); got != tt.want {
 				t.Errorf("IsValidEmail() = %v, want %v", got, tt.want)
 			}
@@ -354,6 +396,8 @@ func TestSanitizeEmail(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := SanitizeEmail(tt.args.email); got != tt.want {
 				t.Errorf("SanitizeEmail() = %v, want %v", got, tt.want)
 			}
@@ -388,6 +432,8 @@ func TestTitle(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := Title(tt.args.input); got != tt.want {
 				t.Errorf("Title() = %v, want %v", got, tt.want)
 			}
@@ -420,6 +466,8 @@ func TestReverse(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := Reverse(tt.input); got != tt.expectedOutput {
 				t.Errorf("Reverse() = %v, want %v", got, tt.expectedOutput)
 			}
@@ -461,9 +509,13 @@ func TestCommonPrefix(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		if got := CommonPrefix(tt.input...); got != tt.expectedOutput {
-			t.Errorf("CommonPrefix() = %v, want %v", got, tt.expectedOutput)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if got := CommonPrefix(tt.input...); got != tt.expectedOutput {
+				t.Errorf("CommonPrefix() = %v, want %v", got, tt.expectedOutput)
+			}
+		})
 	}
 }
 
@@ -501,9 +553,14 @@ func TestCommonSuffix(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		if got := CommonSuffix(tt.input...); got != tt.expectedOutput {
-			t.Errorf("CommonSuffix() = %v, want %v", got, tt.expectedOutput)
-		}
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if got := CommonSuffix(tt.input...); got != tt.expectedOutput {
+				t.Errorf("CommonSuffix() = %v, want %v", got, tt.expectedOutput)
+			}
+		})
+
 	}
 }
 
@@ -513,7 +570,7 @@ func TestCommonSuffix(t *testing.T) {
 
 func BenchmarkSubstringSearch(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		SubstringSearch("find this in a string", "this", SubstringSearchOptions{
 			CaseInsensitive: false,
 			ReturnIndexes:   false,
@@ -521,65 +578,94 @@ func BenchmarkSubstringSearch(b *testing.B) {
 	}
 }
 
+var _titleLength int
+
 func BenchmarkToTitle(b *testing.B) {
-	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		ToTitle("lower case", []string{})
+	const inputString = "this string is primarily lower case and should be Converted to TiTle case"
+
+	tests := [][]string{
+		nil, //nil
+		{
+			// no exceptions
+		},
+		{
+			// 1 exception
+			"case",
+		},
+		{
+			// 2 exceptions
+			"case", "should",
+		},
+	}
+
+	for _, test := range tests {
+		name := strconv.Itoa(len(test))
+		if test == nil {
+			name = "nil"
+		}
+		b.Run("exceptionCount="+name, func(b *testing.B) {
+			b.ReportAllocs()
+			var title string
+			for range b.N {
+				title = ToTitle(inputString, test)
+			}
+			_titleLength = len(title)
+		})
 	}
 }
 
 func BenchmarkTokenize(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		Tokenize("This is a custom-tokenization!example", "-!")
 	}
 }
 
 func BenchmarkRot13Encode(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		Rot13Encode("Hello, World!")
 	}
 }
 
 func BenchmarkCaesarEncrypt(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		CaesarEncrypt("Hello, World!", 3)
 	}
 }
 
 func BenchmarkRunLengthEncode(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		RunLengthEncode("aaabbccccdd")
 	}
 }
 
 func BenchmarkIsValidEmail(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		IsValidEmail("example@email.com")
 	}
 }
 
 func BenchmarkReverse(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		Reverse("hello")
 	}
 }
 
 func BenchmarkCommonPrefix(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		CommonPrefix("nation", "national", "nasty")
 	}
 }
 
 func BenchmarkCommonSuffix(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for range b.N {
 		CommonSuffix("testing", "running", "jumping")
 	}
 }
