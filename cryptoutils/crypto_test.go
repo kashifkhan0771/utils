@@ -191,6 +191,11 @@ func TestEncryptRSA(t *testing.T) {
 		{
 			name:      "With nil Message",
 			message:   nil,
+			publicKey: pubKey,
+		},
+		{
+			name:      "With nil Public Key",
+			message:   []byte("Test message"),
 			wantError: errors.New("public key is required"),
 		},
 	}
@@ -610,6 +615,10 @@ func TestGenerateSecureToken(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.reader != nil {
+				originalReader := rand.Reader
+				defer func() {
+					rand.Reader = originalReader
+				}()
 				rand.Reader = tt.reader
 			}
 			_, err := GenerateSecureToken(tt.length)
