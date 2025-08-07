@@ -34,8 +34,8 @@ func (slugger *Slugger) Slug(s, separator string) string {
 
 	s = strings.ToLower(s)
 
-	for old, new := range slugger.Substitutions {
-		s = strings.ReplaceAll(s, old, " "+new)
+	for oldValue, newValue := range slugger.Substitutions {
+		s = strings.ReplaceAll(s, oldValue, " "+newValue)
 	}
 
 	safe := normalizeToSafeASCII(s)

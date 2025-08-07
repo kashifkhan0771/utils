@@ -52,7 +52,7 @@ func TestFindFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	// Create some test files
 	files := []struct {
@@ -137,7 +137,7 @@ func TestFindFiles(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		defer os.RemoveAll(tempDir)
+		defer func() { _ = os.RemoveAll(tempDir) }()
 
 		if err := os.Chmod(tempDir, 0000); err != nil {
 			t.Fatal(err)
@@ -163,7 +163,7 @@ func TestGetDirectorySize(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	// Create some test files with known sizes
 	files := []struct {
@@ -205,7 +205,7 @@ func TestFilesIdentical(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	// Create some test files
 	files := []struct {
@@ -254,13 +254,13 @@ func TestDirsIdentical(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.RemoveAll(tempDir1)
+	defer func() { _ = os.RemoveAll(tempDir1) }()
 
 	tempDir2, err := os.MkdirTemp("", "testdir2")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.RemoveAll(tempDir2)
+	defer func() { _ = os.RemoveAll(tempDir2) }()
 
 	// Create some test files in both directories
 	files1 := []struct {
@@ -340,8 +340,10 @@ func TestDirsIdentical(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		defer os.RemoveAll(dir1)
-		defer os.RemoveAll(dir2)
+		defer func() {
+			_ = os.RemoveAll(dir2)
+			_ = os.RemoveAll(dir1)
+		}()
 
 		identical, err := DirsIdentical(dir1, dir2)
 		if err != nil {
@@ -360,19 +362,19 @@ func setupNestedDirs() (string, string, error) {
 	}
 	defer func() {
 		if err != nil {
-			os.RemoveAll(tempDir1)
+			_ = os.RemoveAll(tempDir1)
 		}
 	}()
 
 	tempDir2, err := os.MkdirTemp("", "nestedtestdir2_")
 	if err != nil {
-		os.RemoveAll(tempDir1)
+		_ = os.RemoveAll(tempDir1)
 
 		return "", "", fmt.Errorf("failed to create tempDir2: %w", err)
 	}
 	defer func() {
 		if err != nil {
-			os.RemoveAll(tempDir2)
+			_ = os.RemoveAll(tempDir2)
 		}
 	}()
 
@@ -403,7 +405,7 @@ func TestGetFileMetadata(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	// Create a test file
 	filePath := filepath.Join(tempDir, "testfile.txt")
@@ -477,7 +479,7 @@ func TestGetFileMetadata(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		defer os.RemoveAll(tempDir)
+		defer func() { _ = os.RemoveAll(tempDir) }()
 
 		// Create a file and a symlink to it
 		filePath := filepath.Join(tempDir, "testfile.txt")
@@ -506,7 +508,7 @@ func TestFindFilesWithFilter(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	// Create test files with different sizes and mod times
 	testFiles := []struct {
@@ -606,7 +608,7 @@ func BenchmarkFindFiles(b *testing.B) {
 	if err != nil {
 		b.Fatal(err)
 	}
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	for i := 0; i < 100; i++ {
 		filePath := filepath.Join(tempDir, fmt.Sprintf("%d.txt", i))
@@ -627,9 +629,9 @@ func BenchmarkGetDirectorySize(b *testing.B) {
 	if err != nil {
 		b.Fatal(err)
 	}
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
-	for i := 0; i < 100; i++ {
+	for i := range 100 {
 		filePath := filepath.Join(tempDir, fmt.Sprintf("%d.txt", i))
 		data := make([]byte, 1024) // 1 KB per file
 		if _, err := rand.Read(data); err != nil {
@@ -651,7 +653,7 @@ func BenchmarkFilesIdentical(b *testing.B) {
 	if err != nil {
 		b.Fatal(err)
 	}
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	file1 := filepath.Join(tempDir, "file1.txt")
 	file2 := filepath.Join(tempDir, "file2.txt")
@@ -693,7 +695,7 @@ func BenchmarkGetFileMetadata(b *testing.B) {
 	if err != nil {
 		b.Fatal(err)
 	}
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	filePath := filepath.Join(tempDir, "testfile.txt")
 	if err := os.WriteFile(filePath, []byte("test"), 0600); err != nil {
@@ -712,7 +714,7 @@ func BenchmarkFindFilesWithFilter(b *testing.B) {
 	if err != nil {
 		b.Fatal(err)
 	}
-	defer os.RemoveAll(tempDir)
+	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	// Create a mix of files: .log, .txt, .md, some large, some small
 	for i := 0; i < 100; i++ {

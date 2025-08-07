@@ -8,11 +8,11 @@ import (
 )
 
 func generateRandomSliceInt(size int) []int {
-	max := big.NewInt(1000)
+	maxVal := big.NewInt(1000)
 	slice := make([]int, size)
 
 	for i := 0; i < size; i++ {
-		num, err := rand.Int(rand.Reader, max)
+		num, err := rand.Int(rand.Reader, maxVal)
 		if err != nil {
 			panic(err)
 		}

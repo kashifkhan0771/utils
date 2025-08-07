@@ -21,7 +21,7 @@ func TestNullableInt(t *testing.T) {
 		{
 			name: "success - i has a value",
 			args: args{
-				i: func() *int { v := int(42); return &v }(),
+				i: func() *int { v := 42; return &v }(),
 			},
 			want: 42,
 		},
@@ -391,14 +391,14 @@ func TestNullableFloat64(t *testing.T) {
 		{
 			name: "success - f has a value",
 			args: args{
-				f: func() *float64 { v := float64(6.28); return &v }(),
+				f: func() *float64 { v := 6.28; return &v }(),
 			},
 			want: 6.28,
 		},
 		{
 			name: "success - f is zero",
 			args: args{
-				f: func() *float64 { v := float64(0.0); return &v }(),
+				f: func() *float64 { v := 0.0; return &v }(),
 			},
 			want: 0.0,
 		},
@@ -471,14 +471,14 @@ func TestNullableComplex128(t *testing.T) {
 		{
 			name: "success - c is not nil and is 0+0i",
 			args: args{
-				c: func() *complex128 { v := complex128(0 + 0i); return &v }(),
+				c: func() *complex128 { v := 0 + 0i; return &v }(),
 			},
 			want: 0 + 0i,
 		},
 		{
 			name: "success - c is not nil and is 3+4i",
 			args: args{
-				c: func() *complex128 { v := complex128(3 + 4i); return &v }(),
+				c: func() *complex128 { v := 3 + 4i; return &v }(),
 			},
 			want: 3 + 4i,
 		},

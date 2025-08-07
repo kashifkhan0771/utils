@@ -12,7 +12,7 @@ A common utilities library for Go.
 
 ## Prerequisites
 
-- **Go**: The project is written in Golang. Ensure you have Go installed (preferably Go 1.23.3 or later). You can download it [here](https://go.dev/doc/install).
+- **Go**: The project is written in Golang. Ensure you have Go installed (preferably Go 1.24 or later). You can download it [here](https://go.dev/doc/install).
 - **Git**: Required for cloning the repository.
 
 ## Installation

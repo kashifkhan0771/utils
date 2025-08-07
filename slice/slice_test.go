@@ -77,11 +77,11 @@ func generateStrings(n int) []string {
 }
 
 func generateRandomInts(n int) []int {
-	max := big.NewInt(1000)
+	maxVal := big.NewInt(1000)
 	data := make([]int, n)
 
 	for i := 0; i < n; i++ {
-		num, err := rand.Int(rand.Reader, max)
+		num, err := rand.Int(rand.Reader, maxVal)
 		if err != nil {
 			panic(err)
 		}

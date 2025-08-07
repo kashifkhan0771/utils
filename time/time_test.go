@@ -924,7 +924,7 @@ func TestSplitDuration(t *testing.T) {
 		{
 			name: "1 day 2 hours 30 minutes 45 seconds",
 			args: args{
-				d: time.Duration(1*24*time.Hour + 2*time.Hour + 30*time.Minute + 45*time.Second),
+				d: 1*24*time.Hour + 2*time.Hour + 30*time.Minute + 45*time.Second,
 			},
 			wantDays:    1,
 			wantHours:   2,
@@ -934,7 +934,7 @@ func TestSplitDuration(t *testing.T) {
 		{
 			name: "3 days 5 hours",
 			args: args{
-				d: time.Duration(3*24*time.Hour + 5*time.Hour),
+				d: 3*24*time.Hour + 5*time.Hour,
 			},
 			wantDays:    3,
 			wantHours:   5,
@@ -944,7 +944,7 @@ func TestSplitDuration(t *testing.T) {
 		{
 			name: "No days, 1 hour 30 minutes",
 			args: args{
-				d: time.Duration(1*time.Hour + 30*time.Minute),
+				d: 1*time.Hour + 30*time.Minute,
 			},
 			wantDays:    0,
 			wantHours:   1,
@@ -954,7 +954,7 @@ func TestSplitDuration(t *testing.T) {
 		{
 			name: "Negative duration",
 			args: args{
-				d: time.Duration(-26 * time.Hour),
+				d: -26 * time.Hour,
 			},
 			wantDays:    -1,
 			wantHours:   -2,
