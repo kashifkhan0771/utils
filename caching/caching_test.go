@@ -136,37 +136,35 @@ func fib(n int) int {
 
 func BenchmarkFib(b *testing.B) {
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = fib(30)
 	}
 }
 
 func BenchmarkCachedFib(b *testing.B) {
 	cachedFib := CacheWrapper(fib)
-
+	_ = cachedFib(30) // warm-up the cache before running the benchmark
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = cachedFib(30)
 	}
 }
 
 func BenchmarkSafeCachedFib(b *testing.B) {
 	cachedFib := SafeCacheWrapper(fib)
+	_ = cachedFib(30) // warm-up the cache before running the benchmark
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = cachedFib(30)
 	}
 }
 
 func BenchmarkConcurrentSafeCachedFib(b *testing.B) {
 	cachedFib := SafeCacheWrapper(fib)
+	_ = cachedFib(30) // warp-up the cache before running the benchmark
 
 	b.ReportAllocs()
-	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			_ = cachedFib(30)

@@ -103,8 +103,7 @@ func TestLogger(t *testing.T) {
 func BenchmarkLogger(b *testing.B) {
 	logger := logging.NewLogger("Test", logging.INFO, nil)
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		logger.Info("This is an info message")
 	}
 }

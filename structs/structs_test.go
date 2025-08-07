@@ -152,9 +152,8 @@ func BenchmarkCompareStructsSimple(b *testing.B) {
 	new := Test{Name: "example - updated", Age: 18, IsAdult: true}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, err := CompareStructs(old, new)
 		if err != nil {
 			b.Fatal(err)
@@ -175,9 +174,8 @@ func BenchmarkCompareStructsComplex(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, err := CompareStructs(old, new)
 		if err != nil {
 			b.Fatal(err)

@@ -596,7 +596,7 @@ func TestFindFilesWithFilter(t *testing.T) {
 
 func BenchmarkFormatFileSize(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for i := 0; b.Loop(); i++ {
 		_ = FormatFileSize(int64(i))
 	}
 }
@@ -616,9 +616,8 @@ func BenchmarkFindFiles(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = FindFiles(tempDir, ".txt")
 	}
 }
@@ -641,9 +640,8 @@ func BenchmarkGetDirectorySize(b *testing.B) {
 		}
 	}
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = GetDirectorySize(tempDir)
 	}
 }
@@ -671,9 +669,8 @@ func BenchmarkFilesIdentical(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = FilesIdentical(file1, file2)
 	}
 }
@@ -685,9 +682,8 @@ func BenchmarkDirsIdentical(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = DirsIdentical(dir1, dir2)
 	}
 }
@@ -705,9 +701,8 @@ func BenchmarkGetFileMetadata(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = GetFileMetadata(filePath)
 	}
 }
@@ -743,9 +738,8 @@ func BenchmarkFindFilesWithFilter(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = FindFilesWithFilter(tempDir, func(info os.FileInfo) bool {
 			return !info.IsDir() && info.Size() > 1024 && filepath.Ext(info.Name()) == ".log"
 		})

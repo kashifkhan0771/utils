@@ -81,25 +81,25 @@ func TestRandomAddress(t *testing.T) {
 // ================================================================================
 
 func BenchmarkGenerateUUID(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = RandomUUID()
 	}
 }
 
 func BenchmarkRandomDate(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = RandomDate()
 	}
 }
 
 func BenchmarkRandomPhoneNumber(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = RandomPhoneNumber()
 	}
 }
 
 func BenchmarkRandomAddress(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = RandomAddress()
 	}
 }

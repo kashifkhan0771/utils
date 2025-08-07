@@ -182,8 +182,7 @@ func BenchmarkSort(b *testing.B) {
 		input := generateRandomSliceInt(bm.size)
 		for _, fn := range sortFns[int]() {
 			b.Run(fn.Name+"-"+bm.name+"("+strconv.Itoa(bm.size)+")", func(b *testing.B) {
-				b.ResetTimer()
-				for i := 0; i < b.N; i++ {
+				for b.Loop() {
 					// Create a fresh copy of the input for each iteration
 					inputCopy := make([]int, len(input))
 					copy(inputCopy, input)

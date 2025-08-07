@@ -346,42 +346,42 @@ func contains[T comparable](slice []T, item T) bool {
 
 func BenchmarkNumberCrypto(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = SecureNumber()
 	}
 }
 
 func BenchmarkIntMathV2(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = Int()
 	}
 }
 
 func BenchmarkInt64MathV2(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = Int64()
 	}
 }
 
 func BenchmarkNumberInRange(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = NumberInRange(0, 1000)
 	}
 }
 
 func BenchmarkString(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = String()
 	}
 }
 
 func BenchmarkStringWithLength(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = StringWithLength(100)
 	}
 }
@@ -399,9 +399,8 @@ func BenchmarkPick(b *testing.B) {
 	copy(array, benchArray)
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = Pick(array)
 	}
 }
@@ -413,16 +412,15 @@ func BenchmarkShuffle(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = Shuffle(array)
 	}
 }
 
 func BenchmarkStringWithCharset(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = StringWithCharset(1000, DefaultCharset)
 	}
 }

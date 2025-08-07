@@ -224,9 +224,8 @@ func BenchmarkRenderHTML(b *testing.B) {
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		var sb strings.Builder
 		_ = tmpl.Execute(&sb, data)
 	}

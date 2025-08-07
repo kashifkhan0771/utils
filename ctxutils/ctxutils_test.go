@@ -77,13 +77,10 @@ func TestSetIntValueWithWrongKey(t *testing.T) {
 
 func BenchmarkSettingAndGettingStringKey(b *testing.B) {
 	ctx := context.Background()
-
-	b.ReportAllocs()
-	b.ResetTimer()
-
 	key := ContextKeyString{Key: "id"}
 
-	for i := 0; i < b.N; i++ {
+	b.ReportAllocs()
+	for i := 0; b.Loop(); i++ {
 		ctx = SetStringValue(ctx, key, fmt.Sprintf("value-%d", i))
 		_, _ = GetStringValue(ctx, key)
 	}
@@ -91,13 +88,10 @@ func BenchmarkSettingAndGettingStringKey(b *testing.B) {
 
 func BenchmarkSettingAndGettingIntKey(b *testing.B) {
 	ctx := context.Background()
-
-	b.ReportAllocs()
-	b.ResetTimer()
-
 	key := ContextKeyInt{Key: 0}
 
-	for i := 0; i < b.N; i++ {
+	b.ReportAllocs()
+	for i := 0; b.Loop(); i++ {
 		ctx = SetIntValue(ctx, key, i)
 		_, _ = GetIntValue(ctx, key)
 	}

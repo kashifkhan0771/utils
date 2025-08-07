@@ -95,9 +95,8 @@ func BenchmarkRemoveDuplicateStrings(b *testing.B) {
 	data := generateStrings(100000)
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		RemoveDuplicateStr(data)
 	}
 }
@@ -106,9 +105,8 @@ func BenchmarkRemoveDuplicateInts(b *testing.B) {
 	data := generateRandomInts(100000)
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		RemoveDuplicateInt(data)
 	}
 }
