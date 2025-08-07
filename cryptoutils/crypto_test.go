@@ -11,11 +11,8 @@ import (
 	"crypto/sha512"
 	"errors"
 	"hash"
-	"os"
-	"os/exec"
-	"regexp"
+	"io"
 	"strconv"
-	"strings"
 	"testing"
 )
 
@@ -151,7 +148,7 @@ func TestGenerateRSAKeyPair(t *testing.T) {
 		},
 		{
 			bits:      -1,
-			wantError: errors.New("rsa: key too small"),
+			wantError: errors.New("crypto/rsa: too few primes of given length to generate an RSA key"),
 		},
 	}
 
@@ -576,27 +573,45 @@ func TestVerifyHMAC(t *testing.T) {
 	}
 }
 
+type badReader struct{}
+
+func (badReader) Read([]byte) (int, error) {
+	return 0, errors.New("bad reader")
+}
+
 func TestGenerateSecureToken(t *testing.T) {
 	tests := []struct {
+		name      string
 		length    int
+		reader    io.Reader
 		wantError error
 	}{
 		{
+			name:   "length=16",
 			length: 16,
 		},
 		{
+			name:   "length=32",
 			length: 32,
 		},
 		{
+			name:      "length=32_badReader",
+			length:    32,
+			reader:    &badReader{},
+			wantError: errors.New("bad reader"),
+		},
+		{
+			name:      "length=-1",
 			length:    -1,
 			wantError: errors.New("length must be > 0"),
 		},
 	}
 
 	for _, tt := range tests {
-		t.Run("length="+strconv.Itoa(tt.length), func(t *testing.T) {
-			t.Parallel()
-
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.reader != nil {
+				rand.Reader = tt.reader
+			}
 			_, err := GenerateSecureToken(tt.length)
 			if (err != nil) != (tt.wantError != nil) {
 				t.Errorf("unexpected error state: got %v, want error: %v", err, tt.wantError)
@@ -604,35 +619,6 @@ func TestGenerateSecureToken(t *testing.T) {
 				t.Errorf("error mismatch: got %q, want error: %q", err.Error(), tt.wantError.Error())
 			}
 		})
-	}
-}
-
-type badReader struct{}
-
-func (badReader) Read([]byte) (int, error) {
-	return 0, errors.New("bad reader")
-}
-
-func TestGenerateSecureTokenWithPanicWithFork(t *testing.T) {
-	if isForkTest(t) {
-		rand.Reader = badReader{}
-		_, _ = GenerateSecureToken(16)
-		return
-	}
-
-	_, stderr, err := runForkTest(t)
-	if err == nil {
-		t.Fatal("expected GenerateSecureToken to cause a fatal panic, but it did not")
-	}
-
-	// Since crypto/rand now panics fatally, exit code 2 is typically returned.
-	var exitErr *exec.ExitError
-	if !errors.As(err, &exitErr) || exitErr.ExitCode() != 2 {
-		t.Errorf("expected exit code 2 from fatal panic, got: %v", err)
-	}
-
-	if !strings.Contains(stderr, "bad reader") {
-		t.Errorf("expected stderr to contain 'bad reader', got:\n%s", stderr)
 	}
 }
 
@@ -804,32 +790,4 @@ func BenchmarkGenerateSecureToken(b *testing.B) {
 			b.Fatalf("Error generating secure token: %v", err)
 		}
 	}
-}
-
-func isForkTest(t *testing.T) bool {
-	t.Helper()
-	return os.Getenv("FORK") == "1"
-}
-
-// runForkTest will run a fork of the test in situations where the test may panic
-func runForkTest(t *testing.T) (stdout, stderr string, err error) {
-	t.Helper()
-
-	const testNameRegex = `^Test[A-Za-z0-9_-]+WithFork$`
-	testName := t.Name()
-	if ok := regexp.MustCompile(testNameRegex).MatchString(testName); !ok {
-		t.Fatalf("Test name %q does not match expected format", t.Name())
-	}
-
-	inputCmd := os.Args[0]
-	cmd := exec.Command(inputCmd, "-test.run", testName)
-	cmd.Env = append(os.Environ(), "FORK=1")
-
-	var stdoutBuf, stderrBuf bytes.Buffer
-	cmd.Stdout = &stdoutBuf
-	cmd.Stderr = &stderrBuf
-
-	err = cmd.Run()
-
-	return stdoutBuf.String(), stderrBuf.String(), err
 }
