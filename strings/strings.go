@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -47,7 +49,7 @@ func SubstringSearch(input, substring string, options SubstringSearchOptions) []
 		}
 
 		if options.ReturnIndexes {
-			result = append(result, input[start+idx:])
+			result = append(result, strconv.Itoa(start+idx))
 		} else {
 			result = append(result, input[start+idx:start+idx+len(substring)])
 		}
@@ -89,20 +91,11 @@ func ToTitle(input string, exceptions []string) string {
 			continue
 		}
 
-		f := w[0]
-		if 'a' <= f && f <= 'z' {
-			f -= 32
-		}
-		res.WriteByte(f)
+		first, size := utf8.DecodeRuneInString(w)
+		res.WriteRune(unicode.ToUpper(first))
 
-		if len(w) > 1 {
-			for j := 1; j < len(w); j++ {
-				wr := w[j]
-				if 'A' <= wr && wr <= 'Z' {
-					wr += 32
-				}
-				res.WriteByte(wr)
-			}
+		if len(w) > size {
+			res.WriteString(strings.ToLower(w[size:]))
 		}
 	}
 

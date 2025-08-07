@@ -118,12 +118,28 @@ func TestSubstringSearch(t *testing.T) {
 			want: []string{"THIS"},
 		},
 		{
-			name: "success - search a substring without case insensitivity and with indexes",
+			name: "success - search a substring without case insensitivity and return indexes",
 			args: args{input: "find this in a string", substring: "this", options: SubstringSearchOptions{
 				CaseInsensitive: false,
 				ReturnIndexes:   true,
 			}},
-			want: []string{"this in a string"},
+			want: []string{"5"},
+		},
+		{
+			name: "success - search a substring without case insensitivity and return multiple indexes",
+			args: args{input: "find this in a StrInG, but not just a regular string", substring: "string", options: SubstringSearchOptions{
+				CaseInsensitive: false,
+				ReturnIndexes:   true,
+			}},
+			want: []string{"46"},
+		},
+		{
+			name: "success - search a substring with case insensitivity and return multiple indexes",
+			args: args{input: "find this in a StrInG, but not just a regular string", substring: "StrinG", options: SubstringSearchOptions{
+				CaseInsensitive: true,
+				ReturnIndexes:   true,
+			}},
+			want: []string{"15", "46"},
 		},
 		{
 			name: "success - search a multiple substring without case insensitivity and indexes",
