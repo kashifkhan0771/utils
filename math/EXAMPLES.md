@@ -384,5 +384,29 @@ func main() {
 2
 1.4142135623730951
 ```
+## `IsPrime`
 
+### Find if a number is prime or not.
+
+```go
+package main
+
+import (
+	"fmt"
+
+	utils "github.com/kashifkhan0771/utils/math"
+)
+
+func main() {
+	fmt.Println(utils.IsPrime(5))
+	fmt.Println(utils.IsPrime(4))
+}
+```
+
+#### Output:
+
+```
+true
+false
+```
 ---

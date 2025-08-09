@@ -690,6 +690,59 @@ func TestSqrtForFloats(t *testing.T) {
 		})
 	}
 }
+func TestIsPrime(t *testing.T) {
+	type args struct {
+		x int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "success - 0",
+			args: args{x: 0},
+			want: false,
+		},
+		{
+			name: "success - 1",
+			args: args{x: 1},
+			want: false,
+		},
+		{
+			name: "success - 2",
+			args: args{x: 2},
+			want: true,
+		},
+		{
+			name: "success - 3",
+			args: args{x: 3},
+			want: true,
+		},
+		{
+			name: "success - 4",
+			args: args{x: 4},
+			want: false,
+		},
+		{
+			name: "success - 36473",
+			args: args{x: 36473},
+			want: true,
+		},
+		{
+			name: "success - 62423236363",
+			args: args{x: 62423236363},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got, _ := IsPrime(tt.args.x); got != tt.want {
+				t.Errorf("IsPrime() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
 // ================================================================================
 // ### BENCHMARKS
