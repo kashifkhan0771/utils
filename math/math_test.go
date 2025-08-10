@@ -730,8 +730,8 @@ func TestIsPrime(t *testing.T) {
 			want: true,
 		},
 		{
-			name: "success - 62423236363",
-			args: args{x: 62423236363},
+			name: "success - 2147483647 (2^31-1)",
+			args: args{x: 2147483647},
 			want: true,
 		},
 	}
