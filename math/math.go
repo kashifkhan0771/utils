@@ -194,12 +194,9 @@ func IsPrime(x int) (bool, error) {
 	if x == 2 {
 		return true, nil
 	}
-	fsqrx, err := Sqrt(x)
-	if err != nil {
-		return false, err
-	}
+	//no need to handle sqrt error since we elimnated negative numbers
+	fsqrx, _ := Sqrt(x)
 	sqrx := int(fsqrx)
-
 	// if it's an even number that is not 2 then it's not a prime number
 	if x%2 == 0 {
 		return false, nil
