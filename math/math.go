@@ -208,5 +208,6 @@ func IsPrime(x int) (bool, error) {
 			return false, nil
 		}
 	}
+
 	return true, nil
 }
