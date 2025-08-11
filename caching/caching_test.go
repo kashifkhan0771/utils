@@ -99,10 +99,12 @@ func TestSafeCacheWrapperConcurrency(t *testing.T) {
 	cachedSquare := SafeCacheWrapper(square)
 	var wg sync.WaitGroup
 
+	const routines = 10
+
 	// Test concurrency with multiple goroutines.
-	results := make([]int, 10)
-	wg.Add(10)
-	for i := 0; i < 10; i++ {
+	results := make([]int, routines)
+	wg.Add(routines)
+	for i := range routines {
 		go func(idx int) {
 			defer wg.Done()
 			results[idx] = cachedSquare(4) // All goroutines calculate square of 4.
@@ -162,7 +164,7 @@ func BenchmarkSafeCachedFib(b *testing.B) {
 
 func BenchmarkConcurrentSafeCachedFib(b *testing.B) {
 	cachedFib := SafeCacheWrapper(fib)
-	_ = cachedFib(30) // warp-up the cache before running the benchmark
+	_ = cachedFib(30) // warm-up the cache before running the benchmark
 
 	b.ReportAllocs()
 	b.RunParallel(func(pb *testing.PB) {

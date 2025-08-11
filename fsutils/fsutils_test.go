@@ -598,8 +598,10 @@ func TestFindFilesWithFilter(t *testing.T) {
 
 func BenchmarkFormatFileSize(b *testing.B) {
 	b.ReportAllocs()
-	for i := 0; b.Loop(); i++ {
-		_ = FormatFileSize(int64(i))
+
+	const fileSize = 134217728
+	for b.Loop() {
+		_ = FormatFileSize(fileSize)
 	}
 }
 
@@ -610,7 +612,7 @@ func BenchmarkFindFiles(b *testing.B) {
 	}
 	defer func() { _ = os.RemoveAll(tempDir) }()
 
-	for i := 0; i < 100; i++ {
+	for i := range 100 {
 		filePath := filepath.Join(tempDir, fmt.Sprintf("%d.txt", i))
 		if err := os.WriteFile(filePath, []byte{}, 0600); err != nil {
 			b.Fatal(err)
@@ -717,7 +719,7 @@ func BenchmarkFindFilesWithFilter(b *testing.B) {
 	defer func() { _ = os.RemoveAll(tempDir) }()
 
 	// Create a mix of files: .log, .txt, .md, some large, some small
-	for i := 0; i < 100; i++ {
+	for i := range 100 {
 		ext := ".txt"
 		if i%3 == 0 {
 			ext = ".log"

@@ -386,10 +386,12 @@ func BenchmarkStringWithLength(b *testing.B) {
 	}
 }
 
-var benchArray = make([]int, 1000)
+const benchSize = 1000
+
+var benchArray = make([]int, benchSize)
 
 func init() {
-	for i := 0; i < 1000; i++ {
+	for i := range benchSize {
 		benchArray[i] = i
 	}
 }
@@ -406,10 +408,8 @@ func BenchmarkPick(b *testing.B) {
 }
 
 func BenchmarkShuffle(b *testing.B) {
-	array := make([]int, 1000)
-	for i := 0; i < 1000; i++ {
-		array[i] = i
-	}
+	array := make([]int, len(benchArray))
+	copy(array, benchArray)
 
 	b.ReportAllocs()
 

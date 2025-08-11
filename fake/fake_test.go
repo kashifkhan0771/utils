@@ -9,7 +9,7 @@ import (
 
 func TestGenerateUUID(t *testing.T) {
 	uuidSet := make(map[string]struct{})
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		t.Run(fmt.Sprintf("UUIDTest-%d", i), func(t *testing.T) {
 			uuid, err := RandomUUID()
 			if err != nil {

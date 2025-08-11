@@ -64,7 +64,7 @@ func generateStrings(n int) []string {
 	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:,.<>?/~`"
 	data := make([]string, n)
 
-	for i := 0; i < n; i++ {
+	for i := range n {
 		strLen := (i % 10) + 5 // Generate strings of length 5-14
 		var strBuilder strings.Builder
 		for j := 0; j < strLen; j++ {
@@ -80,7 +80,7 @@ func generateRandomInts(n int) []int {
 	maxVal := big.NewInt(1000)
 	data := make([]int, n)
 
-	for i := 0; i < n; i++ {
+	for i := range n {
 		num, err := rand.Int(rand.Reader, maxVal)
 		if err != nil {
 			panic(err)

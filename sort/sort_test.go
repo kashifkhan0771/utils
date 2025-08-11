@@ -11,7 +11,7 @@ func generateRandomSliceInt(size int) []int {
 	maxVal := big.NewInt(1000)
 	slice := make([]int, size)
 
-	for i := 0; i < size; i++ {
+	for i := range size {
 		num, err := rand.Int(rand.Reader, maxVal)
 		if err != nil {
 			panic(err)
@@ -26,7 +26,7 @@ func generateRandomSliceFloat(size int) []float64 {
 	maxUint64 := new(big.Int).Lsh(big.NewInt(1), 53) // 2^53 for float64 precision
 	slice := make([]float64, size)
 
-	for i := 0; i < size; i++ {
+	for i := range size {
 		n, err := rand.Int(rand.Reader, maxUint64)
 		if err != nil {
 			panic(err)
@@ -183,9 +183,12 @@ func BenchmarkSort(b *testing.B) {
 		for _, fn := range sortFns[int]() {
 			b.Run(fn.Name+"-"+bm.name+"("+strconv.Itoa(bm.size)+")", func(b *testing.B) {
 				for b.Loop() {
+					b.StopTimer()
 					// Create a fresh copy of the input for each iteration
 					inputCopy := make([]int, len(input))
 					copy(inputCopy, input)
+					b.StartTimer()
+
 					fn.Fn(inputCopy)
 				}
 			})

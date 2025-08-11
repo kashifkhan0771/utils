@@ -1,6 +1,8 @@
 package slugger
 
 import (
+	"maps"
+	"slices"
 	"strings"
 	"unicode"
 
@@ -34,7 +36,9 @@ func (slugger *Slugger) Slug(s, separator string) string {
 
 	s = strings.ToLower(s)
 
-	for oldValue, newValue := range slugger.Substitutions {
+	sortedKeys := slices.Sorted(maps.Keys(slugger.Substitutions))
+	for _, oldValue := range sortedKeys {
+		newValue := slugger.Substitutions[oldValue]
 		s = strings.ReplaceAll(s, oldValue, " "+newValue)
 	}
 
@@ -43,7 +47,7 @@ func (slugger *Slugger) Slug(s, separator string) string {
 	var slugBuilder strings.Builder
 
 	for i := range words {
-		slugBuilder.WriteString(strings.ToLower(strings.TrimSpace(words[i])))
+		slugBuilder.WriteString(strings.ToLower(words[i]))
 
 		if i != len(words)-1 {
 			slugBuilder.WriteString(separator)

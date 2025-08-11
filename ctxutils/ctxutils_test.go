@@ -2,7 +2,6 @@ package ctxutils
 
 import (
 	"context"
-	"fmt"
 	"testing"
 )
 
@@ -76,23 +75,31 @@ func TestSetIntValueWithWrongKey(t *testing.T) {
 // ================================================================================
 
 func BenchmarkSettingAndGettingStringKey(b *testing.B) {
-	ctx := context.Background()
-	key := ContextKeyString{Key: "id"}
+	var (
+		ctx   context.Context
+		key   = ContextKeyString{Key: "id"}
+		value = "value-123"
+	)
 
 	b.ReportAllocs()
-	for i := 0; b.Loop(); i++ {
-		ctx = SetStringValue(ctx, key, fmt.Sprintf("value-%d", i))
+	for b.Loop() {
+		ctx = context.Background()
+		ctx = SetStringValue(ctx, key, value)
 		_, _ = GetStringValue(ctx, key)
 	}
 }
 
 func BenchmarkSettingAndGettingIntKey(b *testing.B) {
-	ctx := context.Background()
-	key := ContextKeyInt{Key: 0}
+	var (
+		ctx   context.Context
+		key   = ContextKeyInt{Key: 0}
+		value = 123
+	)
 
 	b.ReportAllocs()
-	for i := 0; b.Loop(); i++ {
-		ctx = SetIntValue(ctx, key, i)
+	for b.Loop() {
+		ctx = context.Background()
+		ctx = SetIntValue(ctx, key, value)
 		_, _ = GetIntValue(ctx, key)
 	}
 }
