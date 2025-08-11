@@ -398,7 +398,7 @@ import (
 )
 
 func main() {
-	err,example := utils.IsPrime(5)
+	isPrime, err := utils.IsPrime(5)
 	if err != nil{
 		//handle error
 	}
