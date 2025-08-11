@@ -41,21 +41,53 @@ func SubstringSearch(input, substring string, options SubstringSearchOptions) []
 		result []string
 	)
 
-	if options.CaseInsensitive {
-		searchInput = strings.ToLower(searchInput)
-		searchSubstr = strings.ToLower(searchSubstr)
+	if !options.CaseInsensitive {
+		for start, idx := 0, 0; start < len(searchInput); start += idx + 1 {
+			idx = strings.Index(searchInput[start:], searchSubstr)
+			if idx == -1 {
+				break
+			}
+
+			abs := start + idx
+			if options.ReturnIndexes {
+				result = append(result, strconv.Itoa(abs))
+			} else {
+				result = append(result, input[abs:abs+len(substring)])
+			}
+		}
+
+		return result
 	}
-	for start, idx := 0, 0; start < len(searchInput); start += idx + 1 {
-		idx = strings.Index(searchInput[start:], searchSubstr)
-		if idx == -1 {
+
+	// Unicode-safe, case-insensitive scan using EqualFold.
+	subRuneCount := utf8.RuneCountInString(searchSubstr)
+	if subRuneCount == 0 {
+		return result
+	}
+
+	for i := 0; i < len(searchInput); {
+		// Build window [i:j] spanning subRuneCount runes.
+		j, taken := i, 0
+		for taken < subRuneCount && j < len(searchInput) {
+			_, sz := utf8.DecodeRuneInString(searchInput[j:])
+			j += sz
+			taken++
+		}
+		if taken < subRuneCount {
 			break
 		}
 
-		if options.ReturnIndexes {
-			result = append(result, strconv.Itoa(start+idx))
-		} else {
-			result = append(result, input[start+idx:start+idx+len(substring)])
+		if strings.EqualFold(searchInput[i:j], searchSubstr) {
+			if options.ReturnIndexes {
+				result = append(result, strconv.Itoa(i))
+			} else {
+				result = append(result, input[i:j])
+			}
 		}
+
+		// Advance by one rune to allow overlaps.
+		_, sz := utf8.DecodeRuneInString(searchInput[i:])
+		i += sz
 	}
 
 	return result
@@ -250,12 +282,9 @@ func CaesarDecrypt(input string, shift int) string {
 
 // IsValidEmail checks if a given string is a valid email address.
 func IsValidEmail(email string) bool {
-	// Regular expression for basic email validation
-	const pattern = `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	var reEmail = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 
-	isValid, err := regexp.MatchString(pattern, email)
-
-	return err == nil && isValid
+	return reEmail.MatchString(email)
 }
 
 // SanitizeEmail removes leading and trailing whitespace from an email address.
