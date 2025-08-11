@@ -7,6 +7,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"unicode"
+	"unicode/utf8"
 
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -28,31 +30,64 @@ type TruncateOptions struct {
 
 // SubstringSearch performs substring search in a string and optionally returns indexes.
 func SubstringSearch(input, substring string, options SubstringSearchOptions) []string {
-	var result []string
-	var lowerInput, lowerSubstring string
-
-	if options.CaseInsensitive {
-		lowerInput = strings.ToLower(input)
-		lowerSubstring = strings.ToLower(substring)
-	} else {
-		lowerInput = input
-		lowerSubstring = substring
+	if input == "" || substring == "" {
+		return nil
 	}
 
-	startIndex := 0
-	for {
-		index := strings.Index(lowerInput[startIndex:], lowerSubstring)
-		if index == -1 {
+	var (
+		searchInput  = input
+		searchSubstr = substring
+
+		result []string
+	)
+
+	if !options.CaseInsensitive {
+		for start, idx := 0, 0; start < len(searchInput); start += idx + 1 {
+			idx = strings.Index(searchInput[start:], searchSubstr)
+			if idx == -1 {
+				break
+			}
+
+			abs := start + idx
+			if options.ReturnIndexes {
+				result = append(result, strconv.Itoa(abs))
+			} else {
+				result = append(result, input[abs:abs+len(substring)])
+			}
+		}
+
+		return result
+	}
+
+	// Unicode-safe, case-insensitive scan using EqualFold.
+	subRuneCount := utf8.RuneCountInString(searchSubstr)
+	if subRuneCount == 0 {
+		return result
+	}
+
+	for i := 0; i < len(searchInput); {
+		// Build window [i:j] spanning subRuneCount runes.
+		j, taken := i, 0
+		for taken < subRuneCount && j < len(searchInput) {
+			_, sz := utf8.DecodeRuneInString(searchInput[j:])
+			j += sz
+			taken++
+		}
+		if taken < subRuneCount {
 			break
 		}
 
-		if options.ReturnIndexes {
-			result = append(result, input[index+startIndex:])
-		} else {
-			result = append(result, input[startIndex+index:startIndex+index+len(substring)])
+		if strings.EqualFold(searchInput[i:j], searchSubstr) {
+			if options.ReturnIndexes {
+				result = append(result, strconv.Itoa(i))
+			} else {
+				result = append(result, input[i:j])
+			}
 		}
 
-		startIndex += index + 1
+		// Advance by one rune to allow overlaps.
+		_, sz := utf8.DecodeRuneInString(searchInput[i:])
+		i += sz
 	}
 
 	return result
@@ -66,25 +101,45 @@ func Title(input string) string {
 // ToTitle converts a string to title case, capitalizing the first letter of each word.
 // It excludes exceptions specified in the exceptions slice.
 func ToTitle(input string, exceptions []string) string {
-	// Split the input string into words
-	words := strings.Fields(input)
-
-	// Create a maps of exceptions for faster lookup
-	exceptionMap := make(map[string]bool)
-	for _, exception := range exceptions {
-		exceptionMap[exception] = true
+	if input = strings.TrimSpace(input); len(input) == 0 {
+		return ""
 	}
 
-	// Iterate through words and capitalize the first letter if not in exceptions
-	for i, word := range words {
-		if !exceptionMap[word] {
-			// Convert the first character to uppercase.
-			words[i] = firstLetterToUpper(strings.ToLower(word))
+	// Lookup-map for word exceptions.
+	exceptionsMap := make(map[string]struct{}, len(exceptions))
+	for _, e := range exceptions {
+		exceptionsMap[e] = struct{}{}
+	}
+
+	var output strings.Builder
+	output.Grow(len(input)) // pre-allocate builder to avoid growth
+
+	for i, word := range strings.Fields(input) {
+		// If this is not the first word, add a space before it
+		if i > 0 {
+			output.WriteByte(' ')
+		}
+
+		// If the word is in the exceptions, write it as is
+		if _, skip := exceptionsMap[word]; skip {
+			output.WriteString(word)
+
+			continue
+		}
+
+		// Capitalize the first letter and lower the rest
+		// Decode the first rune to handle multi-byte characters correctly.
+		// size is the number of bytes in the first rune.
+		firstLetter, size := utf8.DecodeRuneInString(word)
+		output.WriteRune(unicode.ToUpper(firstLetter))
+
+		// If the word has more than one rune, write the rest in lowercase
+		if len(word) > size {
+			output.WriteString(strings.ToLower(word[size:]))
 		}
 	}
 
-	// Join the words back together into a single string
-	return strings.Join(words, " ")
+	return output.String()
 }
 
 // Tokenize splits a given string into words based on whitespace and custom delimiters.
@@ -95,13 +150,15 @@ func Tokenize(input string, customDelimiters string) []string {
 	}
 
 	// Split the string using the custom split function.
-	tokens := strings.FieldsFunc(input, customSplit)
-
-	return tokens
+	return strings.FieldsFunc(input, customSplit)
 }
 
 // Rot13Encode encodes a string using the ROT13 cipher.
 func Rot13Encode(input string) string {
+	if len(input) == 0 {
+		return ""
+	}
+
 	encoded := make([]byte, len(input))
 	for i := 0; i < len(input); i++ {
 		char := input[i]
@@ -125,6 +182,10 @@ func Rot13Decode(input string) string {
 
 // CaesarEncrypt encrypts a string using the Caesar cipher with a given shift.
 func CaesarEncrypt(input string, shift int) string {
+	if len(input) == 0 {
+		return ""
+	}
+
 	shifted := make([]byte, len(input))
 	for i := 0; i < len(input); i++ {
 		char := input[i]
@@ -185,11 +246,10 @@ func RunLengthDecode(encoded string) (string, error) {
 	var decoded strings.Builder
 	runes := []rune(encoded)
 	length := len(runes)
-	i := 0
 
-	for i < length {
+	for i, j := 0, 0; i < length; i = j {
 		char := runes[i]
-		j := i + 1
+		j = i + 1
 
 		// Check if a number follows the character
 		for j < length && runes[j] >= '0' && runes[j] <= '9' {
@@ -210,9 +270,6 @@ func RunLengthDecode(encoded string) (string, error) {
 			// If no number follows, treat the character as unencoded
 			decoded.WriteRune(char)
 		}
-
-		// Move to the next character group
-		i = j
 	}
 
 	return decoded.String(), nil
@@ -225,20 +282,13 @@ func CaesarDecrypt(input string, shift int) string {
 
 // IsValidEmail checks if a given string is a valid email address.
 func IsValidEmail(email string) bool {
-	// Regular expression for basic email validation
-	pattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+	var reEmail = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 
-	isValid, err := regexp.MatchString(pattern, email)
-	if err != nil {
-		return false
-	}
-
-	return isValid
+	return reEmail.MatchString(email)
 }
 
 // SanitizeEmail removes leading and trailing whitespace from an email address.
 func SanitizeEmail(email string) string {
-
 	return strings.TrimSpace(email)
 }
 
@@ -249,13 +299,14 @@ func SanitizeEmail(email string) string {
 //	Reverse("hello") returns "olleh"
 //	Reverse("世界") returns "界世"
 func Reverse(input string) string {
-	runes := []rune(input)
-	inputLength := len(runes)
-	result := make([]rune, inputLength)
-	lastCharacterIndex := inputLength - 1
+	var (
+		runes   = []rune(input)
+		result  = make([]rune, len(runes))
+		lastIdx = len(runes) - 1
+	)
 
-	for index, character := range runes {
-		result[lastCharacterIndex-index] = character
+	for idx := range runes {
+		result[lastIdx-idx] = runes[idx]
 	}
 
 	return string(result)
