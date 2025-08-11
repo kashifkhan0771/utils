@@ -51,6 +51,31 @@ func TestTitleCase(t *testing.T) {
 			args: args{input: "UPPER CASE WITH a single exception", exceptions: []string{"exception"}},
 			want: "Upper Case With A Single exception",
 		},
+		{
+			name: "success - convert a mixed case string to title case without exceptions",
+			args: args{input: "MiXeD CaSe", exceptions: []string{}},
+			want: "Mixed Case",
+		},
+		{
+			name: "success - handle empty string",
+			args: args{input: "      ", exceptions: []string{}},
+			want: "",
+		},
+		{
+			name: "success - Leading/trailing spaces preserved post-trim behavior",
+			args: args{input: "  leading and trailing spaces  ", exceptions: []string{}},
+			want: "Leading And Trailing Spaces",
+		},
+		{
+			name: "success - convert a string with special characters to title case without exceptions",
+			args: args{input: "élan vital", exceptions: []string{}},
+			want: "Élan Vital",
+		},
+		{
+			name: "success - convert a string with emojis to title case without exceptions",
+			args: args{input: "hello 🌍", exceptions: []string{}},
+			want: "Hello 🌍",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -140,6 +165,22 @@ func TestSubstringSearch(t *testing.T) {
 				ReturnIndexes:   true,
 			}},
 			want: []string{"15", "46"},
+		},
+		{
+			name: "success - no matches returns empty slice (indexes)",
+			args: args{input: "find this in a string", substring: "absent", options: SubstringSearchOptions{
+				CaseInsensitive: false,
+				ReturnIndexes:   true,
+			}},
+			want: []string{},
+		},
+		{
+			name: "success - empty substring behavior (indexes)",
+			args: args{input: "abc", substring: "", options: SubstringSearchOptions{
+				CaseInsensitive: false,
+				ReturnIndexes:   true,
+			}},
+			want: []string{},
 		},
 		{
 			name: "success - search a multiple substring without case insensitivity and indexes",
@@ -506,6 +547,11 @@ func TestCommonPrefix(t *testing.T) {
 			input:          []string{""},
 			expectedOutput: "",
 		},
+		{
+			name:           "success - zero inputs",
+			input:          []string{},
+			expectedOutput: "",
+		},
 	}
 
 	for _, tt := range tests {
@@ -548,6 +594,11 @@ func TestCommonSuffix(t *testing.T) {
 		{
 			name:           "success - common suffix with empty string",
 			input:          []string{""},
+			expectedOutput: "",
+		},
+		{
+			name:           "success - zero inputs",
+			input:          []string{},
 			expectedOutput: "",
 		},
 	}
@@ -605,6 +656,8 @@ func BenchmarkToTitle(b *testing.B) {
 		}
 		b.Run("exceptionCount="+name, func(b *testing.B) {
 			b.ReportAllocs()
+			b.SetBytes(int64(len(inputString)))
+
 			var title string
 			for range b.N {
 				title = ToTitle(inputString, test)
@@ -707,10 +760,18 @@ func TestTruncate(t *testing.T) {
 			options: &TruncateOptions{Length: 6},
 			want:    "Len...",
 		},
+		{
+			name:    "unicode-safe truncation (emoji)",
+			input:   "Hello 👋🌍",
+			options: &TruncateOptions{Length: 7}, // expect 4 chars + "..." if rune-safe
+			want:    "Hell...",
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := Truncate(tt.input, tt.options); got != tt.want {
 				t.Errorf("Truncate() = %v, want %v", got, tt.want)
 			}

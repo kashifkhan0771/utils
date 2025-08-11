@@ -30,6 +30,10 @@ type TruncateOptions struct {
 
 // SubstringSearch performs substring search in a string and optionally returns indexes.
 func SubstringSearch(input, substring string, options SubstringSearchOptions) []string {
+	if input == "" || substring == "" {
+		return nil
+	}
+
 	var (
 		searchInput  = input
 		searchSubstr = substring
@@ -41,8 +45,7 @@ func SubstringSearch(input, substring string, options SubstringSearchOptions) []
 		searchInput = strings.ToLower(searchInput)
 		searchSubstr = strings.ToLower(searchSubstr)
 	}
-
-	for start, idx := 0, 0; ; start += idx + 1 {
+	for start, idx := 0, 0; start < len(searchInput); start += idx + 1 {
 		idx = strings.Index(searchInput[start:], searchSubstr)
 		if idx == -1 {
 			break
@@ -70,36 +73,41 @@ func ToTitle(input string, exceptions []string) string {
 		return ""
 	}
 
-	// O(1) lookup map for exceptions
-	exc := make(map[string]struct{}, len(exceptions))
+	// Lookup-map for word exceptions.
+	exceptionsMap := make(map[string]struct{}, len(exceptions))
 	for _, e := range exceptions {
-		exc[e] = struct{}{}
+		exceptionsMap[e] = struct{}{}
 	}
 
-	// pre-allocate slice to avoid growth
-	var res strings.Builder
-	res.Grow(len(input)) // pre-allocate builder to avoid growth
+	var output strings.Builder
+	output.Grow(len(input)) // pre-allocate builder to avoid growth
 
-	for i, w := range strings.Fields(input) {
+	for i, word := range strings.Fields(input) {
+		// If this is not the first word, add a space before it
 		if i > 0 {
-			res.WriteByte(' ')
+			output.WriteByte(' ')
 		}
 
-		if _, skip := exc[w]; skip {
-			res.WriteString(w)
+		// If the word is in the exceptions, write it as is
+		if _, skip := exceptionsMap[word]; skip {
+			output.WriteString(word)
 
 			continue
 		}
 
-		first, size := utf8.DecodeRuneInString(w)
-		res.WriteRune(unicode.ToUpper(first))
+		// Capitalize the first letter and lower the rest
+		// Decode the first rune to handle multi-byte characters correctly.
+		// size is the number of bytes in the first rune.
+		firstLetter, size := utf8.DecodeRuneInString(word)
+		output.WriteRune(unicode.ToUpper(firstLetter))
 
-		if len(w) > size {
-			res.WriteString(strings.ToLower(w[size:]))
+		// If the word has more than one rune, write the rest in lowercase
+		if len(word) > size {
+			output.WriteString(strings.ToLower(word[size:]))
 		}
 	}
 
-	return res.String()
+	return output.String()
 }
 
 // Tokenize splits a given string into words based on whitespace and custom delimiters.
