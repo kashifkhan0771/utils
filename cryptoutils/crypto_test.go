@@ -11,7 +11,9 @@ import (
 	"crypto/sha512"
 	"errors"
 	"hash"
-	"io"
+	"os"
+	"os/exec"
+	"regexp"
 	"strconv"
 	"strings"
 	"testing"
@@ -583,7 +585,6 @@ func TestGenerateSecureToken(t *testing.T) {
 	tests := []struct {
 		name      string
 		length    int
-		reader    io.Reader
 		wantError error
 	}{
 		{
@@ -603,13 +604,6 @@ func TestGenerateSecureToken(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.reader != nil {
-				originalReader := rand.Reader
-				defer func() {
-					rand.Reader = originalReader
-				}()
-				rand.Reader = tt.reader
-			}
 			_, err := GenerateSecureToken(tt.length)
 			if (err != nil) != (tt.wantError != nil) {
 				t.Errorf("unexpected error state: got %v, want error: %v", err, tt.wantError)
@@ -617,6 +611,38 @@ func TestGenerateSecureToken(t *testing.T) {
 				t.Errorf("error mismatch: got %q, want error: %q", err.Error(), tt.wantError.Error())
 			}
 		})
+	}
+}
+
+type badReader struct{}
+
+func (badReader) Read([]byte) (int, error) {
+	return 0, errors.New("bad reader")
+}
+
+// TestGenerateSecureTokenWithPanicWithFork tests that GenerateSecureToken panics with a bad reader.
+// This is a fork test to ensure that the panic is handled correctly in a separate process.
+func TestGenerateSecureTokenWithPanicWithFork(t *testing.T) {
+	// If this test is a run as a forked test...
+	if os.Getenv("FORK") == "1" {
+		rand.Reader = badReader{}
+		_, _ = GenerateSecureToken(16)
+		return
+	}
+
+	_, stderr, err := runForkTest(t)
+	if err == nil {
+		t.Fatal("expected GenerateSecureToken to cause a fatal panic, but it did not")
+	}
+
+	// Since crypto/rand now panics fatally, exit code 2 is typically returned.
+	var exitErr *exec.ExitError
+	if !errors.As(err, &exitErr) || exitErr.ExitCode() != 2 {
+		t.Errorf("expected exit code 2 from fatal panic, got: %v", err)
+	}
+
+	if !strings.Contains(stderr, "bad reader") {
+		t.Errorf("expected stderr to contain 'bad reader', got:\n%s", stderr)
 	}
 }
 
@@ -785,4 +811,26 @@ func BenchmarkGenerateSecureToken(b *testing.B) {
 			b.Fatalf("Error generating secure token: %v", err)
 		}
 	}
+}
+
+// runForkTest will run a fork of the test in situations where the test may panic
+func runForkTest(t *testing.T) (stdout, stderr string, err error) {
+	t.Helper()
+
+	testName := t.Name()
+	if ok := regexp.MustCompile(`^Test[A-Za-z0-9_-]+WithFork$`).MatchString(testName); !ok {
+		t.Fatalf("Test name %q does not match expected format", t.Name())
+	}
+
+	inputCmd := os.Args[0]
+	cmd := exec.Command(inputCmd, "-test.run", testName)
+	cmd.Env = append(os.Environ(), "FORK=1")
+
+	var stdoutBuf, stderrBuf bytes.Buffer
+	cmd.Stdout = &stdoutBuf
+	cmd.Stderr = &stderrBuf
+
+	err = cmd.Run()
+
+	return stdoutBuf.String(), stderrBuf.String(), err
 }
