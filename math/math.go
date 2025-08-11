@@ -181,33 +181,29 @@ func Sqrt[T number](x T) (float64, error) {
 }
 
 // check if a number is a prime number complexity = O(sqrt(n)
-func IsPrime(x int) (bool, error) {
-	// don't handle negative numbers
-	if x < 0 {
-		return false, errors.New("can't check on negative numbers")
-	}
-	// both 0 and 1 are not prime numbers
-	if x == 0 || x == 1 {
-		return false, nil
+func IsPrime(x int) bool {
+	// 1 and 0 are not primes and handle all negative numbers as non prime
+	if x < 2 {
+		return false
 	}
 	// 2 is the only even number that is a prime number
 	if x == 2 {
-		return true, nil
+		return true
 	}
 	//no need to handle sqrt error since we elimnated negative numbers
 	fsqrx, _ := Sqrt(x)
 	sqrx := int(fsqrx)
 	// if it's an even number that is not 2 then it's not a prime number
 	if x%2 == 0 {
-		return false, nil
+		return false
 	}
 	//since we eliminated all even numbers we can just iterate over only odd numbers
 	// I'm iterating up to sqrx+1 just to account for any rounding errors
 	for i := 3; i <= sqrx+1; i += 2 {
 		if x%i == 0 {
-			return false, nil
+			return false
 		}
 	}
 
-	return true, nil
+	return true
 }

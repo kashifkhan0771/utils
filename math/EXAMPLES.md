@@ -398,12 +398,8 @@ import (
 )
 
 func main() {
-	isPrime, err := utils.IsPrime(5)
-	if err != nil{
-		//handle error
-	}
-	fmt.Print(example)
-
+	fmt.Println(utils.IsPrime(5))
+	fmt.Println(utils.IsPrime(4))
 }
 ```
 
@@ -411,6 +407,7 @@ func main() {
 
 ```
 true
+false
 
 ```
 ---
