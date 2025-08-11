@@ -700,6 +700,11 @@ func TestIsPrime(t *testing.T) {
 		want bool
 	}{
 		{
+			name: "success - negative 10",
+			args: args{x: 10},
+			want: false,
+		},
+		{
 			name: "success - 0",
 			args: args{x: 0},
 			want: false,
