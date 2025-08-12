@@ -10,7 +10,7 @@ import (
 type TokenBucket struct {
 	mu         sync.Mutex
 	capacity   int
-	tokens     int
+	tokens     float64
 	refillRate float64
 	last       time.Time
 }
@@ -25,7 +25,7 @@ func NewTokenBucket(capacity int, refillRate float64) *TokenBucket {
 
 	return &TokenBucket{
 		capacity:   capacity,
-		tokens:     capacity,
+		tokens:     float64(capacity),
 		refillRate: refillRate,
 		last:       time.Now(),
 	}
@@ -44,9 +44,11 @@ func (t *TokenBucket) refill(now time.Time) {
 		return
 	}
 	add := elapsed * t.refillRate
-	t.tokens += int(add)
-	if t.tokens > t.capacity {
-		t.tokens = t.capacity
+	// Add tokens directly to the float field, preserving fractional tokens
+	t.tokens += add
+	// Cap at capacity
+	if t.tokens > float64(t.capacity) {
+		t.tokens = float64(t.capacity)
 	}
 	t.last = now
 }
@@ -64,8 +66,8 @@ func (t *TokenBucket) AllowN(n int) bool {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.refill(now)
-	if t.tokens >= n {
-		t.tokens -= n
+	if t.tokens >= float64(n) {
+		t.tokens -= float64(n)
 
 		return true
 	}
@@ -79,12 +81,12 @@ func (t *TokenBucket) nextAvailableDuration(n int, now time.Time) time.Duration 
 	if n <= 0 {
 		return 0
 	}
-	if t.tokens >= n {
+	if t.tokens >= float64(n) {
 		return 0
 	}
 
-	needed := n - t.tokens
-	secs := float64(needed) / t.refillRate
+	needed := float64(n) - t.tokens
+	secs := needed / t.refillRate
 
 	return time.Duration(secs * float64(time.Second))
 }
@@ -106,8 +108,8 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 		now := time.Now()
 		t.mu.Lock()
 		t.refill(now)
-		if t.tokens >= n {
-			t.tokens -= n
+		if t.tokens >= float64(n) {
+			t.tokens -= float64(n)
 			t.mu.Unlock()
 
 			return nil
@@ -116,20 +118,34 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 		d := t.nextAvailableDuration(n, now)
 		t.mu.Unlock()
 		if d <= 0 {
+			// When nextAvailableDuration returns 0, it means tokens should be available,
+			// but there might be timing issues or race conditions. Sleep briefly to
+			// prevent busy-waiting while maintaining responsiveness to cancellation.
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			case <-time.After(5 * time.Millisecond):
+				// Yield CPU with a slightly longer sleep to prevent excessive busy-waiting
+				// while still being responsive to context cancellation
+			}
+
 			continue
 		}
+		timer := time.NewTimer(d)
 		select {
 		case <-ctx.Done():
+			timer.Stop()
+
 			return ctx.Err()
-		case <-time.After(d):
-			// try again
+		case <-timer.C:
+			// Timer expired, loop to check tokens again
 
 		}
 	}
 }
 
 // Tokens returns the current available tokens (approximate). This is safe and does not consume tokens.
-func (t *TokenBucket) Tokens() int {
+func (t *TokenBucket) Tokens() float64 {
 	now := time.Now()
 	t.mu.Lock()
 	defer t.mu.Unlock()
@@ -149,8 +165,8 @@ func (t *TokenBucket) SetCapacity(cap int) {
 	defer t.mu.Unlock()
 	t.refill(now)
 	t.capacity = cap
-	if t.tokens > t.capacity {
-		t.tokens = t.capacity
+	if t.tokens > float64(t.capacity) {
+		t.tokens = float64(t.capacity)
 	}
 }
 

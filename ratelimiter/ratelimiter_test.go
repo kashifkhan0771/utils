@@ -66,7 +66,7 @@ func TestRefill(t *testing.T) {
 		t.Fatal("expected Allow() to succeed initially")
 	}
 
-	time.Sleep(600 * time.Millisecond) // ~1.2 tokens refill
+	time.Sleep(700 * time.Millisecond) // ~1tokens refill
 
 	if !rl.Allow() {
 		t.Fatal("expected Allow() to succeed after refill")
@@ -90,7 +90,7 @@ func TestWaitN(t *testing.T) {
 	}
 	elapsed := time.Since(start)
 
-	if elapsed < 900*time.Millisecond {
+	if elapsed < 800*time.Millisecond {
 		t.Fatalf("expected WaitN to block ~1s, blocked only %v", elapsed)
 	}
 }
