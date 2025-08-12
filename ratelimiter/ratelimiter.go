@@ -101,7 +101,10 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 	if n <= 0 {
 		return nil
 	}
-	if n > t.capacity {
+	t.mu.Lock()
+	cap := t.capacity
+	t.mu.Unlock()
+	if n > cap {
 		return fmt.Errorf("requested tokens %d exceeds capacity %v", n, t.capacity)
 	}
 	for {
