@@ -27,6 +27,8 @@
 - **Sqrt**: Finds square root of the given number. Works for both integers and floating-point numbers. If the input is negative, it returns the initial given number.
 + **Sqrt**: Finds the square root of the given number. Works for both integers and floating-point numbers. If the input is negative, it returns an error along with the original negative number.
 
+- **IsPrime**: Checks if a number is prime or not. Only works for non-negative integers.
+
 ## Examples:
 
 For examples of each function, please checkout [EXAMPLES.md](/math/EXAMPLES.md)
