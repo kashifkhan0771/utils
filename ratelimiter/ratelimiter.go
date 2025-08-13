@@ -20,7 +20,7 @@ type TokenBucket struct {
 // NewTokenBucket creates a new TokenBucket with the specified capacity and refill rate.
 // The capacity determines the maximum number of tokens that can be stored,
 // and refillRate specifies how many tokens are added per second.
-// If capacity is less than 1 or equal to 0, it defaults to 1.
+// If capacity is less than 1, it defaults to 1.
 // If refillRate is less than or equal to 0, it defaults to 1.
 // Returns a TokenBucket that starts with full capacity.
 func NewTokenBucket(capacity int, refillRate float64) *TokenBucket {
@@ -49,6 +49,7 @@ func (t *TokenBucket) Allow() bool {
 
 // AllowN checks if n tokens are available and consumes them atomically.
 // Returns true if n tokens were successfully consumed, false otherwise.
+// Returning true if n is less or equal to 0.
 // This method is thread-safe and non-blocking.
 func (t *TokenBucket) AllowN(n int) bool {
 	if n <= 0 {
@@ -106,9 +107,7 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 			return nil
 		}
 
-		t.mu.Lock()
 		d := t.nextAvailableDuration(n)
-		t.mu.Unlock()
 		t.mu.Unlock()
 
 		// Handle the case where nextAvailableDuration returns -1 (impossible request)
