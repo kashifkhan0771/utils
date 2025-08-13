@@ -86,18 +86,14 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 		return nil
 	}
 
-	// Read capacity under lock to avoid race with SetCapacity
-	t.mu.Lock()
-	cap := t.capacity
-	t.mu.Unlock()
-
-	if n > cap {
-		return fmt.Errorf("requested tokens %d exceeds capacity %v", n, cap)
-	}
-
 	for {
 		now := time.Now()
 		t.mu.Lock()
+		if n > t.capacity {
+			currencyCap := t.capacity
+			t.mu.Unlock()
+			return fmt.Errorf("requested tokens %d exceeds capacity %v", n, currencyCap)
+		}
 		t.refill(now)
 
 		if t.tokens >= float64(n) {
