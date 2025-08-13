@@ -5,7 +5,6 @@ import "time"
 // refill adds tokens according to elapsed time.
 // Caller must hold the mutex
 func (t *TokenBucket) refill(now time.Time) {
-
 	if now.Before(t.last) {
 		t.last = now
 
@@ -15,7 +14,6 @@ func (t *TokenBucket) refill(now time.Time) {
 	elapsed := now.Sub(t.last).Seconds()
 
 	if elapsed <= 0 {
-
 		return
 	}
 
@@ -35,12 +33,18 @@ func (t *TokenBucket) refill(now time.Time) {
 // Caller must hold the mutex.
 func (t *TokenBucket) nextAvailableDuration(n int) time.Duration {
 	if n <= 0 {
-
 		return 0
 	}
 
-	if t.tokens >= float64(n) {
+	t.mu.Lock()
+	cap := t.capacity
+	t.mu.Unlock()
 
+	if n > cap {
+		return -1
+	}
+
+	if t.tokens >= float64(n) {
 		return 0
 	}
 

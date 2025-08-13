@@ -113,8 +113,14 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 			return nil
 		}
 
-		d := t.nextAvailableDuration(n)
 		t.mu.Unlock()
+		// Call nextAvailableDuration while holding the mutex
+		d := t.nextAvailableDuration(n)
+
+		// Handle the case where nextAvailableDuration returns -1 (impossible request)
+		if d == -1 {
+			return fmt.Errorf("requested tokens %d cannot be fulfilled", n)
+		}
 
 		if d <= 0 {
 			// When nextAvailableDuration returns 0, it means tokens should be available,
