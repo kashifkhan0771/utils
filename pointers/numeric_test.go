@@ -1,6 +1,9 @@
 package pointers
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 // ptr is a helper function that returns a pointer to the value of type T.
 func ptr[T any](v T) *T { return &v }
@@ -260,8 +263,8 @@ func TestNullableFloat32(t *testing.T) {
 		},
 		{
 			name:  "success - f has a value",
-			input: ptr(float32(3.14)),
-			want:  3.14,
+			input: ptr(float32(math.Pi)),
+			want:  math.Pi,
 		},
 		{
 			name:  "success - f is zero",
