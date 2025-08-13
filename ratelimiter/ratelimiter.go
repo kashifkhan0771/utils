@@ -106,8 +106,9 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 			return nil
 		}
 
-		// Call nextAvailableDuration while holding the mutex
+		t.mu.Lock()
 		d := t.nextAvailableDuration(n)
+		t.mu.Unlock()
 		t.mu.Unlock()
 
 		// Handle the case where nextAvailableDuration returns -1 (impossible request)
