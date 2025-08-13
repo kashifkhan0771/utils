@@ -30,17 +30,14 @@ func (t *TokenBucket) refill(now time.Time) {
 }
 
 // nextAvailableDuration returns how long until n tokens are available from now.
+// Returns -1 if n tokens can never be available or invalid refill rate.
 // Caller must hold the mutex.
 func (t *TokenBucket) nextAvailableDuration(n int) time.Duration {
 	if n <= 0 {
 		return 0
 	}
 
-	t.mu.Lock()
-	cap := t.capacity
-	t.mu.Unlock()
-
-	if n > cap {
+	if n > t.capacity || t.refillRate < 0 {
 		return -1
 	}
 
