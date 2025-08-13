@@ -38,6 +38,12 @@ func main() {
 }
 ```
 
+**Output:**
+```
+Created token bucket with capacity: 5, refill rate: 2.0 tokens/sec
+Invalid parameters corrected - capacity: 1, rate: 1.0
+```
+
 ## Allow
 
 Checks if one token is available and consumes it immediately without blocking.
@@ -66,6 +72,16 @@ func main() {
         time.Sleep(200 * time.Millisecond)
     }
 }
+```
+
+**Output:**
+```
+Testing Allow() method:
+Request #1: ALLOWED at 14:30:15.001
+Request #2: ALLOWED at 14:30:15.202
+Request #3: ALLOWED at 14:30:15.403
+Request #4: DENIED at 14:30:15.604
+Request #5: DENIED at 14:30:15.805
 ```
 
 ## AllowN
@@ -106,6 +122,23 @@ func main() {
 }
 ```
 
+**Output:**
+```
+Testing AllowN() method:
+Request #1: ALLOWED 3 tokens at 14:30:20.001
+  Available tokens: 7
+Request #2: ALLOWED 5 tokens at 14:30:20.502
+  Available tokens: 4
+Request #3: DENIED 2 tokens at 14:30:21.003
+  Available tokens: 6
+Request #4: DENIED 8 tokens at 14:30:21.504
+  Available tokens: 9
+Request #5: ALLOWED 1 tokens at 14:30:22.005
+  Available tokens: 10
+AllowN(0): true
+AllowN(-1): true
+```
+
 ## Wait
 
 Blocks until one token is available and consumes it, or context is cancelled.
@@ -138,6 +171,16 @@ func main() {
         }
     }
 }
+```
+
+**Output:**
+```
+Testing Wait() method:
+Request #1: SUCCESS after 0ms at 14:30:25.001
+Request #2: SUCCESS after 0ms at 14:30:25.002
+Request #3: SUCCESS after 1s at 14:30:26.003
+Request #4: SUCCESS after 1s at 14:30:27.004
+Request #5: SUCCESS after 1s at 14:30:28.005
 ```
 
 ## WaitN
@@ -189,6 +232,18 @@ func main() {
 }
 ```
 
+**Output:**
+```
+Testing WaitN() method:
+Request #1: Got 2 tokens after 0ms at 14:30:30.001
+Request #2: Got 3 tokens after 0ms at 14:30:30.002
+Request #3: Got 1 token after 500ms at 14:30:30.503
+Request #4: Got 4 tokens after 1s at 14:30:31.504
+
+Testing with context timeout:
+Request with timeout: ERROR after 0ms - requested tokens 10 exceeds capacity 5
+```
+
 ## Tokens
 
 Returns the current number of available tokens (approximate, thread-safe).
@@ -225,6 +280,22 @@ func main() {
         time.Sleep(1 * time.Second)
     }
 }
+```
+
+**Output:**
+```
+Testing Tokens() method:
+Initial tokens: 5
+After consuming 3 tokens: 2
+Waiting 2 seconds for refill...
+After 2 seconds: 5 tokens (should have refilled)
+
+Monitoring token count:
+Time 0s: 5 tokens
+Time 1s: 5 tokens
+Time 2s: 5 tokens
+Time 3s: 5 tokens
+Time 4s: 5 tokens
 ```
 
 ## SetCapacity
@@ -271,6 +342,18 @@ func main() {
     bucket.SetCapacity(0)
     fmt.Printf("After trying to set capacity to 0 (ignored): %d tokens\n", bucket.Tokens())
 }
+```
+
+**Output:**
+```
+Testing SetCapacity() method:
+Initial capacity: 10, tokens: 10
+After consuming 6 tokens: 4
+After reducing capacity to 5: 4
+After 2 seconds (should cap at 5): 5
+After increasing capacity to 15: 5
+After 3 more seconds: 14
+After trying to set capacity to 0 (ignored): 15
 ```
 
 ## SetRefillRate
@@ -333,6 +416,30 @@ func main() {
     bucket.SetRefillRate(-1.0)
     fmt.Printf("After trying to set rate to -1.0 (ignored), rate remains: 0.5\n")
 }
+```
+
+**Output:**
+```
+Testing SetRefillRate() method:
+Consumed all tokens, remaining: 0
+Original rate (1 token/sec):
+After 1 second(s): 1 tokens
+After 2 second(s): 2 tokens
+After 3 second(s): 3 tokens
+
+Changed to faster rate (3 tokens/sec):
+Consumed all tokens, remaining: 0
+After 1 second(s): 3 tokens
+After 2 second(s): 5 tokens
+After 3 second(s): 5 tokens
+
+Changed to slower rate (0.5 tokens/sec):
+Consumed all tokens, remaining: 0
+After 1 second(s): 0 tokens
+After 2 second(s): 1 tokens
+After 3 second(s): 1 tokens
+After 4 second(s): 2 tokens
+After trying to set rate to -1.0 (ignored), rate remains: 0.5
 ```
 
 ## Complete Usage Example
@@ -401,4 +508,24 @@ func main() {
     wg.Wait()
     fmt.Println("All requests completed")
 }
+```
+
+**Output:**
+```
+Simulating concurrent API requests...
+Request 1: Immediate success at 14:30:45.001
+Request 2: Immediate success at 14:30:45.012
+Request 3: Immediate success at 14:30:45.023
+...
+Request 20: Immediate success at 14:30:45.201
+Bucket status: 0/20 tokens available
+Request 21: Success after 100ms at 14:30:45.302
+Request 22: Success after 200ms at 14:30:45.412
+Request 23: Success after 300ms at 14:30:45.523
+...
+Request 50: Success after 3.2s at 14:30:48.234
+Bucket status: 5/20 tokens available
+All requests completed
+```
+````
 

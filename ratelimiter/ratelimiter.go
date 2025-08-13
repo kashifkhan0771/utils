@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+// TokenBucket implements a thread-safe token bucket rate limiter that allows
+// bursts up to a certain capacity while maintaining a steady refill rate.
 type TokenBucket struct {
 	mu         sync.Mutex
 	capacity   int
@@ -15,10 +17,18 @@ type TokenBucket struct {
 	last       time.Time
 }
 
+// NewTokenBucket creates a new TokenBucket with the specified capacity and refill rate.
+// The capacity determines the maximum number of tokens that can be stored,
+// and refillRate specifies how many tokens are added per second.
+// If capacity is less than 1 or equal to 0, it defaults to 1.
+// If refillRate is less than or equal to 0, it defaults to 1.
+// Returns a TokenBucket that starts with full capacity.
 func NewTokenBucket(capacity int, refillRate float64) *TokenBucket {
+
 	if capacity < 1 {
 		capacity = 1
 	}
+
 	if refillRate <= 0 {
 		refillRate = 1
 	}
@@ -31,41 +41,29 @@ func NewTokenBucket(capacity int, refillRate float64) *TokenBucket {
 	}
 }
 
-// refill adds tokens according to elapsed time.
-// Caller must hold t.mu
-func (t *TokenBucket) refill(now time.Time) {
-	if now.Before(t.last) {
-		t.last = now
-
-		return
-	}
-	elapsed := now.Sub(t.last).Seconds()
-	if elapsed <= 0 {
-		return
-	}
-	add := elapsed * t.refillRate
-	// Add tokens directly to the float field, preserving fractional tokens
-	t.tokens += add
-	// Cap at capacity
-	if t.tokens > float64(t.capacity) {
-		t.tokens = float64(t.capacity)
-	}
-	t.last = now
-}
-
+// Allow checks if one token is available and consumes it if so.
+// Returns true if the token was successfully consumed, false otherwise.
+// This is a convenience method that calls AllowN(1).
 func (t *TokenBucket) Allow() bool {
+
 	return t.AllowN(1)
 }
 
 // AllowN checks if n tokens are available and consumes them atomically.
+// Returns true if n tokens were successfully consumed, false otherwise.
+// This method is thread-safe and non-blocking.
 func (t *TokenBucket) AllowN(n int) bool {
+
 	if n <= 0 {
+
 		return true
 	}
+
 	now := time.Now()
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.refill(now)
+
 	if t.tokens >= float64(n) {
 		t.tokens -= float64(n)
 
@@ -75,42 +73,39 @@ func (t *TokenBucket) AllowN(n int) bool {
 	return false
 }
 
-// nextAvailableDuration returns how long until n tokens are available from now.
-// Caller must hold the mutex.
-func (t *TokenBucket) nextAvailableDuration(n int, now time.Time) time.Duration {
-	if n <= 0 {
-		return 0
-	}
-	if t.tokens >= float64(n) {
-		return 0
-	}
-
-	needed := float64(n) - t.tokens
-	secs := needed / t.refillRate
-
-	return time.Duration(secs * float64(time.Second))
-}
-
-// Wait blocks until one token is available or ctx is done.
+// Wait blocks until one token is available and consumes it, or until the context is cancelled.
+// Returns an error if the context is cancelled before a token becomes available.
+// This is a convenience method that calls WaitN(ctx, 1).
 func (t *TokenBucket) Wait(ctx context.Context) error {
+
 	return t.WaitN(ctx, 1)
 }
 
-// WaitN blocks until n tokens are available and consumes them, or ctx is done.
+// WaitN blocks until n tokens are available and consumes them, or until the context is cancelled.
+// Returns an error if the requested number of tokens exceeds the bucket capacity,
+// or if the context is cancelled before the tokens become available.
+// This method is thread-safe and will wait as long as necessary (respecting context cancellation).
 func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
+
 	if n <= 0 {
+
 		return nil
 	}
+
+	// Read capacity under lock to avoid race with SetCapacity
 	t.mu.Lock()
 	cap := t.capacity
 	t.mu.Unlock()
+
 	if n > cap {
-		return fmt.Errorf("requested tokens %d exceeds capacity %v", n, t.capacity)
+		return fmt.Errorf("requested tokens %d exceeds capacity %v", n, cap)
 	}
+
 	for {
 		now := time.Now()
 		t.mu.Lock()
 		t.refill(now)
+
 		if t.tokens >= float64(n) {
 			t.tokens -= float64(n)
 			t.mu.Unlock()
@@ -118,8 +113,9 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 			return nil
 		}
 
-		d := t.nextAvailableDuration(n, now)
+		d := t.nextAvailableDuration(n)
 		t.mu.Unlock()
+
 		if d <= 0 {
 			// When nextAvailableDuration returns 0, it means tokens should be available,
 			// but there might be timing issues or race conditions. Sleep briefly to
@@ -127,13 +123,14 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 			select {
 			case <-ctx.Done():
 				return ctx.Err()
-			case <-time.After(5 * time.Millisecond):
+			case <-time.After(1 * time.Millisecond):
 				// Yield CPU with a slightly longer sleep to prevent excessive busy-waiting
 				// while still being responsive to context cancellation
 			}
 
 			continue
 		}
+
 		timer := time.NewTimer(d)
 		select {
 		case <-ctx.Done():
@@ -147,7 +144,9 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 	}
 }
 
-// Tokens returns the current available tokens (approximate). This is safe and does not consume tokens.
+// Tokens returns the current number of available tokens as a float64.
+// This method is thread-safe and does not consume any tokens.
+// The returned value is approximate and may change immediately after the call returns.
 func (t *TokenBucket) Tokens() float64 {
 	now := time.Now()
 	t.mu.Lock()
@@ -157,27 +156,37 @@ func (t *TokenBucket) Tokens() float64 {
 	return t.tokens
 }
 
-// SetCapacity lets you adjust the capacity at runtime. If new capacity is smaller,
-// tokens are trimmed to the new capacity. Thread-safe.
+// SetCapacity adjusts the bucket capacity at runtime.
+// If the new capacity is smaller than the current number of tokens,
+// the token count is reduced to match the new capacity.
+// This method is thread-safe.
 func (t *TokenBucket) SetCapacity(cap int) {
+
 	if cap < 1 {
 		return
 	}
+
 	now := time.Now()
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.refill(now)
 	t.capacity = cap
+
 	if t.tokens > float64(t.capacity) {
 		t.tokens = float64(t.capacity)
 	}
 }
 
-// SetRefillRate adjusts refill rate (tokens per second). Thread-safe.
+// SetRefillRate adjusts the token refill rate (tokens per second) at runtime.
+// The rate must be positive; invalid rates are ignored.
+// This method is thread-safe.
 func (t *TokenBucket) SetRefillRate(rate float64) {
+
 	if rate <= 0 {
+
 		return
 	}
+
 	now := time.Now()
 	t.mu.Lock()
 	defer t.mu.Unlock()
