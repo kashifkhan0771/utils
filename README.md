@@ -68,7 +68,7 @@ cd utils
 | **timeutils** | Time and date manipulation utilities               | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
 | **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
 | **conversion** | Conversion of data types, time, and temperatues   | [README](conversion/README.md) | [EXAMPLES](conversion/EXAMPLES.md)
-| **ratelimiter** | Conversion of data types, time, and temperatues   | [README](ratelimiter/README.md) | [EXAMPLES](ratelimiter/EXAMPLES.md)
+| **ratelimiter** | Rate Limiter  | [README](ratelimiter/README.md) | [EXAMPLES](ratelimiter/EXAMPLES.md)
 
 ## Comparison
 
