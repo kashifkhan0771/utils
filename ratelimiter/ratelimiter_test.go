@@ -323,3 +323,69 @@ func TestConcurrentAccess(t *testing.T) {
 
 	// Should not panic or race
 }
+
+// TestAllowAfterRefill ensures tokens are refilled correctly after time passes.
+func TestAllowAfterRefill(t *testing.T) {
+	rl := NewTokenBucket(2, 1)
+	rl.AllowN(2)
+	time.Sleep(1100 * time.Millisecond)
+	if !rl.Allow() {
+		t.Error("expected Allow() to succeed after refill")
+	}
+}
+
+// TestSetCapacityIncreaseAndDecrease tests increasing and decreasing capacity.
+func TestSetCapacityIncreaseAndDecrease(t *testing.T) {
+	rl := NewTokenBucket(2, 1)
+	rl.SetCapacity(5)
+	if rl.capacity != 5 {
+		t.Errorf("expected capacity to be 5, got %v", rl.capacity)
+	}
+	rl.SetCapacity(1)
+	if rl.capacity != 1 {
+		t.Errorf("expected capacity to be 1, got %v", rl.capacity)
+	}
+}
+
+// TestSetRefillRateIncreaseAndDecrease tests increasing and decreasing refill rate.
+func TestSetRefillRateIncreaseAndDecrease(t *testing.T) {
+	rl := NewTokenBucket(2, 1)
+	rl.SetRefillRate(5)
+	if rl.refillRate != 5 {
+		t.Errorf("expected refillRate to be 5, got %v", rl.refillRate)
+	}
+	rl.SetRefillRate(0.1)
+	if rl.refillRate != 0.1 {
+		t.Errorf("expected refillRate to be 0.1, got %v", rl.refillRate)
+	}
+}
+
+// TestWaitNWithExactTokens ensures WaitN succeeds immediately if enough tokens are present.
+func TestWaitNWithExactTokens(t *testing.T) {
+	rl := NewTokenBucket(3, 1)
+	ctx := context.Background()
+	err := rl.WaitN(ctx, 3)
+	if err != nil {
+		t.Errorf("expected WaitN to succeed with exact tokens, got %v", err)
+	}
+}
+
+// TestWaitNImpossibleRequest ensures WaitN returns error if n > capacity.
+func TestWaitNImpossibleRequest(t *testing.T) {
+	rl := NewTokenBucket(2, 1)
+	ctx := context.Background()
+	err := rl.WaitN(ctx, 5)
+	if err == nil {
+		t.Error("expected WaitN to fail for n > capacity")
+	}
+}
+
+// TestTokensNeverNegative ensures tokens never go negative.
+func TestTokensNeverNegative(t *testing.T) {
+	rl := NewTokenBucket(1, 1)
+	rl.Allow()
+	rl.Allow()
+	if rl.Tokens() < 0 {
+		t.Errorf("tokens should never be negative, got %v", rl.Tokens())
+	}
+}

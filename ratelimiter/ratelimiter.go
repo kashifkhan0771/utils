@@ -92,6 +92,7 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 		if n > t.capacity {
 			currencyCap := t.capacity
 			t.mu.Unlock()
+
 			return fmt.Errorf("requested tokens %d exceeds capacity %v", n, currencyCap)
 		}
 		t.refill(now)
