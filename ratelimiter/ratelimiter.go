@@ -156,20 +156,25 @@ func (t *TokenBucket) Tokens() float64 {
 // If the new capacity is smaller than the current number of tokens,
 // the token count is reduced to match the new capacity.
 // This method is thread-safe.
+// SetCapacity adjusts the bucket capacity at runtime.
+// If the new capacity is smaller than the current number of tokens,
+// the token count is reduced to match the new capacity.
+// This method is thread-safe.
+// If cap < 1, it is clamped to 1.
 func (t *TokenBucket) SetCapacity(cap int) {
-	if cap < 1 {
-		return
-	}
+    if cap < 1 {
+        cap = 1
+    }
 
-	now := time.Now()
-	t.mu.Lock()
-	defer t.mu.Unlock()
-	t.refill(now)
-	t.capacity = cap
+    now := time.Now()
+    t.mu.Lock()
+    defer t.mu.Unlock()
+    t.refill(now)
+    t.capacity = cap
 
-	if t.tokens > float64(t.capacity) {
-		t.tokens = float64(t.capacity)
-	}
+    if t.tokens > float64(t.capacity) {
+        t.tokens = float64(t.capacity)
+    }
 }
 
 // SetRefillRate adjusts the token refill rate (tokens per second) at runtime.
