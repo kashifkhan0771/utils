@@ -1,6 +1,7 @@
 package math
 
 import (
+	"math"
 	"testing"
 )
 
@@ -28,6 +29,11 @@ func TestAbsForInts(t *testing.T) {
 			args: args{x: 0},
 			want: 0,
 		},
+		{
+			name: "success - negative zero input",
+			args: args{x: -0},
+			want: 0.0,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -37,6 +43,7 @@ func TestAbsForInts(t *testing.T) {
 		})
 	}
 }
+
 func TestAbsForFloats(t *testing.T) {
 	type args struct {
 		x float32
@@ -68,6 +75,13 @@ func TestAbsForFloats(t *testing.T) {
 				t.Errorf("Abs() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestAbsForFloats_NaN(t *testing.T) {
+	got := Abs(float32(math.NaN()))
+	if !math.IsNaN(float64(got)) {
+		t.Errorf("Abs(NaN) = %v, want NaN", got)
 	}
 }
 
@@ -672,8 +686,8 @@ func TestSqrtForFloats(t *testing.T) {
 	}{
 		{
 			name: "success - square root of pi",
-			args: args{x: 3.14159265358979323846264338327950288419716939937510582097494459230781640628},
-			want: 1.77245385090551602729816748334114518279754945612238712821380778985291128458,
+			args: args{x: math.Pi},
+			want: math.SqrtPi,
 		},
 		{
 			name: "success - square root of square root of 2",
@@ -755,46 +769,53 @@ func TestIsPrime(t *testing.T) {
 
 func BenchmarkIntPow(b *testing.B) {
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	bases := []int{2, 3, 4, 5}
-	exponents := []int{2, 3, 4}
-
-	for i := 0; i < b.N; i++ {
-		base := bases[i%len(bases)]
-		exp := exponents[i%len(exponents)]
-		IntPow(base, exp)
+	const base, exp = 3, 2
+	for b.Loop() {
+		_ = IntPow(base, exp)
 	}
 }
 
 func BenchmarkFactorial(b *testing.B) {
 	b.ReportAllocs()
 
-	for i := 0; i < b.N; i++ {
-		_, _ = Factorial(i % 20) // Factorial of numbers 0 to 19
+	const x = 7
+	for b.Loop() {
+		_, _ = Factorial(x)
 	}
 }
 
 func BenchmarkGCD(b *testing.B) {
 	b.ReportAllocs()
 
-	for i := 0; i < b.N; i++ {
-		GCD(i, i+1)
+	const x, y = 17, 19
+	for b.Loop() {
+		_ = GCD(x, y)
 	}
 }
 
 func BenchmarkLCM(b *testing.B) {
 	b.ReportAllocs()
 
-	for i := 0; i < b.N; i++ {
-		LCM(i, i+1)
+	const x, y = 4, 6
+	for b.Loop() {
+		_ = LCM(x, y)
 	}
 }
 
 func BenchmarkSqrt(b *testing.B) {
 	b.ReportAllocs()
 
-	for i := 0; i < b.N; i++ {
-		_, _ = Sqrt(i)
+	for b.Loop() {
+		_, _ = Sqrt(math.Pi)
+	}
+}
+
+func BenchmarkIsPrime(b *testing.B) {
+	b.ReportAllocs()
+
+	const prime = 2147483647
+	for b.Loop() {
+		_ = IsPrime(prime)
 	}
 }

@@ -74,7 +74,7 @@ func BenchmarkSlugger_Slug(b *testing.B) {
 		},
 	}
 
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		slugger.Slug("Wôrķšpáçè ~~sèťtïñğš~~", "")
 	}
 }
@@ -88,7 +88,7 @@ func BenchmarkSlugger_Slug_WithEmoji(b *testing.B) {
 		},
 	}
 
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		slugger.Slug("a 😺, 🐈‍⬛, and a 🦁 go to 🏞️", "")
 	}
 }
@@ -102,7 +102,7 @@ func BenchmarkSlugger_Slug_CustomSeparator(b *testing.B) {
 		},
 	}
 
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		slugger.Slug("Wôrķšpáçè ~~sèťtïñğš~~", "|")
 	}
 }

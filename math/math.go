@@ -173,7 +173,7 @@ func Sqrt[T number](x T) (float64, error) {
 
 	for {
 		nextZ := z - (z*z-float64(x))/(2*z)
-		if float64(Abs(nextZ-z)) < epsilon {
+		if Abs[float64](nextZ-z) < epsilon {
 			return z, nil
 		}
 		z = nextZ

@@ -64,7 +64,7 @@ func generateStrings(n int) []string {
 	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:,.<>?/~`"
 	data := make([]string, n)
 
-	for i := 0; i < n; i++ {
+	for i := range n {
 		strLen := (i % 10) + 5 // Generate strings of length 5-14
 		var strBuilder strings.Builder
 		for j := 0; j < strLen; j++ {
@@ -77,11 +77,11 @@ func generateStrings(n int) []string {
 }
 
 func generateRandomInts(n int) []int {
-	max := big.NewInt(1000)
+	maxVal := big.NewInt(1000)
 	data := make([]int, n)
 
-	for i := 0; i < n; i++ {
-		num, err := rand.Int(rand.Reader, max)
+	for i := range n {
+		num, err := rand.Int(rand.Reader, maxVal)
 		if err != nil {
 			panic(err)
 		}
@@ -95,9 +95,8 @@ func BenchmarkRemoveDuplicateStrings(b *testing.B) {
 	data := generateStrings(100000)
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		RemoveDuplicateStr(data)
 	}
 }
@@ -106,9 +105,8 @@ func BenchmarkRemoveDuplicateInts(b *testing.B) {
 	data := generateRandomInts(100000)
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		RemoveDuplicateInt(data)
 	}
 }

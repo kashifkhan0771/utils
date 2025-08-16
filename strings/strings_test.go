@@ -621,15 +621,13 @@ func TestCommonSuffix(t *testing.T) {
 
 func BenchmarkSubstringSearch(b *testing.B) {
 	b.ReportAllocs()
-	for range b.N {
+	for b.Loop() {
 		SubstringSearch("find this in a string", "this", SubstringSearchOptions{
 			CaseInsensitive: false,
 			ReturnIndexes:   false,
 		})
 	}
 }
-
-var _titleLength int
 
 func BenchmarkToTitle(b *testing.B) {
 	const inputString = "this string is primarily lower case and should be Converted to TiTle case"
@@ -658,67 +656,65 @@ func BenchmarkToTitle(b *testing.B) {
 			b.ReportAllocs()
 			b.SetBytes(int64(len(inputString)))
 
-			var title string
-			for range b.N {
-				title = ToTitle(inputString, test)
+			for b.Loop() {
+				_ = ToTitle(inputString, test)
 			}
-			_titleLength = len(title)
 		})
 	}
 }
 
 func BenchmarkTokenize(b *testing.B) {
 	b.ReportAllocs()
-	for range b.N {
+	for b.Loop() {
 		Tokenize("This is a custom-tokenization!example", "-!")
 	}
 }
 
 func BenchmarkRot13Encode(b *testing.B) {
 	b.ReportAllocs()
-	for range b.N {
+	for b.Loop() {
 		Rot13Encode("Hello, World!")
 	}
 }
 
 func BenchmarkCaesarEncrypt(b *testing.B) {
 	b.ReportAllocs()
-	for range b.N {
+	for b.Loop() {
 		CaesarEncrypt("Hello, World!", 3)
 	}
 }
 
 func BenchmarkRunLengthEncode(b *testing.B) {
 	b.ReportAllocs()
-	for range b.N {
+	for b.Loop() {
 		RunLengthEncode("aaabbccccdd")
 	}
 }
 
 func BenchmarkIsValidEmail(b *testing.B) {
 	b.ReportAllocs()
-	for range b.N {
+	for b.Loop() {
 		IsValidEmail("example@email.com")
 	}
 }
 
 func BenchmarkReverse(b *testing.B) {
 	b.ReportAllocs()
-	for range b.N {
+	for b.Loop() {
 		Reverse("hello")
 	}
 }
 
 func BenchmarkCommonPrefix(b *testing.B) {
 	b.ReportAllocs()
-	for range b.N {
+	for b.Loop() {
 		CommonPrefix("nation", "national", "nasty")
 	}
 }
 
 func BenchmarkCommonSuffix(b *testing.B) {
 	b.ReportAllocs()
-	for range b.N {
+	for b.Loop() {
 		CommonSuffix("testing", "running", "jumping")
 	}
 }

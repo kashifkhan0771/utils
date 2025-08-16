@@ -11,8 +11,11 @@ import (
 	"crypto/sha512"
 	"errors"
 	"hash"
-	"io"
+	"os"
+	"os/exec"
+	"regexp"
 	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -148,7 +151,7 @@ func TestGenerateRSAKeyPair(t *testing.T) {
 		},
 		{
 			bits:      -1,
-			wantError: errors.New("crypto/rsa: too few primes of given length to generate an RSA key"),
+			wantError: errors.New("crypto/rsa: -1-bit keys are insecure"),
 		},
 	}
 
@@ -159,8 +162,8 @@ func TestGenerateRSAKeyPair(t *testing.T) {
 			_, _, err := GenerateRSAKeyPair(tt.bits)
 			if (err != nil) != (tt.wantError != nil) {
 				t.Errorf("unexpected error state: got %v, want error: %v", err, tt.wantError)
-			} else if tt.wantError != nil && tt.wantError.Error() != err.Error() {
-				t.Errorf("error mismatch: got %q, want error: %q", err.Error(), tt.wantError.Error())
+			} else if tt.wantError != nil && !strings.Contains(err.Error(), tt.wantError.Error()) {
+				t.Errorf("error mismatch: got %q, but error should contain: %q", err.Error(), tt.wantError.Error())
 			}
 		})
 	}
@@ -578,17 +581,10 @@ func TestVerifyHMAC(t *testing.T) {
 	}
 }
 
-type badReader struct{}
-
-func (badReader) Read([]byte) (int, error) {
-	return 0, errors.New("bad reader")
-}
-
 func TestGenerateSecureToken(t *testing.T) {
 	tests := []struct {
 		name      string
 		length    int
-		reader    io.Reader
 		wantError error
 	}{
 		{
@@ -600,12 +596,6 @@ func TestGenerateSecureToken(t *testing.T) {
 			length: 32,
 		},
 		{
-			name:      "length=32_badReader",
-			length:    32,
-			reader:    &badReader{},
-			wantError: errors.New("bad reader"),
-		},
-		{
 			name:      "length=-1",
 			length:    -1,
 			wantError: errors.New("length must be > 0"),
@@ -614,13 +604,6 @@ func TestGenerateSecureToken(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if tt.reader != nil {
-				originalReader := rand.Reader
-				defer func() {
-					rand.Reader = originalReader
-				}()
-				rand.Reader = tt.reader
-			}
 			_, err := GenerateSecureToken(tt.length)
 			if (err != nil) != (tt.wantError != nil) {
 				t.Errorf("unexpected error state: got %v, want error: %v", err, tt.wantError)
@@ -631,15 +614,47 @@ func TestGenerateSecureToken(t *testing.T) {
 	}
 }
 
+type badReader struct{}
+
+func (badReader) Read([]byte) (int, error) {
+	return 0, errors.New("bad reader")
+}
+
+// TestGenerateSecureTokenWithPanicWithFork tests that GenerateSecureToken panics with a bad reader.
+// This is a fork test to ensure that the panic is handled correctly in a separate process.
+func TestGenerateSecureTokenWithPanicWithFork(t *testing.T) {
+	// If this test is a run as a forked test...
+	if os.Getenv("FORK") == "1" {
+		rand.Reader = badReader{}
+		_, _ = GenerateSecureToken(16)
+		return
+	}
+
+	_, stderr, err := runForkTest(t)
+	if err == nil {
+		t.Fatal("expected GenerateSecureToken to cause a fatal panic, but it did not")
+	}
+
+	// Since crypto/rand now panics fatally, exit code 2 is typically returned.
+	var exitErr *exec.ExitError
+	if !errors.As(err, &exitErr) || exitErr.ExitCode() != 2 {
+		t.Errorf("expected exit code 2 from fatal panic, got: %v", err)
+	}
+
+	if !strings.Contains(stderr, "bad reader") {
+		t.Errorf("expected stderr to contain 'bad reader', got:\n%s", stderr)
+	}
+}
+
 func BenchmarkEncryptAES(b *testing.B) {
 	var (
 		plaintext = []byte("This is a test plaintext message for encryption.")
 		key       = []byte("thisis32bitlongpassphraseimusing")
 	)
 
-	b.ResetTimer()
-	for range b.N {
-		if _, _, err := EncryptAES(plaintext, key); err != nil {
+	for b.Loop() {
+		_, _, err := EncryptAES(plaintext, key)
+		if err != nil {
 			b.Fatalf("Error during encryption: %v", err)
 		}
 	}
@@ -656,17 +671,18 @@ func BenchmarkDecryptAES(b *testing.B) {
 		b.Fatalf("Error during encryption for benchmarking decryption: %v", err)
 	}
 
-	b.ResetTimer()
-	for range b.N {
-		if _, err = DecryptAES(ciphertext, key, nonce); err != nil {
-			b.Fatalf("Error during decryption: %v", err)
+	for b.Loop() {
+		_, benchErr := DecryptAES(ciphertext, key, nonce)
+		if benchErr != nil {
+			b.Fatalf("Error during decryption: %v", benchErr)
 		}
 	}
 }
 
 func BenchmarkGenerateRSAKeyPair(b *testing.B) {
-	for range b.N {
-		if _, _, err := GenerateRSAKeyPair(StandardRSAKeyBits); err != nil {
+	for b.Loop() {
+		_, _, err := GenerateRSAKeyPair(StandardRSAKeyBits)
+		if err != nil {
 			b.Fatalf("Error during key pair generation: %v", err)
 		}
 	}
@@ -680,10 +696,10 @@ func BenchmarkEncryptRSA(b *testing.B) {
 
 	message := []byte("This is a test message for RSA encryption.")
 
-	b.ResetTimer()
-	for range b.N {
-		if _, err = EncryptRSA(message, pubKey); err != nil {
-			b.Fatalf("Error during encryption: %v", err)
+	for b.Loop() {
+		_, benchErr := EncryptRSA(message, pubKey)
+		if benchErr != nil {
+			b.Fatalf("Error during encryption: %v", benchErr)
 		}
 	}
 }
@@ -700,10 +716,10 @@ func BenchmarkDecryptRSA(b *testing.B) {
 		b.Fatalf("Error during encryption: %v", err)
 	}
 
-	b.ResetTimer()
-	for range b.N {
-		if _, err = DecryptRSA(ciphertext, privKey); err != nil {
-			b.Fatalf("Error during decryption: %v", err)
+	for b.Loop() {
+		_, benchErr := DecryptRSA(ciphertext, privKey)
+		if benchErr != nil {
+			b.Fatalf("Error during decryption: %v", benchErr)
 		}
 	}
 }
@@ -711,9 +727,9 @@ func BenchmarkDecryptRSA(b *testing.B) {
 func BenchmarkGenerateECDSAKeyPair(b *testing.B) {
 	curve := elliptic.P384()
 
-	b.ResetTimer()
-	for range b.N {
-		if _, _, err := GenerateECDSAKeyPair(curve); err != nil {
+	for b.Loop() {
+		_, _, err := GenerateECDSAKeyPair(curve)
+		if err != nil {
 			b.Fatalf("Error during key pair generation: %v", err)
 		}
 	}
@@ -727,11 +743,9 @@ func BenchmarkECDSASignASN1(b *testing.B) {
 
 	message := []byte("This is a test message for ECDSA signing.")
 
-	b.ResetTimer()
-
-	for range b.N {
-		if _, err = ECDSASignASN1(message, privKey); err != nil {
-			b.Fatalf("Error during signing: %v", err)
+	for b.Loop() {
+		if _, benchErr := ECDSASignASN1(message, privKey); benchErr != nil {
+			b.Fatalf("Error during signing: %v", benchErr)
 		}
 	}
 }
@@ -747,9 +761,8 @@ func BenchmarkECDSAVerifyASN1(b *testing.B) {
 	if err != nil {
 		b.Fatalf("Error during signing: %v", err)
 	}
-	b.ResetTimer()
 
-	for range b.N {
+	for b.Loop() {
 		if !ECDSAVerifyASN1(message, signature, pubKey) {
 			b.Fatalf("Error during verification")
 		}
@@ -759,7 +772,7 @@ func BenchmarkECDSAVerifyASN1(b *testing.B) {
 func BenchmarkHashSHA256(b *testing.B) {
 	input := "This is a test string for SHA256 hashing."
 
-	for range b.N {
+	for b.Loop() {
 		HashSHA256(input)
 	}
 }
@@ -771,8 +784,7 @@ func BenchmarkGenerateHMAC(b *testing.B) {
 		hashFn  = sha256.New()
 	)
 
-	b.ResetTimer()
-	for range b.N {
+	for b.Loop() {
 		GenerateHMAC(key, message, hashFn)
 	}
 }
@@ -785,18 +797,40 @@ func BenchmarkVerifyHMAC(b *testing.B) {
 		expectedHMAC = GenerateHMAC(key, message, hashFn)
 	)
 
-	b.ResetTimer()
-	for range b.N {
-		VerifyHMAC(key, message, hashFn, expectedHMAC)
+	for b.Loop() {
+		VerifyHMAC(key, message, sha256.New(), expectedHMAC)
 	}
 }
 
 func BenchmarkGenerateSecureToken(b *testing.B) {
 	length := 32
 
-	for range b.N {
-		if _, err := GenerateSecureToken(length); err != nil {
+	for b.Loop() {
+		_, err := GenerateSecureToken(length)
+		if err != nil {
 			b.Fatalf("Error generating secure token: %v", err)
 		}
 	}
+}
+
+// runForkTest will run a fork of the test in situations where the test may panic
+func runForkTest(t *testing.T) (stdout, stderr string, err error) {
+	t.Helper()
+
+	testName := t.Name()
+	if ok := regexp.MustCompile(`^Test[A-Za-z0-9_-]+WithFork$`).MatchString(testName); !ok {
+		t.Fatalf("Test name %q does not match expected format", t.Name())
+	}
+
+	inputCmd := os.Args[0]
+	cmd := exec.Command(inputCmd, "-test.run", testName)
+	cmd.Env = append(os.Environ(), "FORK=1")
+
+	var stdoutBuf, stderrBuf bytes.Buffer
+	cmd.Stdout = &stdoutBuf
+	cmd.Stderr = &stderrBuf
+
+	err = cmd.Run()
+
+	return stdoutBuf.String(), stderrBuf.String(), err
 }
