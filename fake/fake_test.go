@@ -9,7 +9,7 @@ import (
 
 func TestGenerateUUID(t *testing.T) {
 	uuidSet := make(map[string]struct{})
-	for i := 0; i < 1000; i++ {
+	for i := range 1000 {
 		t.Run(fmt.Sprintf("UUIDTest-%d", i), func(t *testing.T) {
 			uuid, err := RandomUUID()
 			if err != nil {
@@ -81,25 +81,25 @@ func TestRandomAddress(t *testing.T) {
 // ================================================================================
 
 func BenchmarkGenerateUUID(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = RandomUUID()
 	}
 }
 
 func BenchmarkRandomDate(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = RandomDate()
 	}
 }
 
 func BenchmarkRandomPhoneNumber(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = RandomPhoneNumber()
 	}
 }
 
 func BenchmarkRandomAddress(b *testing.B) {
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_, _ = RandomAddress()
 	}
 }

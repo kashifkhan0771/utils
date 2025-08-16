@@ -1,6 +1,8 @@
 module github.com/kashifkhan0771/utils
 
-go 1.23.3
+go 1.24
+
+toolchain go1.24.6
 
 require (
 	github.com/forPelevin/gomoji v1.3.1

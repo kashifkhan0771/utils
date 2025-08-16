@@ -185,7 +185,8 @@ func BenchmarkRenderText(b *testing.B) {
 		Date: time.Date(2024, 10, 1, 0, 0, 0, 0, time.UTC),
 	}
 
-	for i := 0; i < b.N; i++ {
+	b.ReportAllocs()
+	for b.Loop() {
 		_, _ = RenderText(testTemplate1, data)
 	}
 }

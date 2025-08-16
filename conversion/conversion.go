@@ -56,7 +56,7 @@ func SecondsToMinutes(s int64) float64 {
 // MinutesToSeconds converts minutes to seconds.
 // It takes an integer value of minutes and returns the equivalent in seconds as an int64.
 func MinutesToSeconds(m int64) int64 {
-	return int64(m * 60)
+	return m * 60
 }
 
 // MinutesToHours converts minutes to hours.
@@ -68,7 +68,7 @@ func MinutesToHours(m int64) float64 {
 // HoursToMinutes converts hours to minutes.
 // It takes an integer value of hours and returns the equivalent in minutes as an int64.
 func HoursToMinutes(h int64) int64 {
-	return int64(h * 60)
+	return h * 60
 }
 
 // HoursToDays converts hours to days.
@@ -80,7 +80,7 @@ func HoursToDays(h int64) float64 {
 // DaysToHours converts days to hours.
 // It takes an integer value of days and returns the equivalent in days as an int64.
 func DaysToHours(d int64) int64 {
-	return int64(d * 24)
+	return d * 24
 }
 
 // Temperature conversion functions

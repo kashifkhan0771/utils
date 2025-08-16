@@ -412,36 +412,55 @@ func TestGetQueryParamError(t *testing.T) {
 // ================================================================================
 
 func BenchmarkBuildURL(b *testing.B) {
+	var (
+		scheme, host, path = "http", "example.com", "onePath"
+		qp                 = map[string]string{"queryParamOne": "valueQueryParamOne"}
+	)
+
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		_, _ = BuildURL("http", "example.com", "onePath", map[string]string{"queryParamOne": "valueQueryParamOne"})
+	for b.Loop() {
+		_, _ = BuildURL(scheme, host, path, qp)
 	}
 }
 
 func BenchmarkAddQueryParams(b *testing.B) {
+	var (
+		urlStr = "http://example.com"
+		qp     = map[string]string{"queryParamOne": "valueQueryParamOne"}
+	)
+
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		_, _ = AddQueryParams("http://example.com", map[string]string{"queryParamOne": "valueQueryParamOne"})
+	for b.Loop() {
+		_, _ = AddQueryParams(urlStr, qp)
 	}
 }
 
 func BenchmarkIsValidURL(b *testing.B) {
+	var (
+		urlStr  = "http://example.com"
+		schemes = []string{"http", "https"}
+	)
+
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		IsValidURL("http://example.com", []string{"http", "https"})
+	for b.Loop() {
+		IsValidURL(urlStr, schemes)
 	}
 }
 
 func BenchmarkExtractDomain(b *testing.B) {
+	urlStr := "http://example.com"
+
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		_, _ = ExtractDomain("http://example.com")
+	for b.Loop() {
+		_, _ = ExtractDomain(urlStr)
 	}
 }
 
 func BenchmarkGetQueryParam(b *testing.B) {
+	urlStr, key := "http://example.com?key=value", "key"
+
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		_, _ = GetQueryParam("http://example.com?key=value", "key")
+	for b.Loop() {
+		_, _ = GetQueryParam(urlStr, key)
 	}
 }
