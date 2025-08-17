@@ -90,10 +90,10 @@ func (t *TokenBucket) WaitN(ctx context.Context, n int) error {
 		now := time.Now()
 		t.mu.Lock()
 		if n > t.capacity {
-			currencyCap := t.capacity
+			currentCap := t.capacity
 			t.mu.Unlock()
 
-			return fmt.Errorf("requested tokens %d exceeds capacity %v", n, currencyCap)
+			return fmt.Errorf("requested tokens %d exceeds capacity %v", n, currentCap)
 		}
 		t.refill(now)
 
@@ -152,10 +152,6 @@ func (t *TokenBucket) Tokens() float64 {
 	return t.tokens
 }
 
-// SetCapacity adjusts the bucket capacity at runtime.
-// If the new capacity is smaller than the current number of tokens,
-// the token count is reduced to match the new capacity.
-// This method is thread-safe.
 // SetCapacity adjusts the bucket capacity at runtime.
 // If the new capacity is smaller than the current number of tokens,
 // the token count is reduced to match the new capacity.
