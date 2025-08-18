@@ -8,31 +8,30 @@ import (
 )
 
 func TestErrorAggregator_Add(t *testing.T) {
+	t.Parallel()
+
 	// create one instance on top to use in test
 	e := NewErrorAggregator()
 
-	type args struct {
-		err error
-	}
 	tests := []struct {
 		name  string
-		args  args
+		err   error
 		total int
 	}{
 		{
 			name:  "success - add a new error",
-			args:  args{err: errors.New("a new error")},
+			err:   errors.New("a new error"),
 			total: 1,
 		},
 		{
-			name:  "success - add a another new error",
-			args:  args{err: errors.New("a new different error")},
+			name:  "success - add another new error",
+			err:   errors.New("a new different error"),
 			total: 2,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e.Add(tt.args.err)
+			e.Add(tt.err)
 
 			if len(e.ErrorList()) != tt.total {
 				t.Errorf("add error failed: got total: %d - want total: %d", len(e.ErrorList()), tt.total)
@@ -42,34 +41,32 @@ func TestErrorAggregator_Add(t *testing.T) {
 }
 
 func TestErrorAggregator_HasErrors(t *testing.T) {
+	t.Parallel()
+
 	e := NewErrorAggregator()
-
-	e1 := NewErrorAggregator()
-	e1.Add(errors.New("a new error for test"))
-
-	type args struct {
-		errs *ErrorAggregator
-	}
+	e.Add(errors.New("a new error for test"))
 
 	tests := []struct {
 		name string
-		args args
+		errs *ErrorAggregator
 		want bool
 	}{
 		{
 			name: "no error",
-			args: args{errs: e},
+			errs: NewErrorAggregator(),
 			want: false,
 		},
 		{
 			name: "has error",
-			args: args{errs: e1},
+			errs: e,
 			want: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.args.errs.HasErrors(); got != tt.want {
+			t.Parallel()
+
+			if got := tt.errs.HasErrors(); got != tt.want {
 				t.Errorf("ErrorAggregator.HasErrors() = %v, want %v", got, tt.want)
 			}
 		})
@@ -77,6 +74,8 @@ func TestErrorAggregator_HasErrors(t *testing.T) {
 }
 
 func TestErrorAggregator_Error(t *testing.T) {
+	t.Parallel()
+
 	e := NewErrorAggregator()
 	e.Add(errors.New("a new error"))
 	e.Add(errors.New("a new another error"))
@@ -95,6 +94,8 @@ func TestErrorAggregator_Error(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			// calling the Error() method to get the aggregated error
 			if err := tt.errs.Error(); err != nil {
 				// Comparing the error message
@@ -109,6 +110,8 @@ func TestErrorAggregator_Error(t *testing.T) {
 }
 
 func TestErrorAggregator_ErrorList(t *testing.T) {
+	t.Parallel()
+
 	e := NewErrorAggregator()
 	e.Add(errors.New("a new error"))
 	e.Add(errors.New("a new another error"))
@@ -124,6 +127,8 @@ func TestErrorAggregator_ErrorList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := e.ErrorList(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ErrorAggregator.ErrorList() = %v, want %v", got, tt.want)
 			}

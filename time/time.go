@@ -113,17 +113,12 @@ func NextOccurrence(hour, minute, second int, t time.Time) time.Time {
 
 // WeekNumber returns the year and week number for the given time
 func WeekNumber(t time.Time) (int, int) {
-	year, week := t.ISOWeek()
-
-	return year, week
+	return t.ISOWeek()
 }
 
 // DaysBetween returns the number of days between two times
 func DaysBetween(start, end time.Time) int {
-	start = time.Date(start.Year(), start.Month(), start.Day(), 0, 0, 0, 0, start.Location())
-	end = time.Date(end.Year(), end.Month(), end.Day(), 0, 0, 0, 0, end.Location())
-
-	return int(end.Sub(start).Hours() / 24)
+	return int(StartOfDay(end).Sub(StartOfDay(start)) / (24 * time.Hour))
 }
 
 // IsTimeBetween checks if the given time is between the start and end times
@@ -148,46 +143,20 @@ func SplitDuration(d time.Duration) (days, hours, minutes, seconds int) {
 
 // GetMonthName returns the name of the month for the given month number
 func GetMonthName(monthNumber int) (string, error) {
-	months := []string{
-		"",          // Index 0 (placeholder, as months start from 1)
-		"January",   // 1
-		"February",  // 2
-		"March",     // 3
-		"April",     // 4
-		"May",       // 5
-		"June",      // 6
-		"July",      // 7
-		"August",    // 8
-		"September", // 9
-		"October",   // 10
-		"November",  // 11
-		"December",  // 12
-	}
-
 	if monthNumber < 1 || monthNumber > 12 {
 		return "", fmt.Errorf("invalid month number %d - it should be between 1 and 12", monthNumber)
 	}
 
-	return months[monthNumber], nil
+	return time.Month(monthNumber).String(), nil
 }
 
 // GetDayName returns the name of the day for the given day number
 func GetDayName(dayNumber int) (string, error) {
-	days := []string{
-		"Sunday",    // 0
-		"Monday",    // 1
-		"Tuesday",   // 2
-		"Wednesday", // 3
-		"Thursday",  // 4
-		"Friday",    // 5
-		"Saturday",  // 6
-	}
-
 	if dayNumber < 0 || dayNumber > 6 {
 		return "", fmt.Errorf("invalid day number %d - it should be between 0 and 6", dayNumber)
 	}
 
-	return days[dayNumber], nil
+	return time.Weekday(dayNumber).String(), nil
 }
 
 func FormatForDisplay(t time.Time) string {

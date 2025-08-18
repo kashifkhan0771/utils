@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 
+	"golang.org/x/net/idna"
 	"golang.org/x/net/publicsuffix"
 )
 
@@ -67,7 +68,7 @@ var pathRe = regexp.MustCompile(pathRegex)
 //
 // Notes:
 //   - If any query parameters are provided, they will be encoded and appended to the URL.
-//   - If the path is empty, a trailing slash will be included after the host.
+//   - If the path is empty, no trailing slash is added after the host.
 //   - The function ensures the proper encoding of query parameters and safely constructs the final URL.
 //
 // Usage:
@@ -78,45 +79,51 @@ var pathRe = regexp.MustCompile(pathRegex)
 //	  fmt.Println("Constructed URL:", url)
 func BuildURL(scheme, host, path string, query map[string]string) (string, error) {
 	var errMessage []string
+
+	scheme = strings.TrimSpace(scheme)
 	if scheme == "" {
 		errMessage = append(errMessage, "scheme is required")
+	} else if !isAllowedScheme(scheme) {
+		errMessage = append(errMessage, fmt.Sprintf("URL scheme %s is invalid", scheme))
 	}
-	if host != "" {
-		if !hostRe.MatchString(host) {
-			errMessage = append(errMessage, "the host is not valid")
-		}
-	}
+
 	if host == "" {
 		errMessage = append(errMessage, "host is required")
-	}
-
-	if path != "" {
-		if !pathRe.MatchString(path) {
-			errMessage = append(errMessage, "path is permitted with a-z, 0-9, - and _ characters and multiple path segments")
+	} else {
+		asciiHost, err := idna.ToASCII(host)
+		if err != nil {
+			errMessage = append(errMessage, fmt.Sprintf("invalid internationalized host %q, %v", host, err))
+		} else if !hostRe.MatchString(asciiHost) {
+			errMessage = append(errMessage, "the host is not valid")
+		} else {
+			host = asciiHost
 		}
 	}
 
-	if errMessage != nil {
+	if path != "" && !pathRe.MatchString(path) {
+		errMessage = append(errMessage, "path is permitted with a-z, 0-9, - and _ characters and multiple path segments")
+	}
+
+	if len(errMessage) > 0 {
 		return "", errors.New(strings.Join(errMessage, "; "))
 	}
 
 	parsedUrl := &url.URL{
 		Scheme: scheme,
 		Host:   host,
+		Path:   path,
 	}
 
-	if path == "" {
-		parsedUrl.Path = "/"
-	} else if !strings.HasPrefix(path, "/") {
-		parsedUrl.Path = "/" + path
-	} else {
-		parsedUrl.Path = path
+	if len(query) > 0 {
+		queryParams := parsedUrl.Query()
+		for key, value := range query {
+			if err := validateKeyValue(key, value); err != nil {
+				return "", err
+			}
+			queryParams.Add(key, value)
+		}
+		parsedUrl.RawQuery = queryParams.Encode()
 	}
-	queryParams := parsedUrl.Query()
-	for key, value := range query {
-		queryParams.Add(key, value)
-	}
-	parsedUrl.RawQuery = queryParams.Encode()
 
 	return parsedUrl.String(), nil
 }
@@ -167,37 +174,42 @@ func AddQueryParams(urlStr string, params map[string]string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("URL %s could not be parsed. err: %w", urlStr, err)
 	}
-	switch parsedURL.Scheme {
-	case "http", "https", "ws", "wss", "ftp":
-	default:
+
+	if !isAllowedScheme(parsedURL.Scheme) {
 		return "", fmt.Errorf("URL scheme %s is invalid", parsedURL.Scheme)
 	}
-	queryParams := parsedURL.Query()
 
-	for key, value := range params {
-		err = validateKeyValue(key, value)
-		if err != nil {
-			return "", err
+	if len(params) > 0 {
+		queryParams := parsedURL.Query()
+
+		for key, value := range params {
+			err = validateKeyValue(key, value)
+			if err != nil {
+				return "", err
+			}
+			queryParams.Add(key, value)
 		}
-		queryParams.Add(key, value)
+		parsedURL.RawQuery = queryParams.Encode()
 	}
-	parsedURL.RawQuery = queryParams.Encode()
 
 	return parsedURL.String(), nil
 }
 
 func validateKeyValue(key, value string) error {
-	if key == "" {
+	if strings.TrimSpace(key) == "" {
 		return errors.New("query parameter key cannot be empty")
 	}
-	if value == "" {
+
+	if strings.TrimSpace(value) == "" {
 		return fmt.Errorf("query parameter value for key %s cannot be empty", key)
 	}
+
 	if !alphaNumericRe.MatchString(key) {
-		return fmt.Errorf("query parameter key %s must be alphanumeric", key)
+		return fmt.Errorf("query parameter key %q must contain only letters, digits, or hyphens", key)
 	}
+
 	if !alphaNumericRe.MatchString(value) {
-		return fmt.Errorf("query parameter value %s for key %s must be alphanumeric", value, key)
+		return fmt.Errorf("query parameter value %q for key %q must contain only letters, digits, or hyphens", value, key)
 	}
 
 	return nil
@@ -241,13 +253,15 @@ func IsValidURL(urlStr string, allowedReqSchemes []string) bool {
 	if urlStr == "" {
 		return false
 	}
+
 	parsedURL, err := url.Parse(urlStr)
 	if err != nil {
 		return false
 	}
+
 	for _, scheme := range allowedReqSchemes {
 		if scheme == "" {
-			return false
+			continue
 		}
 		if parsedURL.Scheme == scheme {
 			return true
@@ -280,7 +294,7 @@ func IsValidURL(urlStr string, allowedReqSchemes []string) bool {
 //	    log.Println("Domain:", domain) // Output: "example.com"
 //
 // Notes:
-//   - This function uses `net/url.ParseRequestURI` to validate and parse the URL.
+//   - This function uses `net/url.Parse` to validate and parse the URL.
 //   - It extracts the hostname part of the URL and ignores the port, path, query, or fragment.
 //
 // Usage:
@@ -358,4 +372,14 @@ func GetQueryParam(urlStr, param string) (string, error) {
 	}
 
 	return value[0], nil
+}
+
+var allowedSchemes = map[string]struct{}{
+	"http": {}, "https": {}, "ws": {}, "wss": {}, "ftp": {},
+}
+
+func isAllowedScheme(s string) bool {
+	_, ok := allowedSchemes[strings.TrimSpace(strings.ToLower(s))]
+
+	return ok
 }
