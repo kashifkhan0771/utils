@@ -9,23 +9,36 @@ import (
 )
 
 func TestRemoveDuplicateStr(t *testing.T) {
-	type args struct {
-		strSlice []string
-	}
+	t.Parallel()
+
 	tests := []struct {
-		name string
-		args args
-		want []string
+		name  string
+		input []string
+		want  []string
 	}{
 		{
-			name: "success - remove duplicate strings from slice",
-			args: args{[]string{"one", "one", "one", "two", "three"}},
-			want: []string{"one", "two", "three"},
+			name:  "success - remove duplicates",
+			input: []string{"one", "one", "two", "one", "three"},
+			want:  []string{"one", "two", "three"},
+		},
+		{
+			name:  "success - empty input",
+			input: []string{},
+			want:  []string{},
+		},
+		{
+			name:  "success - nil input",
+			input: nil,
+			want:  nil,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := RemoveDuplicateStr(tt.args.strSlice); !reflect.DeepEqual(got, tt.want) {
+			t.Parallel()
+
+			got := RemoveDuplicateStr(tt.input)
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("RemoveDuplicateStr() = %v, want %v", got, tt.want)
 			}
 		})
@@ -33,26 +46,13 @@ func TestRemoveDuplicateStr(t *testing.T) {
 }
 
 func TestRemoveDuplicateInt(t *testing.T) {
-	type args struct {
-		strSlice []int
-	}
-	tests := []struct {
-		name string
-		args args
-		want []int
-	}{
-		{
-			name: "success - remove duplicate integer from a slice",
-			args: args{[]int{1, 2, 3, 4, 4, 5, 5, 6, 7, 7, 7}},
-			want: []int{1, 2, 3, 4, 5, 6, 7},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := RemoveDuplicateInt(tt.args.strSlice); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("RemoveDuplicateInt() = %v, want %v", got, tt.want)
-			}
-		})
+	t.Parallel()
+
+	input := []int{1, 2, 3, 4, 4, 5, 5, 6, 7, 7, 7}
+	want := []int{1, 2, 3, 4, 5, 6, 7}
+
+	if got := RemoveDuplicateInt(input); !reflect.DeepEqual(got, want) {
+		t.Errorf("RemoveDuplicateInt() = %v, want %v", got, want)
 	}
 }
 
