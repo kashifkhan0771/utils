@@ -190,14 +190,14 @@ func IsPrime(x int) bool {
 	if x == 2 {
 		return true
 	}
-	//no need to handle sqrt error since we elimnated negative numbers
+	// No need to handle sqrt error since we elimnated negative numbers
 	fsqrx, _ := Sqrt(x)
 	sqrx := int(fsqrx)
-	// if it's an even number that is not 2 then it's not a prime number
+	// If it's an even number that is not 2 then it's not a prime number
 	if x%2 == 0 {
 		return false
 	}
-	//since we eliminated all even numbers we can just iterate over only odd numbers
+	// Since we eliminated all even numbers we can just iterate over only odd numbers
 	// I'm iterating up to sqrx+1 just to account for any rounding errors
 	for i := 3; i <= sqrx+1; i += 2 {
 		if x%i == 0 {
@@ -206,4 +206,52 @@ func IsPrime(x int) bool {
 	}
 
 	return true
+}
+
+// Sieve of Eratosthenes algorithm Complexity = O(n log log n).
+func PrimeList(n int) []int {
+	if n < 2 {
+		return []int{}
+	}
+	list := []int{}
+	// Slice of bool to flag each number, intially we assume every number is a prime number except 1 and 0
+	isPrime := make([]bool, n+1)
+	for i := 2; i <= n; i++ {
+		isPrime[i] = true
+	}
+	// Basic implementation of Sieve
+	for i := 2; i*i <= n; i++ {
+		if isPrime[i] {
+			for j := i + i; j <= n; j += i {
+				isPrime[j] = false
+			}
+		}
+	}
+	for i := 2; i <= n; i++ {
+		if isPrime[i] {
+			list = append(list, i)
+		}
+	}
+
+	return list
+}
+
+// Complexity = sqrt(n)
+func GetDivisors(n int) []int {
+	if n <= 0 {
+		return []int{}
+	}
+	// 2 is a good starting point for the slice capacity
+	list := make([]int, 0, 2)
+	for i := 1; i*i <= n; i++ {
+		if n%i == 0 {
+			list = append(list, i)
+			// Check for perfect squares
+			if i != n/i {
+				list = append(list, n/i)
+			}
+		}
+	}
+	// The list is not sorted.
+	return list
 }
