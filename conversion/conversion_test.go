@@ -6,12 +6,14 @@ import (
 	"github.com/kashifkhan0771/utils/conversion"
 )
 
+type testCase[V, W comparable] struct {
+	name string
+	arg  V
+	want W
+}
+
 func TestBytesToKB(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  int64
-		want float64
-	}{
+	tests := []testCase[int64, float64]{
 		{
 			name: "calculate bytes to kilobytes",
 			arg:  1024,
@@ -36,20 +38,18 @@ func TestBytesToKB(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.BytesToKB(tt.arg)
 			if got != tt.want {
-				t.Errorf("BytesToK() = %v, want %v", got, tt.want)
+				t.Errorf("BytesToKB(%v) = %v, want %v", tt.arg, got, tt.want)
 			}
 		})
 	}
 }
 
 func TestKBToBytes(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  float64
-		want int64
-	}{
+	tests := []testCase[float64, int64]{
 		{
 			name: "1 KB to bytes",
 			arg:  1.0,
@@ -68,12 +68,14 @@ func TestKBToBytes(t *testing.T) {
 		{
 			name: "10.25 KB to bytes",
 			arg:  10.25,
-			want: 10496, // 10.25 * 1024 = 10496
+			want: 10_496, // 10.25 * 1024 = 10496
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.KBToBytes(tt.arg)
 			if got != tt.want {
 				t.Errorf("KBToBytes(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -83,14 +85,10 @@ func TestKBToBytes(t *testing.T) {
 }
 
 func TestBytesToMB(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  int64
-		want float64
-	}{
+	tests := []testCase[int64, float64]{
 		{
 			name: "1048576 bytes to megabytes",
-			arg:  1048576,
+			arg:  1_048_576,
 			want: 1.0,
 		},
 		{
@@ -100,13 +98,15 @@ func TestBytesToMB(t *testing.T) {
 		},
 		{
 			name: "2621440 bytes to megabytes",
-			arg:  2621440,
+			arg:  2_621_440,
 			want: 2.5,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.BytesToMB(tt.arg)
 			if got != tt.want {
 				t.Errorf("BytesToMB(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -116,15 +116,11 @@ func TestBytesToMB(t *testing.T) {
 }
 
 func TestMBToBytes(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  float64
-		want int64
-	}{
+	tests := []testCase[float64, int64]{
 		{
 			name: "1 MB to bytes",
 			arg:  1.0,
-			want: 1048576,
+			want: 1_048_576,
 		},
 		{
 			name: "0 MB to bytes",
@@ -134,12 +130,14 @@ func TestMBToBytes(t *testing.T) {
 		{
 			name: "2.5 MB to bytes",
 			arg:  2.5,
-			want: 2621440,
+			want: 2_621_440,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.MBToBytes(tt.arg)
 			if got != tt.want {
 				t.Errorf("MBToBytes(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -150,14 +148,10 @@ func TestMBToBytes(t *testing.T) {
 
 func TestBytesToGB(t *testing.T) {
 
-	tests := []struct {
-		name string
-		arg  int64
-		want float64
-	}{
+	tests := []testCase[int64, float64]{
 		{
 			name: "1073741824 bytes to gigabytes",
-			arg:  1073741824,
+			arg:  1_073_741_824,
 			want: 1.0,
 		},
 		{
@@ -167,13 +161,15 @@ func TestBytesToGB(t *testing.T) {
 		},
 		{
 			name: "107374182400 bytes to gigabytes",
-			arg:  107374182400,
+			arg:  107_374_182_400,
 			want: 100.0,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.BytesToGB(tt.arg)
 			if got != tt.want {
 				t.Errorf("BytesToGB(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -183,15 +179,11 @@ func TestBytesToGB(t *testing.T) {
 }
 
 func TestGBToBytes(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  float64
-		want int64
-	}{
+	tests := []testCase[float64, int64]{
 		{
 			name: "1 GB to bytes",
 			arg:  1.0,
-			want: 1073741824,
+			want: 1_073_741_824,
 		},
 		{
 			name: "0 GB to bytes",
@@ -201,12 +193,14 @@ func TestGBToBytes(t *testing.T) {
 		{
 			name: "2.5 GB to bytes",
 			arg:  2.5,
-			want: 2684354560,
+			want: 2_684_354_560,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.GBToBytes(tt.arg)
 			if got != tt.want {
 				t.Errorf("GBToBytes(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -217,11 +211,7 @@ func TestGBToBytes(t *testing.T) {
 
 // Time conversion functions
 func TestSecondsToMinutes(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  int64
-		want float64
-	}{
+	tests := []testCase[int64, float64]{
 		{
 			name: "60 seconds to minutes",
 			arg:  60,
@@ -241,6 +231,8 @@ func TestSecondsToMinutes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.SecondsToMinutes(tt.arg)
 			if got != tt.want {
 				t.Errorf("SecondsToMinutes(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -250,11 +242,7 @@ func TestSecondsToMinutes(t *testing.T) {
 }
 
 func TestMinutesToSeconds(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  int64
-		want int64
-	}{
+	tests := []testCase[int64, int64]{
 		{
 			name: "1 minute to seconds",
 			arg:  1,
@@ -266,14 +254,16 @@ func TestMinutesToSeconds(t *testing.T) {
 			want: 0,
 		},
 		{
-			name: "0.5 minutes to seconds",
-			arg:  0,
-			want: 0,
+			name: "-1 minutes to seconds",
+			arg:  -1,
+			want: -60,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.MinutesToSeconds(tt.arg)
 			if got != tt.want {
 				t.Errorf("MinutesToSeconds(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -283,11 +273,7 @@ func TestMinutesToSeconds(t *testing.T) {
 }
 
 func TestMinutesToHours(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  int64
-		want float64
-	}{
+	tests := []testCase[int64, float64]{
 		{
 			name: "60 minutes to hours",
 			arg:  60,
@@ -307,6 +293,8 @@ func TestMinutesToHours(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.MinutesToHours(tt.arg)
 			if got != tt.want {
 				t.Errorf("MinutesToHours(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -316,11 +304,7 @@ func TestMinutesToHours(t *testing.T) {
 }
 
 func TestHoursToMinutes(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  int64
-		want int64
-	}{
+	tests := []testCase[int64, int64]{
 		{
 			name: "1 hour to minutes",
 			arg:  1,
@@ -340,6 +324,8 @@ func TestHoursToMinutes(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.HoursToMinutes(tt.arg)
 			if got != tt.want {
 				t.Errorf("HoursToMinutes(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -349,11 +335,7 @@ func TestHoursToMinutes(t *testing.T) {
 }
 
 func TestHoursToDays(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  int64
-		want float64
-	}{
+	tests := []testCase[int64, float64]{
 		{
 			name: "24 hours to days",
 			arg:  24,
@@ -373,6 +355,8 @@ func TestHoursToDays(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.HoursToDays(tt.arg)
 			if got != tt.want {
 				t.Errorf("HoursToDays(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -382,11 +366,7 @@ func TestHoursToDays(t *testing.T) {
 }
 
 func TestDaysToHours(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  int64
-		want int64
-	}{
+	tests := []testCase[int64, int64]{
 		{
 			name: "1 day to hours",
 			arg:  1,
@@ -406,6 +386,8 @@ func TestDaysToHours(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.DaysToHours(tt.arg)
 			if got != tt.want {
 				t.Errorf("DaysToHours(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -416,11 +398,7 @@ func TestDaysToHours(t *testing.T) {
 
 // Temperature conversion functions
 func TestCelsiusToFahrenheit(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  float64
-		want float64
-	}{
+	tests := []testCase[float64, float64]{
 		{
 			name: "0 Celsius to Fahrenheit",
 			arg:  0,
@@ -440,6 +418,8 @@ func TestCelsiusToFahrenheit(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.CelsiusToFahrenheit(tt.arg)
 			if got != tt.want {
 				t.Errorf("CelsiusToFahrenheit(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -449,11 +429,7 @@ func TestCelsiusToFahrenheit(t *testing.T) {
 }
 
 func TestFahrenheitToCelsius(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  float64
-		want float64
-	}{
+	tests := []testCase[float64, float64]{
 		{
 			name: "32 Fahrenheit to Celsius",
 			arg:  32,
@@ -473,6 +449,8 @@ func TestFahrenheitToCelsius(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.FahrenheitToCelsius(tt.arg)
 			if got != tt.want {
 				t.Errorf("FahrenheitToCelsius(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -482,11 +460,7 @@ func TestFahrenheitToCelsius(t *testing.T) {
 }
 
 func TestCelsiusToKelvin(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  float64
-		want float64
-	}{
+	tests := []testCase[float64, float64]{
 		{
 			name: "0 Celsius to Kelvin",
 			arg:  0,
@@ -506,6 +480,8 @@ func TestCelsiusToKelvin(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.CelsiusToKelvin(tt.arg)
 			if got != tt.want {
 				t.Errorf("CelsiusToKelvin(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -515,11 +491,7 @@ func TestCelsiusToKelvin(t *testing.T) {
 }
 
 func TestKelvinToCelsius(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  float64
-		want float64
-	}{
+	tests := []testCase[float64, float64]{
 		{
 			name: "273.15 Kelvin to Celsius",
 			arg:  273.15,
@@ -539,6 +511,8 @@ func TestKelvinToCelsius(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.KelvinToCelsius(tt.arg)
 			if got != tt.want {
 				t.Errorf("KelvinToCelsius(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -548,11 +522,7 @@ func TestKelvinToCelsius(t *testing.T) {
 }
 
 func TestFahrenheitToKelvin(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  float64
-		want float64
-	}{
+	tests := []testCase[float64, float64]{
 		{
 			name: "0 Fahrenheit to Kelvin",
 			arg:  0,
@@ -567,6 +537,8 @@ func TestFahrenheitToKelvin(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.FahrenheitToKelvin(tt.arg)
 			if got != tt.want {
 				t.Errorf("FahrenheitToKelvin(%v) = %v, want %v", tt.arg, got, tt.want)
@@ -576,11 +548,7 @@ func TestFahrenheitToKelvin(t *testing.T) {
 }
 
 func TestKelvinToFahrenheit(t *testing.T) {
-	tests := []struct {
-		name string
-		arg  float64
-		want float64
-	}{
+	tests := []testCase[float64, float64]{
 		{
 			name: "255.37 Kelvin to Fahrenheit",
 			arg:  255.37,
@@ -595,6 +563,8 @@ func TestKelvinToFahrenheit(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := conversion.KelvinToFahrenheit(tt.arg)
 			if got != tt.want {
 				t.Errorf("KelvinToFahrenheit(%v) = %v, want %v", tt.arg, got, tt.want)
