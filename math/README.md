@@ -29,6 +29,12 @@
 
 - **IsPrime**: Checks if a number is prime or not. Only works for non-negative integers.
 
+- **PrimeList**: Returns a slice of prime numbers up to n.
+
+- **GetDivisors**: Returns the divisors of a positive integer as an unordered slice. Returns an empty slice for negative inputs.
+
+
+
 ## Examples:
 
 For examples of each function, please checkout [EXAMPLES.md](/math/EXAMPLES.md)
