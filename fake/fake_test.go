@@ -1,78 +1,98 @@
 package fake
 
 import (
-	"fmt"
 	"regexp"
 	"testing"
+	"testing/quick"
 	"time"
 )
 
-func TestGenerateUUID(t *testing.T) {
-	uuidSet := make(map[string]struct{})
-	for i := range 1000 {
-		t.Run(fmt.Sprintf("UUIDTest-%d", i), func(t *testing.T) {
-			uuid, err := RandomUUID()
-			if err != nil {
-				t.Fatalf("Expected no error, got %v", err)
-			}
+func TestRandomUUID(t *testing.T) {
+	t.Parallel()
 
-			// Test if UUID is of correct length
-			if len(uuid) != 36 {
-				t.Errorf("Expected length 36, got %d", len(uuid))
-			}
+	re := regexp.MustCompile(`^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$`)
+	seen := make(map[string]struct{})
 
-			// Test if UUID matches the correct format
-			isValidUUID := regexp.MustCompile(`^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$`).MatchString
-			if !isValidUUID(uuid) {
-				t.Errorf("UUID %s does not match the required format", uuid)
-			}
+	prop := func() bool {
+		u, err := RandomUUID()
+		if err != nil || len(u) != 36 || !re.MatchString(u) {
+			return false
+		}
+		// simple uniqueness check across trials
+		if _, dup := seen[u]; dup {
+			return false
+		}
+		seen[u] = struct{}{}
+		return true
+	}
 
-			// Test for uniqueness
-			if _, exists := uuidSet[uuid]; exists {
-				t.Errorf("Duplicate UUID found: %s", uuid)
-			}
-			uuidSet[uuid] = struct{}{}
-		})
+	if err := quick.Check(prop, &quick.Config{MaxCount: 1_000}); err != nil {
+		t.Fatalf("RandomUUID property failed: %v", err)
 	}
 }
 
 func TestRandomDate(t *testing.T) {
-	start := time.Date(EpochYear, time.Month(EpochMonth), EpochDay, EpochHour, EpochMinute, EpochSecond, EpochNano, time.UTC)
-	end := time.Now()
+	t.Parallel()
 
-	randomDate, err := RandomDate()
-	if err != nil {
-		t.Fatalf("Expected no error, but got %v", err)
+	start := time.Date(EpochYear, time.Month(EpochMonth), EpochDay, EpochHour, EpochMinute, EpochSecond, EpochNano, time.UTC)
+
+	prop := func() bool {
+		d, err := RandomDate()
+		if err != nil {
+			return false
+		}
+		end := time.Now()
+		return !d.Before(start) && !d.After(end)
 	}
 
-	if randomDate.Before(start) || randomDate.After(end) {
-		t.Fatalf("Random date %v is outside the expected range [%v, %v]", randomDate, start, end)
+	if err := quick.Check(prop, &quick.Config{MaxCount: 1_000}); err != nil {
+		t.Fatalf("RandomDate property failed: %v", err)
 	}
 }
 
-func TestGenerateRandomPhoneNumber(t *testing.T) {
-	phoneNumber, err := RandomPhoneNumber()
-	if err != nil {
-		t.Fatalf("Expected no error, but got %v", err)
+// Sanity property: RandomDate never returns the zero time.
+func TestRandomDate_NonZero_Property(t *testing.T) {
+	t.Parallel()
+
+	prop := func() bool {
+		d, err := RandomDate()
+		return err == nil && !d.IsZero()
 	}
+
+	if err := quick.Check(prop, &quick.Config{MaxCount: 1_000}); err != nil {
+		t.Fatalf("RandomDate_NonZero property failed: %v", err)
+	}
+}
+
+func TestRandomPhoneNumber(t *testing.T) {
+	t.Parallel()
 
 	re := regexp.MustCompile(`^\+1 \(\d{3}\) \d{3}-\d{4}$`)
 
-	if !re.MatchString(phoneNumber) {
-		t.Errorf("Generated phone number %v does not match the expected format", phoneNumber)
+	prop := func() bool {
+		phoneNumber, err := RandomPhoneNumber()
+
+		return err == nil && re.MatchString(phoneNumber)
+	}
+
+	if err := quick.Check(prop, &quick.Config{MaxCount: 1_000}); err != nil {
+		t.Fatalf("RandomPhoneNumber property failed: %v", err)
 	}
 }
 
 func TestRandomAddress(t *testing.T) {
-	address, err := RandomAddress()
-	if err != nil {
-		t.Fatalf("Expected no error, but got %v", err)
-	}
+	t.Parallel()
 
 	re := regexp.MustCompile(`^\d+ [A-Za-z ]+, [A-Za-z ]+, [A-Z]{2} \d{5}, USA$`)
 
-	if !re.MatchString(address) {
-		t.Errorf("Generated address %v does not match the expected format", address)
+	prop := func() bool {
+		address, err := RandomAddress()
+
+		return err == nil && re.MatchString(address)
+	}
+
+	if err := quick.Check(prop, &quick.Config{MaxCount: 1_000}); err != nil {
+		t.Fatalf("RandomAddress property failed: %v", err)
 	}
 }
 
