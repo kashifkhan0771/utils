@@ -1,43 +1,30 @@
 package slice
 
-import (
-	"fmt"
-
-	"github.com/kashifkhan0771/utils/maps"
-)
-
-// RemoveDuplicateStr removes all the duplicate strings and return a new slice without any duplicate values.
+// RemoveDuplicateStr removes duplicate strings and returns a new slice without duplicates, preserving input order.
 func RemoveDuplicateStr(strSlice []string) []string {
-	duplicate := maps.NewStateMap()
-
-	newSlice := make([]string, 0)
-
-	for _, value := range strSlice {
-		if duplicate.HasState(value) {
-			continue
-		}
-
-		duplicate.SetState(value, true)
-		newSlice = append(newSlice, value)
-	}
-
-	return newSlice
+	return unique(strSlice)
 }
 
-// RemoveDuplicateInt removes all the duplicate integers and return a new slice without any duplicate values.
-func RemoveDuplicateInt(strSlice []int) []int {
-	duplicate := maps.NewStateMap()
+// RemoveDuplicateInt removes duplicate integers and returns a new slice without duplicates, preserving input order.
+func RemoveDuplicateInt(intSlice []int) []int {
+	return unique(intSlice)
+}
 
-	newSlice := make([]int, 0)
-
-	for _, value := range strSlice {
-		if duplicate.HasState(fmt.Sprintf("%d", value)) {
-			continue
-		}
-
-		duplicate.SetState(fmt.Sprintf("%d", value), true)
-		newSlice = append(newSlice, value)
+func unique[T comparable](in []T) []T {
+	if in == nil {
+		return nil
 	}
 
-	return newSlice
+	seen := make(map[T]struct{}, len(in))
+	out := make([]T, 0, len(in))
+
+	for _, v := range in {
+		if _, ok := seen[v]; ok {
+			continue
+		}
+		seen[v] = struct{}{}
+		out = append(out, v)
+	}
+
+	return out
 }
