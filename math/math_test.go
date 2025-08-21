@@ -2,6 +2,7 @@ package math
 
 import (
 	"math"
+	"slices"
 	"testing"
 )
 
@@ -715,7 +716,7 @@ func TestIsPrime(t *testing.T) {
 	}{
 		{
 			name: "success - negative 10",
-			args: args{x: 10},
+			args: args{x: -10},
 			want: false,
 		},
 		{
@@ -758,6 +759,126 @@ func TestIsPrime(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := IsPrime(tt.args.x); got != tt.want {
 				t.Errorf("IsPrime() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestPrimeList(t *testing.T) {
+	type args struct {
+		x int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			name: "success - 2",
+			args: args{x: 2},
+			want: []int{2},
+		},
+		{
+			name: "success - 0",
+			args: args{x: 0},
+			want: []int{},
+		},
+		{
+			name: "success - 1",
+			args: args{x: 1},
+			want: []int{},
+		},
+		{
+			name: "success - 3",
+			args: args{x: 3},
+			want: []int{2, 3},
+		},
+		{
+			name: "success - 4",
+			args: args{x: 4},
+			want: []int{2, 3},
+		},
+		{
+			name: "success - 10",
+			args: args{x: 10},
+			want: []int{2, 3, 5, 7},
+		},
+		{
+			name: "success - 100 ",
+			args: args{x: 100},
+			want: []int{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := PrimeList(tt.args.x); !slices.Equal(got, tt.want) {
+				t.Errorf("PrimeList() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+func TestGetDivisors(t *testing.T) {
+	type args struct {
+		x int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			name: "success - 0",
+			args: args{x: 0},
+			want: []int{},
+		},
+		{
+			name: "success - 1",
+			args: args{x: 1},
+			want: []int{1},
+		},
+		{
+			name: "success - 2",
+			args: args{x: 2},
+			want: []int{1, 2},
+		},
+		{
+			name: "success - 3",
+			args: args{x: 3},
+			want: []int{1, 3},
+		},
+		{
+			name: "success - 4",
+			args: args{x: 4},
+			want: []int{1, 2, 4},
+		},
+		{
+			name: "success - 10",
+			args: args{x: 10},
+			want: []int{1, 2, 5, 10},
+		},
+		{
+			name: "success - 49",
+			args: args{x: 49},
+			want: []int{1, 7, 49},
+		},
+		{
+			name: "success - 48",
+			args: args{x: 48},
+			want: []int{1, 2, 3, 4, 6, 8, 12, 16, 24, 48},
+		},
+		{
+			name: "success - 100 ",
+			args: args{x: 100},
+			want: []int{1, 2, 4, 5, 10, 20, 25, 50, 100},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := GetDivisors(tt.args.x)
+			// The slice need to be sorted in order to be compared
+			slices.Sort(got)
+			if !slices.Equal(got, tt.want) {
+				t.Errorf("GetDivisors() = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -817,5 +938,23 @@ func BenchmarkIsPrime(b *testing.B) {
 	const prime = 2147483647
 	for b.Loop() {
 		_ = IsPrime(prime)
+	}
+}
+
+func BenchmarkPrimeList(b *testing.B) {
+	b.ReportAllocs()
+
+	const n = 1e8
+	for b.Loop() {
+		_ = PrimeList(n)
+	}
+}
+
+func BenchmarkGetDivisors(b *testing.B) {
+	b.ReportAllocs()
+
+	const n = 2e9
+	for b.Loop() {
+		_ = GetDivisors(n)
 	}
 }
