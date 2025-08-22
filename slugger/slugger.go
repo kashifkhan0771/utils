@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/forPelevin/gomoji"
 	"golang.org/x/text/unicode/norm"
@@ -20,14 +21,14 @@ type Slugger struct {
 	Substitutions map[string]string // A map of string replacements to apply before generating the slug
 	WithEmoji     bool              // If true, emojis will be included in a slug-friendly format
 
-	init     sync.Once         // Controls initialization of the replacer
+	mu       sync.RWMutex      // Guards substitutions and replacer; safe for concurrent Slug and updates
 	replacer *strings.Replacer // Replacer used to handle substitutions in the input string
 }
 
 // New creates and returns a new Slugger instance with optional substitutions and emoji handling.
 func New(substitutions map[string]string, withEmoji bool) *Slugger {
 	return &Slugger{
-		Substitutions: substitutions,
+		Substitutions: copyMap(substitutions),
 		WithEmoji:     withEmoji,
 		Separator:     defaultSeparator,
 	}
@@ -50,9 +51,17 @@ func (sl *Slugger) Slug(s, separator string) string {
 
 	s = strings.ToLower(s)
 
-	sl.init.Do(sl.initReplacer)
-	if sl.replacer != nil {
-		s = sl.replacer.Replace(s)
+	sl.mu.RLock()
+	r := sl.replacer
+	sl.mu.RUnlock()
+	if r == nil {
+		sl.initReplacer()
+		sl.mu.RLock()
+		r = sl.replacer
+		sl.mu.RUnlock()
+	}
+	if r != nil {
+		s = r.Replace(s)
 	}
 
 	words := normalizeWordsToSafeASCII(s)
@@ -65,42 +74,63 @@ func (sl *Slugger) Slug(s, separator string) string {
 
 // AddSubstitution adds a new substitution to the Slugger and resets the replacer cache.
 func (sl *Slugger) AddSubstitution(key, value string) {
+	sl.mu.Lock()
+	defer sl.mu.Unlock()
+
 	if sl.Substitutions == nil {
 		sl.Substitutions = make(map[string]string)
 	}
 
 	sl.Substitutions[key] = value
-	sl.init = sync.Once{}
+	sl.replacer = nil
 }
 
 // RemoveSubstitution deletes a substitution by key and resets the replacer cache.
 func (sl *Slugger) RemoveSubstitution(key string) {
+	sl.mu.Lock()
+	defer sl.mu.Unlock()
+
 	if len(sl.Substitutions) == 0 {
 		return
 	}
 
 	if _, exists := sl.Substitutions[key]; exists {
 		delete(sl.Substitutions, key)
-		sl.init = sync.Once{}
+		sl.replacer = nil
 	}
 }
 
 // ReplaceSubstitution updates the value of an existing substitution and resets the replacer cache.
 func (sl *Slugger) ReplaceSubstitution(key, newValue string) {
+	sl.mu.Lock()
+	defer sl.mu.Unlock()
+
 	if len(sl.Substitutions) == 0 {
 		return
 	}
 
 	if _, exists := sl.Substitutions[key]; exists {
 		sl.Substitutions[key] = newValue
-		sl.init = sync.Once{}
+		sl.replacer = nil
 	}
 }
 
 // SetSubstitutions replaces all current substitutions with the provided map and resets the replacer cache.
 func (sl *Slugger) SetSubstitutions(substitutions map[string]string) {
-	sl.Substitutions = substitutions
-	sl.init = sync.Once{} // Reset the initialization to rebuild the replacer
+	sl.mu.Lock()
+	defer sl.mu.Unlock()
+
+	sl.Substitutions = copyMap(substitutions)
+	sl.replacer = nil
+}
+
+func copyMap(m map[string]string) map[string]string {
+	cp := make(map[string]string, len(m))
+	for k, v := range m {
+		cp[k] = v
+	}
+
+	return cp
 }
 
 // ligatureReplacer is used to replace common ligatures with their ASCII equivalents.
@@ -140,8 +170,14 @@ func normalizeWordsToSafeASCII(s string) []string {
 // initReplacer builds and caches a strings.Replacer from the current substitutions.
 // Substitution keys are sorted by length (descending) to ensure longer matches are replaced first.
 func (sl *Slugger) initReplacer() {
-	// Reset the replacer to nil so that it can be rebuilt with the latest substitutions
-	sl.replacer = nil
+	sl.mu.Lock()
+
+	if sl.replacer != nil {
+		sl.mu.Unlock()
+
+		return
+	}
+	defer sl.mu.Unlock()
 
 	if len(sl.Substitutions) == 0 {
 		return
@@ -150,6 +186,7 @@ func (sl *Slugger) initReplacer() {
 	// struct to hold key-value pairs for sorting
 	type subsKV struct {
 		k, v string
+		n    int
 	}
 
 	subsPairs := make([]subsKV, 0, len(sl.Substitutions))
@@ -157,7 +194,12 @@ func (sl *Slugger) initReplacer() {
 		if k == "" {
 			continue
 		}
-		subsPairs = append(subsPairs, subsKV{k: k, v: strings.ToLower(v)})
+		subsPairs = append(subsPairs,
+			subsKV{
+				k: k,
+				v: strings.ToLower(v),
+				n: utf8.RuneCountInString(k),
+			})
 	}
 
 	if len(subsPairs) == 0 {
@@ -165,8 +207,8 @@ func (sl *Slugger) initReplacer() {
 	}
 
 	slices.SortFunc(subsPairs, func(a, b subsKV) int {
-		if la, lb := len(a.k), len(b.k); la != lb {
-			return cmp.Compare(lb, la) // sort by key length DESC
+		if a.n != b.n {
+			return cmp.Compare(b.n, a.n) // sort by key length DESC
 		}
 
 		return cmp.Compare(a.k, b.k)

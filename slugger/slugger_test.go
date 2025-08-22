@@ -1,7 +1,14 @@
 package slugger
 
 import (
+	"context"
+	"fmt"
 	"testing"
+	"time"
+	"unicode"
+
+	"github.com/kashifkhan0771/utils/rand"
+	"golang.org/x/sync/errgroup"
 )
 
 func TestSlugger_Slug(t *testing.T) {
@@ -82,6 +89,14 @@ func TestSlugger_Slug(t *testing.T) {
 			substitutionsChange:       map[string]string{"#": "hashtag"},
 			removeSubstitutionsChange: true,
 			expected:                  "hello-and-world-helloworld",
+		},
+		{
+			name:                "ReplaceSubstitution updates value only",
+			input:               "Price is 10 %",
+			separator:           "-",
+			substitutions:       map[string]string{"%": "percent"},
+			substitutionsChange: map[string]string{"%": "pct"},
+			expected:            "price-is-10-pct",
 		},
 		{
 			name:               "Clear all substitutions",
@@ -201,6 +216,119 @@ func TestSlugger_Slug_EdgeCases(t *testing.T) {
 				t.Fatalf("expected %q, got %q", tt.expected, got)
 			}
 		})
+	}
+}
+
+func TestSluggerConcurrentSubstitutions(t *testing.T) {
+	t.Parallel()
+
+	pick := func(slice []string) string {
+		if len(slice) == 0 {
+			return ""
+		}
+		p, err := rand.Pick(slice)
+		if err != nil {
+			return ""
+		}
+		return p
+	}
+
+	intN := func(max int) int {
+		n, err := rand.NumberInRange(0, int64(max-1))
+		if err != nil {
+			return 0
+		}
+		return int(n)
+	}
+
+	sl := New(map[string]string{
+		"hello": "hi",
+		"😀":     "smile",
+		"æ":     "ae",
+		"foo":   "bar",
+	}, true)
+
+	// Random inputs to stress both emoji path and substitutions.
+	inputs := []string{
+		"Hello World!",
+		"  multiple    spaces   ",
+		"Æblegrød med fløde",
+		"foo/bar_baz.qux",
+		"Mixed—dash–types… and punctuation!!!",
+		"Edge😀Case🚀❤️",
+		"____ leading and trailing ____",
+		"",
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+	eg, ctx := errgroup.WithContext(ctx)
+
+	// Spin up 8 readers.
+	for range 8 {
+		eg.Go(func() error {
+			for {
+				select {
+				case <-ctx.Done():
+					return nil
+				default:
+				}
+
+				in := pick(inputs)
+				sep := pick([]string{"", "-", "_", ".", "--"})
+				out := sl.Slug(in, sep)
+
+				// Basic sanity: only ASCII letters/digits and -_. separators, no spaces.
+				for _, rr := range out {
+					if rr > unicode.MaxASCII {
+						return fmt.Errorf("non-ascii rune in slug: %q -> %q", in, out)
+					}
+					if unicode.IsSpace(rr) {
+						return fmt.Errorf("space in slug: %q -> %q", in, out)
+					}
+				}
+			}
+		})
+	}
+
+	// Spin up 4 writers.
+	for range 4 {
+		eg.Go(func() error {
+			keys := []string{"hello", "😀", "æ", "foo", "bar", "baz", "qux", "quux"}
+
+			for {
+				select {
+				case <-ctx.Done():
+					return nil
+				default:
+				}
+
+				switch intN(4) {
+				case 0: // Add
+					k := pick(keys) + time.Now().Format("150405.000")
+					sl.AddSubstitution(k, pick(keys))
+				case 1: // Remove
+					sl.RemoveSubstitution(pick(keys))
+				case 2: // Replace
+					sl.ReplaceSubstitution(pick(keys), pick(keys))
+				case 3: // Replace all
+					n := 1 + intN(4)
+					m := make(map[string]string, n)
+					for range n {
+						m[pick(keys)] = keys[intN(len(keys))]
+					}
+					sl.SetSubstitutions(m)
+				}
+
+				// Random sleep to avoid contention.
+				time.Sleep(time.Duration(intN(3)) * time.Millisecond)
+			}
+		})
+	}
+
+	// Wait for completion (either timeout or earlier failure).
+	if err := eg.Wait(); err != nil {
+		t.Fatal(err)
 	}
 }
 
