@@ -460,3 +460,27 @@ func main() {
 [1 24 2 12 3 8 4 6]
 ```
 ---
+## `RoundDecimalPlaces`
+
+```go
+package main
+
+import (
+	"fmt"
+
+	utils "github.com/kashifkhan0771/utils/math"
+)
+
+func main() {
+	fmt.Println(utils.RoundDecimalPlaces(3.14159, 2)) // Rounds to 2 decimal places
+	fmt.Println(utils.RoundDecimalPlaces(3.14159, -1)) // Negative places are clamped to 0 (rounds to a whole number)
+}   
+```
+
+#### Output:
+
+```
+3.14
+3.0
+```
+---
