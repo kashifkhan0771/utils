@@ -884,6 +884,69 @@ func TestGetDivisors(t *testing.T) {
 	}
 }
 
+func TestRoundDecimalPlaces(t *testing.T) {
+	tests := []struct {
+		name     string
+		value    float64
+		places   int
+		expected float64
+	}{
+		{
+			name:     "success - round to 2 decimal places",
+			value:    3.14159,
+			places:   2,
+			expected: 3.14,
+		},
+		{
+			name:     "success - round to 3 decimal places",
+			value:    2.718281828459045,
+			places:   3,
+			expected: 2.718,
+		},
+		{
+			name:     "success - round to 0 decimal places",
+			value:    1.9999,
+			places:   0,
+			expected: 2.0,
+		},
+		{
+			name:     "success - round negative number to 1 decimal place",
+			value:    -1.2345,
+			places:   1,
+			expected: -1.2,
+		},
+		{
+			name:     "success - round to 4 decimal places",
+			value:    0.123456789,
+			places:   4,
+			expected: 0.1235,
+		},
+		{
+			name:     "success - round to 5 decimal places",
+			value:    0.123456789,
+			places:   5,
+			expected: 0.12346,
+		},
+		{
+			name:     "success - round to 0 decimal places with negative number",
+			value:    3.14159,
+			places:   -1,
+			expected: 3.0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			result := RoundDecimalPlaces(tt.value, tt.places)
+			if result != tt.expected {
+				t.Errorf("RoundDecimalPlaces(%v, %d) = %v; want %v", tt.value, tt.places, result, tt.expected)
+			}
+		})
+	}
+}
+
 // ================================================================================
 // ### BENCHMARKS
 // ================================================================================
