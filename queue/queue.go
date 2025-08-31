@@ -9,9 +9,8 @@ import (
 var ErrEmptyQueue = errors.New("queue is empty")
 
 const (
-	// DefaultCapacity is the initial capacity for a new queue.
-	DefaultCapacity = 16
-	MinCapacity     = 16
+	// MinCapacity is the initial capacity for a new queue.
+	MinCapacity = 16
 )
 
 // Queue is a generic, thread-safe FIFO queue implementation.
@@ -31,7 +30,7 @@ type Queue[T any] struct {
 // NewQueue creates a new Queue with the given capacity.
 func NewQueue[T any](capacity int) *Queue[T] {
 	if capacity <= 0 {
-		capacity = DefaultCapacity
+		capacity = MinCapacity
 	}
 
 	return &Queue[T]{
@@ -72,7 +71,7 @@ func (q *Queue[T]) Dequeue() (T, error) {
 	q.size--
 
 	// Shrink if much less than a quarter full and capacity > 32.
-	if q.size > 0 && q.size*4 < len(q.data) && len(q.data) > 32 {
+	if q.size > 0 && q.size*4 < len(q.data) && len(q.data) > 2*MinCapacity {
 		q.shrink()
 	}
 

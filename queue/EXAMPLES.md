@@ -267,21 +267,21 @@ func main() {
     fmt.Printf("Initial capacity: %d\n", q.Capacity())
     
     // Fill queue to trigger growth
-    fmt.Println("\\nFilling queue to trigger growth:")
+    fmt.Println("\nFilling queue to trigger growth:")
     for i := 1; i <= 10; i++ {
         q.Enqueue(i)
         fmt.Printf("Added %d: size=%d, capacity=%d\n", i, q.Size(), q.Capacity())
     }
     
     // Add many more to see multiple growth cycles
-    fmt.Println("\\nAdding more elements:")
+    fmt.Println("\nAdding more elements:")
     for i := 11; i <= 20; i++ {
         q.Enqueue(i)
     }
     fmt.Printf("After adding 20 elements: size=%d, capacity=%d\n", q.Size(), q.Capacity())
     
     // Remove most elements to trigger shrinking
-    fmt.Println("\\nRemoving elements to trigger shrinking:")
+    fmt.Println("\nRemoving elements to trigger shrinking:")
     for i := 1; i <= 17; i++ {
         q.Dequeue()
         if i%5 == 0 || i == 17 { // Show every 5th removal and the last one
@@ -346,7 +346,7 @@ func main() {
     }
     
     // Struct queue
-    fmt.Println("\\nStruct queue:")
+    fmt.Println("\nStruct queue:")
     type Person struct {
         Name string
         Age  int
@@ -369,7 +369,7 @@ func main() {
     }
     
     // Pointer queue
-    fmt.Println("\\nPointer queue:")
+    fmt.Println("\nPointer queue:")
     ptrQueue := queue.NewQueue[*int](2)
     
     values := []int{10, 20, 30}
@@ -435,7 +435,7 @@ func main() {
             for j := 1; j <= 5; j++ {
                 value := producerID*100 + j
                 q.Enqueue(value)
-                fmt.Printf("Producer %d: enqueued %d\\n", producerID, value)
+                fmt.Printf("Producer %d: enqueued %d\n", producerID, value)
                 time.Sleep(50 * time.Millisecond)
             }
         }(i)
@@ -451,7 +451,7 @@ func main() {
                 if !q.IsEmpty() {
                     value, err := q.Dequeue()
                     if err == nil {
-                        fmt.Printf("Consumer %d: dequeued %d\\n", consumerID, value)
+                        fmt.Printf("Consumer %d: dequeued %d\n", consumerID, value)
                         consumed++
                         time.Sleep(75 * time.Millisecond)
                     }
@@ -467,13 +467,13 @@ func main() {
     go func() {
         defer wg.Done()
         for i := 0; i < 20; i++ {
-            fmt.Printf("Queue size: %d\\n", q.Size())
+            fmt.Printf("Queue size: %d\n", q.Size())
             time.Sleep(100 * time.Millisecond)
         }
     }()
     
     wg.Wait()
-    fmt.Printf("Final queue size: %d\\n", q.Size())
+    fmt.Printf("Final queue size: %d\n", q.Size())
 }
 ```
 
@@ -516,11 +516,11 @@ func main() {
             if errors.Is(err, queue.ErrEmptyQueue) {
                 fmt.Println("Cannot dequeue: queue is empty")
             } else {
-                fmt.Printf("Unexpected error: %v\\n", err)
+                fmt.Printf("Unexpected error: %v\n", err)
             }
             return
         }
-        fmt.Printf("Successfully dequeued: %d\\n", value)
+        fmt.Printf("Successfully dequeued: %d\n", value)
     }
     
     // Function to safely peek with error handling
@@ -530,11 +530,11 @@ func main() {
             if errors.Is(err, queue.ErrEmptyQueue) {
                 fmt.Println("Cannot peek: queue is empty")
             } else {
-                fmt.Printf("Unexpected error: %v\\n", err)
+                fmt.Printf("Unexpected error: %v\n", err)
             }
             return
         }
-        fmt.Printf("Peeked value: %d\\n", value)
+        fmt.Printf("Peeked value: %d\n", value)
     }
     
     // Test error cases
@@ -543,7 +543,7 @@ func main() {
     safePeek(q)
     
     // Add some items and test success cases
-    fmt.Println("\\nAdding items and testing success cases:")
+    fmt.Println("\nAdding items and testing success cases:")
     q.Enqueue(42)
     q.Enqueue(84)
     
@@ -553,7 +553,7 @@ func main() {
     safeDequeue(q)
     
     // Test empty again
-    fmt.Println("\\nTesting empty queue again:")
+    fmt.Println("\nTesting empty queue again:")
     safeDequeue(q)
     safePeek(q)
 }
@@ -625,7 +625,7 @@ func main() {
         
         for _, task := range tasks {
             workQueue.Enqueue(task)
-            fmt.Printf("📝 Queued: %s\\n", task)
+            fmt.Printf("📝 Queued: %s\n", task)
             time.Sleep(200 * time.Millisecond)
         }
         fmt.Println("✅ All tasks queued")
@@ -654,11 +654,11 @@ func main() {
                 }
                 
                 // Simulate task processing
-                fmt.Printf("🔄 Worker %d processing: %s\\n", workerID, task)
+                fmt.Printf("🔄 Worker %d processing: %s\n", workerID, task)
                 processingTime := time.Duration(task.Priority*200) * time.Millisecond
                 time.Sleep(processingTime)
                 
-                fmt.Printf("✅ Worker %d completed: %s (took %v)\\n", 
+                fmt.Printf("✅ Worker %d completed: %s (took %v)\n", 
                     workerID, task, processingTime)
                 processed++
                 
@@ -667,7 +667,7 @@ func main() {
                     break
                 }
             }
-            fmt.Printf("🛑 Worker %d finished (processed %d tasks)\\n", workerID, processed)
+            fmt.Printf("🛑 Worker %d finished (processed %d tasks)\n", workerID, processed)
         }(i)
     }
     
@@ -678,7 +678,7 @@ func main() {
         for i := 0; i < 15; i++ {
             size := workQueue.Size()
             capacity := workQueue.Capacity()
-            fmt.Printf("📊 Queue status: %d/%d tasks pending\\n", size, capacity)
+            fmt.Printf("📊 Queue status: %d/%d tasks pending\n", size, capacity)
             time.Sleep(500 * time.Millisecond)
         }
     }()
@@ -687,13 +687,13 @@ func main() {
     
     // Final status
     remaining := workQueue.Size()
-    fmt.Printf("\\n🏁 Processing complete. Remaining tasks: %d\\n", remaining)
+    fmt.Printf("\n🏁 Processing complete. Remaining tasks: %d\n", remaining)
     
     if remaining > 0 {
         fmt.Println("Remaining tasks:")
         for !workQueue.IsEmpty() {
             task, _ := workQueue.Dequeue()
-            fmt.Printf("  - %s\\n", task)
+            fmt.Printf("  - %s\n", task)
         }
     }
 }
