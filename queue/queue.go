@@ -61,6 +61,7 @@ func (q *Queue[T]) Dequeue() (T, error) {
 
 	if q.size == 0 {
 		var zero T
+
 		return zero, ErrEmptyQueue
 	}
 
@@ -86,6 +87,7 @@ func (q *Queue[T]) Peek() (T, error) {
 
 	if q.size == 0 {
 		var zero T
+
 		return zero, ErrEmptyQueue
 	}
 
