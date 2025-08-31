@@ -69,6 +69,7 @@ cd utils
 | **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
 | **conversion** | Conversion of data types, time, and temperatues   | [README](conversion/README.md) | [EXAMPLES](conversion/EXAMPLES.md)
 | **ratelimiter** | Token-bucket rate limiter (allow/wait, adjustable capacity & refill rate) | [README](ratelimiter/README.md) | [EXAMPLES](ratelimiter/EXAMPLES.md) |
+| **queue** | Queue data structure| [README](queue/README.md) | [EXAMPLES](queue/EXAMPLES.md) |
 
 ## Comparison
 
@@ -97,7 +98,7 @@ cd utils
 | URL Utilities             | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
 | Dependency-Free           | ✅ Yes                      | ❌ No                            | ❌ No                            |
 | Small API Surface         | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
-| Rate Limiter Utilities         | ✅ Yes                      | ❌ No                            | ❌ No                           |
+| Rate Limiter Utilities    | ✅ Yes                      | ❌ No                            | ❌ No                            |
 
 
 ## Contributions
