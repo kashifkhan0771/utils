@@ -632,8 +632,8 @@ func main() {
             time.Sleep(200 * time.Millisecond)
         }
         fmt.Println("✅ All tasks queued")
+        close(done)
     }()
-    
     // Worker processes
     numWorkers := 3
     for i := 1; i <= numWorkers; i++ {
