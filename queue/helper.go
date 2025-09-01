@@ -1,7 +1,11 @@
 package queue
 
+// grow doubles capacity. Caller MUST hold q.mu.
 func (q *Queue[T]) grow() {
 	newCapacity := len(q.data) * 2
+	if newCapacity == 0 {
+		newCapacity = MinCapacity
+	}
 	newData := make([]T, newCapacity)
 
 	// Copy elements in FIFO order from circular buffer
