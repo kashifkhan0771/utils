@@ -415,6 +415,7 @@ package main
 
 import (
     "fmt"
+    "errors"
     "sync"
     "time"
     "github.com/kashifkhan0771/utils/queue"
@@ -448,16 +449,17 @@ func main() {
             defer wg.Done()
             consumed := 0
             for consumed < 7 { // Each consumer will try to consume 7 items
-                if !q.IsEmpty() {
-                    value, err := q.Dequeue()
-                    if err == nil {
-                        fmt.Printf("Consumer %d: dequeued %d\n", consumerID, value)
-                        consumed++
-                        time.Sleep(75 * time.Millisecond)
-                    }
-                } else {
+              value, err := q.Dequeue()
+                if errors.Is(err, queue.ErrEmptyQueue) {
                     time.Sleep(10 * time.Millisecond) // Wait for items
+                    continue
+                } else if err != nil {
+                    fmt.Printf("Unexpected error: %v\n", err)
+                    continue
                 }
+                fmt.Printf("Consumer %d: dequeued %d\n", consumerID,value)
+                consumed++
+                time.Sleep(75 * time.Millisecond)
             }
         }(i)
     }
@@ -477,7 +479,7 @@ func main() {
 }
 ```
 
-**Output:**
+**Example output (abridged; order may vary):*
 ```
 Starting concurrent producers and consumers...
 Producer 1: enqueued 101
@@ -640,16 +642,9 @@ func main() {
             processed := 0
             
             for {
-                // Check if there's work to do
-                if workQueue.IsEmpty() {
-                    time.Sleep(100 * time.Millisecond)
-                    continue
-                }
-                
-                // Get a task
                 task, err := workQueue.Dequeue()
                 if err != nil {
-                    time.Sleep(50 * time.Millisecond)
+                    time.Sleep(100 * time.Millisecond)
                     continue
                 }
                 

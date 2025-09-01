@@ -19,11 +19,26 @@ func (q *Queue[T]) grow() {
 	q.tail = q.size
 }
 
+// shrink halves capacity when safe. Caller MUST hold q.mu.
 func (q *Queue[T]) shrink() {
+	if len(q.data) == 0 {
+		return
+	}
+
 	newCapacity := len(q.data) / 2
 
+	if newCapacity < q.size {
+		return
+	}
+
+	// Clamp to at least MinCapacity
 	if newCapacity < MinCapacity {
 		newCapacity = MinCapacity
+	}
+
+	// Only proceed if we're actually shrinking
+	if newCapacity >= len(q.data) {
+		return
 	}
 
 	newData := make([]T, newCapacity)
