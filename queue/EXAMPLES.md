@@ -675,24 +675,6 @@ func main() {
                 processed++
             }
             fmt.Printf("🛑 Worker %d finished (processed %d tasks)\n", workerID, processed)
-                        continue
-                    }
-                    // Unexpected error path
-                    fmt.Printf("dequeue error: %v\n", err)
-                    time.Sleep(50 * time.Millisecond)
-                    continue
-                }
-
-                // Simulate task processing
-                fmt.Printf("🔄 Worker %d processing: %s\n", workerID, task)
-                processingTime := time.Duration(task.Priority*200) * time.Millisecond
-                time.Sleep(processingTime)
-
-                fmt.Printf("✅ Worker %d completed: %s (took %v)\n",
-                    workerID, task, processingTime)
-                processed++
-            }
-            fmt.Printf("🛑 Worker %d finished (processed %d tasks)\n", workerID, processed)
         }(i)
     }
     
