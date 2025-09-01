@@ -641,27 +641,35 @@ func main() {
         go func(workerID int) {
             defer wg.Done()
             processed := 0
-            
             for {
                 task, err := workQueue.Dequeue()
                 if err != nil {
-                    time.Sleep(100 * time.Millisecond)
+                    if errors.Is(err, queue.ErrEmptyQueue) {
+                        // If producer is done and queue drained, exit
+                        select {
+                        case <-done:
+                            if workQueue.IsEmpty() {
+                                break
+                            }
+                        default:
+                        }
+                        time.Sleep(100 * time.Millisecond)
+                        continue
+                    }
+                    // Unexpected error path
+                    fmt.Printf("dequeue error: %v\n", err)
+                    time.Sleep(50 * time.Millisecond)
                     continue
                 }
-                
+
                 // Simulate task processing
                 fmt.Printf("🔄 Worker %d processing: %s\n", workerID, task)
                 processingTime := time.Duration(task.Priority*200) * time.Millisecond
                 time.Sleep(processingTime)
-                
-                fmt.Printf("✅ Worker %d completed: %s (took %v)\n", 
+
+                fmt.Printf("✅ Worker %d completed: %s (took %v)\n",
                     workerID, task, processingTime)
                 processed++
-                
-                // Stop after processing several tasks
-                if processed >= 3 {
-                    break
-                }
             }
             fmt.Printf("🛑 Worker %d finished (processed %d tasks)\n", workerID, processed)
         }(i)
