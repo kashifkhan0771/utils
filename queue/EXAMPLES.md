@@ -121,7 +121,7 @@ func main() {
     }
     
     // Try to dequeue from empty queue
-    item, err := q.Dequeue()
+    _, err := q.Dequeue()
     if err != nil {
         fmt.Printf("Empty queue error: %v\n", err)
     }
