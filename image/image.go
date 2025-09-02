@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/gif"
 	"image/jpeg"
 	"image/png"
 	"io"
@@ -15,6 +16,9 @@ import (
 	"path/filepath"
 
 	"github.com/nfnt/resize"
+	"golang.org/x/image/bmp"
+	"golang.org/x/image/tiff"
+	"golang.org/x/image/webp"
 )
 
 type Image struct {
@@ -30,11 +34,19 @@ type Image struct {
 type ImageFormat string
 
 const (
-	FormatJPG  ImageFormat = "jpg"
-	FormatJFIF ImageFormat = "jfif"
-	FormatJPE  ImageFormat = "jpe"
-	FormatJPEG ImageFormat = "jpeg"
-	FormatPNG  ImageFormat = "png"
+	FormatJPG     ImageFormat = "jpg"
+	FormatJFIF    ImageFormat = "jfif"
+	FormatJPE     ImageFormat = "jpe"
+	FormatJPEG    ImageFormat = "jpeg"
+	FormatPNG     ImageFormat = "png"
+	FormatGIF     ImageFormat = "gif"
+	FormatTIF     ImageFormat = "tif"
+	FormatTIFF    ImageFormat = "tiff"
+	FormatTIFF_FX ImageFormat = "tiff-fx"
+	FormatWEBP    ImageFormat = "webp"
+	FormatBMP     ImageFormat = "bmp"
+	FormatDIB     ImageFormat = "dib"
+	FormatXBMP    ImageFormat = "x-bmp"
 )
 
 func LoadFromFile(path string) (*Image, error) {
@@ -189,8 +201,16 @@ func decodeTo(format ImageFormat, r io.Reader) (image.Image, error) {
 		return jpeg.Decode(r)
 	case FormatPNG:
 		return png.Decode(r)
+	case FormatGIF:
+		return gif.Decode(r)
+	case FormatTIF, FormatTIFF, FormatTIFF_FX:
+		return tiff.Decode(r)
+	case FormatWEBP:
+		return webp.Decode(r)
+	case FormatBMP, FormatDIB, FormatXBMP:
+		return bmp.Decode(r)
 	default:
-		return nil, fmt.Errorf("invalid or unsupported image format: %s", format)
+		return nil, fmt.Errorf("unable to decode image in format %s", format)
 	}
 }
 
@@ -200,8 +220,14 @@ func (img *Image) encodeTo(w io.Writer) error {
 		return jpeg.Encode(w, img.Image, nil)
 	case FormatPNG:
 		return png.Encode(w, img.Image)
+	case FormatGIF:
+		return gif.Encode(w, img.Image, nil)
+	case FormatTIF, FormatTIFF, FormatTIFF_FX:
+		return tiff.Encode(w, img.Image, nil)
+	case FormatBMP, FormatDIB, FormatXBMP:
+		return bmp.Encode(w, img.Image)
 	default:
-		return fmt.Errorf("invalid or unsupported image format: %s", img.Format)
+		return fmt.Errorf("unable to encode image in format %s", img.Format)
 	}
 }
 
