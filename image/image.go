@@ -49,6 +49,7 @@ const (
 	FormatXBMP    ImageFormat = "x-bmp"
 )
 
+// LoadFromFile loads an image from the given file path.
 func LoadFromFile(path string) (*Image, error) {
 	path = filepath.Clean(path)
 	f, err := os.Open(path)
@@ -62,6 +63,7 @@ func LoadFromFile(path string) (*Image, error) {
 	return LoadFromReader(format, f)
 }
 
+// LoadFromURL downloads and loads an image from the given URL.
 func LoadFromURL(url string) (*Image, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -88,12 +90,14 @@ func LoadFromURL(url string) (*Image, error) {
 	return LoadFromReader(format, resp.Body)
 }
 
+// LoadFromBytes loads an image from a raw byte slice with the specified format.
 func LoadFromBytes(format ImageFormat, data []byte) (*Image, error) {
 	buf := bytes.NewBuffer(data)
 
 	return LoadFromReader(format, buf)
 }
 
+// LoadFromReader loads an image from an io.Reader with the specified format.
 func LoadFromReader(format ImageFormat, r io.Reader) (*Image, error) {
 	img, err := decodeTo(format, r)
 	if err != nil {
@@ -103,6 +107,7 @@ func LoadFromReader(format ImageFormat, r io.Reader) (*Image, error) {
 	return newImage(format, img), nil
 }
 
+// SaveToFile saves the image to a file on disk in its current format.
 func (img *Image) SaveToFile(path string) error {
 	path = filepath.Clean(path)
 	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0664)
@@ -114,10 +119,12 @@ func (img *Image) SaveToFile(path string) error {
 	return img.encodeTo(f)
 }
 
+// SaveToWriter writes the image to any io.Writer in its current format.
 func (img *Image) SaveToWriter(writer io.Writer) error {
 	return img.encodeTo(writer)
 }
 
+// ToBytes encodes the image into a byte slice in its current format.
 func (img *Image) ToBytes() ([]byte, error) {
 	var buf bytes.Buffer
 	err := img.encodeTo(&buf)
@@ -128,6 +135,7 @@ func (img *Image) ToBytes() ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// ToBase64 encodes the image as a base64 string in its current format.
 func (img *Image) ToBase64() (string, error) {
 	b, err := img.ToBytes()
 	if err != nil {
@@ -137,20 +145,27 @@ func (img *Image) ToBase64() (string, error) {
 	return base64.StdEncoding.EncodeToString(b), nil
 }
 
+// Resize creates a new resized copy of the image using the given dimensions and interpolation.
+// The original image remains unchanged.
 func (img *Image) Resize(width, height uint, interp resize.InterpolationFunction) *Image {
 	resized := resize.Resize(width, height, img.Image, interp)
 
 	return newImage(img.Format, resized)
 }
 
+// ResizeToWidth resizes the image to the given width while preserving aspect ratio.
+// The original image remains unchanged.
 func (img *Image) ResizeToWidth(width uint, interp resize.InterpolationFunction) *Image {
 	return img.Resize(width, img.Height, interp)
 }
 
+// ResizeToHeight resizes the image to the given height while preserving aspect ratio.
+// The original image remains unchanged.
 func (img *Image) ResizeToHeight(height uint, interp resize.InterpolationFunction) *Image {
 	return img.Resize(img.Width, height, interp)
 }
 
+// ResizeSelf resizes the image in place to the given dimensions using the specified interpolation.
 func (img *Image) ResizeSelf(width, height uint, interp resize.InterpolationFunction) {
 	img.Image = resize.Resize(width, height, img.Image, interp)
 	img.Width = width
@@ -158,6 +173,8 @@ func (img *Image) ResizeSelf(width, height uint, interp resize.InterpolationFunc
 	img.ColorModel = img.Image.ColorModel()
 }
 
+// Scale creates a new scaled copy of the image by the given factor (e.g., 0.5 for half size).
+// The original image remains unchanged.
 func (img *Image) Scale(factor float64, interp resize.InterpolationFunction) (*Image, error) {
 	if factor <= 0 {
 		return nil, fmt.Errorf("factor must be positive")
@@ -169,6 +186,7 @@ func (img *Image) Scale(factor float64, interp resize.InterpolationFunction) (*I
 	return img.Resize(w, h, interp), nil
 }
 
+// ScaleSelf scales the image in place by the given factor (e.g., 2.0 for double size).
 func (img *Image) ScaleSelf(factor float64, interp resize.InterpolationFunction) error {
 	if factor <= 0 {
 		return fmt.Errorf("factor must be positive")
@@ -181,6 +199,10 @@ func (img *Image) ScaleSelf(factor float64, interp resize.InterpolationFunction)
 	return nil
 }
 
+/*
+ScaleDown creates a new image scaled down to fit within the given max width and height,
+preserving aspect ratio. The original image remains unchanged.
+*/
 func (img *Image) ScaleDown(maxWidth, maxHeight uint, interp resize.InterpolationFunction) (*Image, error) {
 	w, h := img.Width, img.Height
 	if w <= maxWidth && h <= maxHeight {
