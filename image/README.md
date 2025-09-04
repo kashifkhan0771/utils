@@ -80,14 +80,14 @@ The `image` package provides a set of utilities for loading, manipulating, encod
 ### **ResizeToWidth**
 
 - **`(img *Image) ResizeToWidth(width uint, interp resize.InterpolationFunction) *Image`**  
-  Returns a resized copy with a new width; height remains unchanged.
+  Returns a resized copy with a new width while preserving aspect ratio (height is computed).
 
 ---
 
 ### **ResizeToHeight**
 
 - **`(img *Image) ResizeToHeight(height uint, interp resize.InterpolationFunction) *Image`**  
-  Returns a resized copy with a new height; width remains unchanged.
+  Returns a resized copy with a new height while preserving aspect ratio (width is computed).
 
 ---
 

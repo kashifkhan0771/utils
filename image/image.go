@@ -10,10 +10,13 @@ import (
 	"image/jpeg"
 	"image/png"
 	"io"
+	"math"
 	"mime"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
 	"github.com/nfnt/resize"
 	"golang.org/x/image/bmp"
@@ -58,7 +61,11 @@ func LoadFromFile(path string) (*Image, error) {
 	}
 	defer f.Close()
 
-	format := ImageFormat(filepath.Ext(path)[1:])
+	ext := strings.TrimPrefix(strings.ToLower(filepath.Ext(path)), ".")
+	if ext == "" {
+		return nil, fmt.Errorf("unable to determine image format from path (no extension): %s", path)
+	}
+	format := ImageFormat(ext)
 
 	return LoadFromReader(format, f)
 }
@@ -70,11 +77,16 @@ func LoadFromURL(url string) (*Image, error) {
 		return nil, err
 	}
 
-	resp, err := http.DefaultClient.Do(req)
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("request failed: expected status 200 OK, got %d %s", resp.StatusCode, http.StatusText(resp.StatusCode))
+	}
 
 	extensions, err := mime.ExtensionsByType(resp.Header.Get("Content-Type"))
 	if err != nil {
@@ -110,7 +122,7 @@ func LoadFromReader(format ImageFormat, r io.Reader) (*Image, error) {
 // SaveToFile saves the image to a file on disk in its current format.
 func (img *Image) SaveToFile(path string) error {
 	path = filepath.Clean(path)
-	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0664)
+	f, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}
@@ -156,13 +168,13 @@ func (img *Image) Resize(width, height uint, interp resize.InterpolationFunction
 // ResizeToWidth resizes the image to the given width while preserving aspect ratio.
 // The original image remains unchanged.
 func (img *Image) ResizeToWidth(width uint, interp resize.InterpolationFunction) *Image {
-	return img.Resize(width, img.Height, interp)
+	return img.Resize(width, 0, interp)
 }
 
 // ResizeToHeight resizes the image to the given height while preserving aspect ratio.
 // The original image remains unchanged.
 func (img *Image) ResizeToHeight(height uint, interp resize.InterpolationFunction) *Image {
-	return img.Resize(img.Width, height, interp)
+	return img.Resize(0, height, interp)
 }
 
 // ResizeSelf resizes the image in place to the given dimensions using the specified interpolation.
@@ -180,8 +192,8 @@ func (img *Image) Scale(factor float64, interp resize.InterpolationFunction) (*I
 		return nil, fmt.Errorf("factor must be positive")
 	}
 
-	w := uint(float64(img.Width) * factor)
-	h := uint(float64(img.Height) * factor)
+	w := uint(math.Max(1, math.Round(float64(img.Width)*factor)))
+	h := uint(math.Max(1, math.Round(float64(img.Height)*factor)))
 
 	return img.Resize(w, h, interp), nil
 }
@@ -192,8 +204,8 @@ func (img *Image) ScaleSelf(factor float64, interp resize.InterpolationFunction)
 		return fmt.Errorf("factor must be positive")
 	}
 
-	w := uint(float64(img.Width) * factor)
-	h := uint(float64(img.Height) * factor)
+	w := uint(math.Max(1, math.Round(float64(img.Width)*factor)))
+	h := uint(math.Max(1, math.Round(float64(img.Height)*factor)))
 	img.ResizeSelf(w, h, interp)
 
 	return nil

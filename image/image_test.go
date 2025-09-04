@@ -203,10 +203,11 @@ func TestResizeToWidth(t *testing.T) {
 		origW   uint
 		origH   uint
 		targetW uint
+		targetH uint
 	}{
-		{"increase_width", 4, 4, 8},
-		{"decrease_width", 8, 4, 4},
-		{"same_width", 5, 3, 5},
+		{"increase_width", 4, 4, 8, 8},
+		{"decrease_width", 8, 4, 4, 2},
+		{"same_width", 5, 3, 5, 3},
 	}
 
 	for _, tt := range tests {
@@ -225,9 +226,8 @@ func TestResizeToWidth(t *testing.T) {
 				t.Errorf("ResizeToWidth() width = %d, want %d", newImg.Width, tt.targetW)
 			}
 
-			// Height should remain unchanged
-			if newImg.Height != tt.origH {
-				t.Errorf("ResizeToWidth() height = %d, want %d", newImg.Height, tt.origH)
+			if newImg.Height != tt.targetH {
+				t.Errorf("ResizeToWidth() height = %d, want %d", newImg.Height, tt.targetH)
 			}
 
 			// Original image should stay unchanged
@@ -244,10 +244,11 @@ func TestResizeToHeight(t *testing.T) {
 		origW   uint
 		origH   uint
 		targetH uint
+		targetW uint
 	}{
-		{"increase_height", 4, 4, 8},
-		{"decrease_height", 4, 8, 4},
-		{"same_height", 5, 3, 3},
+		{"increase_height", 4, 4, 8, 8},
+		{"decrease_height", 4, 8, 4, 2},
+		{"same_height", 5, 3, 3, 5},
 	}
 
 	for _, tt := range tests {
@@ -266,9 +267,8 @@ func TestResizeToHeight(t *testing.T) {
 				t.Errorf("ResizeToHeight() height = %d, want %d", newImg.Height, tt.targetH)
 			}
 
-			// Width should remain unchanged
-			if newImg.Width != tt.origW {
-				t.Errorf("ResizeToHeight() width = %d, want %d", newImg.Width, tt.origW)
+			if newImg.Width != tt.targetW {
+				t.Errorf("ResizeToHeight() width = %d, want %d", newImg.Width, tt.targetW)
 			}
 
 			// Original image should stay unchanged
@@ -415,15 +415,15 @@ func BenchmarkDecodeTo(b *testing.B) {
 
 	var pngBuf, jpegBuf, gifBuf bytes.Buffer
 	if err := png.Encode(&pngBuf, img); err != nil {
-		b.Fatalf("png.Enode() failed: %v", err)
+		b.Fatalf("png.Encode() failed: %v", err)
 	}
 
 	if err := jpeg.Encode(&jpegBuf, img, nil); err != nil {
-		b.Fatalf("jpeg.Enode() failed: %v", err)
+		b.Fatalf("jpeg.Encode() failed: %v", err)
 	}
 
 	if err := gif.Encode(&gifBuf, img, nil); err != nil {
-		b.Fatalf("gif.Enode() failed: %v", err)
+		b.Fatalf("gif.Encode() failed: %v", err)
 	}
 
 	benches := []struct {
