@@ -187,3 +187,92 @@ func (t *TokenBucket) SetRefillRate(rate float64) {
 	t.refill(now)
 	t.refillRate = rate
 }
+
+// FixedWindow implements a fixed window rate limiter.
+// It allows up to 'limit' events per 'interval' duration.
+// The window resets after each interval.
+type FixedWindow struct {
+	windowEndTime time.Time     // End time of the current window
+	interval      time.Duration // Duration of each window
+	mu            sync.Mutex    // Mutex to protect concurrent access
+	limit         int           // Maximum allowed events per window
+	count         int           // Current count of events in the window
+}
+
+// NewFixedWindow creates a new FixedWindow rate limiter with the given limit and interval.
+// If limit < 1, it defaults to 1. If interval <= 0, it defaults to 1 second.
+func NewFixedWindow(limit int, interval time.Duration) *FixedWindow {
+	if limit < 1 {
+		limit = 1
+	}
+	if interval <= 0 {
+		interval = 1 * time.Second
+	}
+
+	return &FixedWindow{
+		limit:         limit,
+		interval:      interval,
+		windowEndTime: time.Now().Add(interval),
+	}
+}
+
+// Allow checks if a new event is allowed under the rate limit.
+// Returns true if allowed, false otherwise.
+func (l *FixedWindow) Allow() bool {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	now := time.Now()
+
+	if now.After(l.windowEndTime) {
+		l.count = 0
+		l.windowEndTime = now.Add(l.interval)
+	}
+
+	if l.count < l.limit {
+		l.count++
+
+		return true
+	}
+
+	return false
+}
+
+// SetInterval updates the interval duration for the rate limiter.
+// If interval <= 0, it defaults to 1 second.
+func (l *FixedWindow) SetInterval(interval time.Duration) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	now := time.Now()
+
+	if interval <= 0 {
+		interval = 1 * time.Second
+	}
+	l.interval = interval
+
+	if now.After(l.windowEndTime) {
+		l.count = 0
+		l.windowEndTime = now.Add(l.interval)
+	}
+}
+
+// SetLimit updates the maximum allowed events per window.
+// If limit <= 0, it defaults to 1.
+func (l *FixedWindow) SetLimit(limit int) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	now := time.Now()
+
+	if limit <= 0 {
+		limit = 1
+	}
+
+	l.limit = limit
+
+	if now.After(l.windowEndTime) {
+		l.count = 0
+		l.windowEndTime = now.Add(l.interval)
+	}
+}
