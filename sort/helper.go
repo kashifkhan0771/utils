@@ -119,6 +119,6 @@ func heapify[T number](arr []T, n, i int) {
 	// If largest is not root
 	if largest != i {
 		arr[i], arr[largest] = arr[largest], arr[i] // Swap
-		heapify(arr, n, largest)                    // Recursively heapify the affected sub-tree
+		heapify[T](arr, n, largest)                 // Recursively heapify the affected subtree
 	}
 }

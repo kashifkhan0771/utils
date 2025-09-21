@@ -12,7 +12,7 @@ A common utilities library for Go.
 
 ## Prerequisites
 
-- **Go**: The project is written in Golang. Ensure you have Go installed (preferably Go 1.23.3 or later). You can download it [here](https://go.dev/doc/install).
+- **Go**: The project is written in Golang. Ensure you have Go installed (preferably Go 1.24 or later). You can download it [here](https://go.dev/doc/install).
 - **Git**: Required for cloning the repository.
 
 ## Installation
@@ -68,6 +68,7 @@ cd utils
 | **timeutils** | Time and date manipulation utilities               | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
 | **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
 | **conversion** | Conversion of data types, time, and temperatues   | [README](conversion/README.md) | [EXAMPLES](conversion/EXAMPLES.md)
+| **ratelimiter** | Token-bucket rate limiter (allow/wait, adjustable capacity & refill rate) | [README](ratelimiter/README.md) | [EXAMPLES](ratelimiter/EXAMPLES.md) |
 
 ## Comparison
 
@@ -96,6 +97,7 @@ cd utils
 | URL Utilities             | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
 | Dependency-Free           | ✅ Yes                      | ❌ No                            | ❌ No                            |
 | Small API Surface         | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
+| Rate Limiter Utilities         | ✅ Yes                      | ❌ No                            | ❌ No                           |
 
 
 ## Contributions

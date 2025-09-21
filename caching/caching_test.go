@@ -6,6 +6,12 @@ import (
 	"testing"
 )
 
+type testCase[T any] struct {
+	name  string
+	input int
+	want  T
+}
+
 // TestCacheWrapper tests the non-thread-safe caching wrapper.
 func TestCacheWrapper(t *testing.T) {
 	// Example function: Calculate factorial of a number.
@@ -20,30 +26,26 @@ func TestCacheWrapper(t *testing.T) {
 
 	cachedFactorial := CacheWrapper(factorial)
 
-	tests := []struct {
-		name string
-		arg  int
-		want *big.Int
-	}{
+	tests := []testCase[*big.Int]{
 		{
-			name: "success - calculate factorial of 5",
-			arg:  5,
-			want: big.NewInt(120),
+			name:  "success - calculate factorial of 5",
+			input: 5,
+			want:  big.NewInt(120),
 		},
 		{
-			name: "success - calculate factorial of 0",
-			arg:  0,
-			want: big.NewInt(1),
+			name:  "success - calculate factorial of 0",
+			input: 0,
+			want:  big.NewInt(1),
 		},
 		{
-			name: "success - repeated call with factorial of 5",
-			arg:  5,
-			want: big.NewInt(120),
+			name:  "success - repeated call with factorial of 5",
+			input: 5,
+			want:  big.NewInt(120),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := cachedFactorial(tt.arg); got.Cmp(tt.want) != 0 {
+			if got := cachedFactorial(tt.input); got.Cmp(tt.want) != 0 {
 				t.Errorf("CacheWrapper() = %v, want %v", got, tt.want)
 			}
 		})
@@ -59,30 +61,28 @@ func TestSafeCacheWrapper(t *testing.T) {
 
 	cachedDouble := SafeCacheWrapper(double)
 
-	tests := []struct {
-		name string
-		arg  int
-		want int
-	}{
+	tests := []testCase[int]{
 		{
-			name: "success - double 4",
-			arg:  4,
-			want: 8,
+			name:  "success - double 4",
+			input: 4,
+			want:  8,
 		},
 		{
-			name: "success - double 0",
-			arg:  0,
-			want: 0,
+			name:  "success - double 0",
+			input: 0,
+			want:  0,
 		},
 		{
-			name: "success - repeated call with double 4",
-			arg:  4,
-			want: 8,
+			name:  "success - repeated call with double 4",
+			input: 4,
+			want:  8,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := cachedDouble(tt.arg); got != tt.want {
+			t.Parallel()
+
+			if got := cachedDouble(tt.input); got != tt.want {
 				t.Errorf("SafeCacheWrapper() = %v, want %v", got, tt.want)
 			}
 		})
@@ -100,9 +100,11 @@ func TestSafeCacheWrapperConcurrency(t *testing.T) {
 	var wg sync.WaitGroup
 
 	// Test concurrency with multiple goroutines.
-	results := make([]int, 10)
-	wg.Add(10)
-	for i := 0; i < 10; i++ {
+	const numRoutines = 10
+
+	results := make([]int, numRoutines)
+	wg.Add(numRoutines)
+	for i := range numRoutines {
 		go func(idx int) {
 			defer wg.Done()
 			results[idx] = cachedSquare(4) // All goroutines calculate square of 4.
@@ -136,37 +138,35 @@ func fib(n int) int {
 
 func BenchmarkFib(b *testing.B) {
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = fib(30)
 	}
 }
 
 func BenchmarkCachedFib(b *testing.B) {
 	cachedFib := CacheWrapper(fib)
-
+	_ = cachedFib(30) // warm-up the cache before running the benchmark
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = cachedFib(30)
 	}
 }
 
 func BenchmarkSafeCachedFib(b *testing.B) {
 	cachedFib := SafeCacheWrapper(fib)
+	_ = cachedFib(30) // warm-up the cache before running the benchmark
 
 	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = cachedFib(30)
 	}
 }
 
 func BenchmarkConcurrentSafeCachedFib(b *testing.B) {
 	cachedFib := SafeCacheWrapper(fib)
+	_ = cachedFib(30) // warm-up the cache before running the benchmark
 
 	b.ReportAllocs()
-	b.ResetTimer()
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			_ = cachedFib(30)

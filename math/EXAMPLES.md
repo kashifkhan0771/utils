@@ -384,5 +384,103 @@ func main() {
 2
 1.4142135623730951
 ```
+## `IsPrime`
 
+### Find if a number is prime or not.
+
+```go
+package main
+
+import (
+	"fmt"
+
+	utils "github.com/kashifkhan0771/utils/math"
+)
+
+func main() {
+	fmt.Println(utils.IsPrime(5))
+	fmt.Println(utils.IsPrime(4))
+}
+```
+
+#### Output:
+
+```
+true
+false
+```
+---
+## `PrimeList`
+
+### Get a list of prime numbers.
+
+```go
+package main
+
+import (
+	"fmt"
+
+	utils "github.com/kashifkhan0771/utils/math"
+)
+
+func main() {
+	sl := utils.PrimeList(60)
+	fmt.Println(sl)
+}
+```
+
+#### Output:
+
+```
+[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59]
+```
+---
+## `GetDivisors`
+
+### Get a list of divisors of a number.
+
+```go
+package main
+
+import (
+	"fmt"
+
+	utils "github.com/kashifkhan0771/utils/math"
+)
+
+func main() {
+	sl := utils.GetDivisors(24)
+	fmt.Println(sl)
+}
+```
+
+#### Output:
+
+```
+[1 24 2 12 3 8 4 6]
+```
+---
+## `RoundDecimalPlaces`
+
+```go
+package main
+
+import (
+	"fmt"
+
+	utils "github.com/kashifkhan0771/utils/math"
+)
+
+func main() {
+	fmt.Println(utils.RoundDecimalPlaces(3.14159, 2)) // Rounds to 2 decimal places
+	fmt.Println(utils.RoundDecimalPlaces(3.14159, -1)) // Negative places are clamped to 0 (rounds to a whole number)
+}   
+```
+
+#### Output:
+
+```
+3.14
+3.0
+```
 ---

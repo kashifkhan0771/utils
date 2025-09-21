@@ -9,23 +9,36 @@ import (
 )
 
 func TestRemoveDuplicateStr(t *testing.T) {
-	type args struct {
-		strSlice []string
-	}
+	t.Parallel()
+
 	tests := []struct {
-		name string
-		args args
-		want []string
+		name  string
+		input []string
+		want  []string
 	}{
 		{
-			name: "success - remove duplicate strings from slice",
-			args: args{[]string{"one", "one", "one", "two", "three"}},
-			want: []string{"one", "two", "three"},
+			name:  "success - remove duplicates",
+			input: []string{"one", "one", "two", "one", "three"},
+			want:  []string{"one", "two", "three"},
+		},
+		{
+			name:  "success - empty input",
+			input: []string{},
+			want:  []string{},
+		},
+		{
+			name:  "success - nil input",
+			input: nil,
+			want:  nil,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := RemoveDuplicateStr(tt.args.strSlice); !reflect.DeepEqual(got, tt.want) {
+			t.Parallel()
+
+			got := RemoveDuplicateStr(tt.input)
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("RemoveDuplicateStr() = %v, want %v", got, tt.want)
 			}
 		})
@@ -33,26 +46,13 @@ func TestRemoveDuplicateStr(t *testing.T) {
 }
 
 func TestRemoveDuplicateInt(t *testing.T) {
-	type args struct {
-		strSlice []int
-	}
-	tests := []struct {
-		name string
-		args args
-		want []int
-	}{
-		{
-			name: "success - remove duplicate integer from a slice",
-			args: args{[]int{1, 2, 3, 4, 4, 5, 5, 6, 7, 7, 7}},
-			want: []int{1, 2, 3, 4, 5, 6, 7},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := RemoveDuplicateInt(tt.args.strSlice); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("RemoveDuplicateInt() = %v, want %v", got, tt.want)
-			}
-		})
+	t.Parallel()
+
+	input := []int{1, 2, 3, 4, 4, 5, 5, 6, 7, 7, 7}
+	want := []int{1, 2, 3, 4, 5, 6, 7}
+
+	if got := RemoveDuplicateInt(input); !reflect.DeepEqual(got, want) {
+		t.Errorf("RemoveDuplicateInt() = %v, want %v", got, want)
 	}
 }
 
@@ -64,7 +64,7 @@ func generateStrings(n int) []string {
 	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:,.<>?/~`"
 	data := make([]string, n)
 
-	for i := 0; i < n; i++ {
+	for i := range n {
 		strLen := (i % 10) + 5 // Generate strings of length 5-14
 		var strBuilder strings.Builder
 		for j := 0; j < strLen; j++ {
@@ -77,11 +77,11 @@ func generateStrings(n int) []string {
 }
 
 func generateRandomInts(n int) []int {
-	max := big.NewInt(1000)
+	maxVal := big.NewInt(1000)
 	data := make([]int, n)
 
-	for i := 0; i < n; i++ {
-		num, err := rand.Int(rand.Reader, max)
+	for i := range n {
+		num, err := rand.Int(rand.Reader, maxVal)
 		if err != nil {
 			panic(err)
 		}
@@ -95,9 +95,8 @@ func BenchmarkRemoveDuplicateStrings(b *testing.B) {
 	data := generateStrings(100000)
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		RemoveDuplicateStr(data)
 	}
 }
@@ -106,9 +105,8 @@ func BenchmarkRemoveDuplicateInts(b *testing.B) {
 	data := generateRandomInts(100000)
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		RemoveDuplicateInt(data)
 	}
 }

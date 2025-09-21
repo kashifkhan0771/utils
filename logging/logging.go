@@ -107,7 +107,7 @@ func (l *Logger) log(level LogLevel, message string) {
 	// Write the log message to the configured output
 	_, err := fmt.Fprint(l.output, logMessage)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to write log: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "Failed to write log: %v\n", err)
 	}
 }
 

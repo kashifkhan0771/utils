@@ -10,6 +10,8 @@ import (
 var now = time.Date(2025, 1, 10, 0, 0, 0, 0, time.UTC)
 
 func TestStartOfDay(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		input time.Time
 	}
@@ -36,14 +38,20 @@ func TestStartOfDay(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		result := StartOfDay(tc.args.input)
-		if !result.Equal(tc.want) {
-			t.Errorf("StartOfDay(%v) = %v; want %v", tc.args.input, result, tc.want)
-		}
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			result := StartOfDay(tc.args.input)
+			if !result.Equal(tc.want) {
+				t.Errorf("StartOfDay(%v) = %v; want %v", tc.args.input, result, tc.want)
+			}
+		})
 	}
 }
 
 func TestEndOfDay(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		input time.Time
 	}
@@ -70,14 +78,20 @@ func TestEndOfDay(t *testing.T) {
 	}
 
 	for _, tc := range tests {
-		result := EndOfDay(tc.args.input)
-		if !result.Equal(tc.want) {
-			t.Errorf("EndOfDay(%v) = %v; want %v", tc.args.input, result, tc.want)
-		}
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			result := EndOfDay(tc.args.input)
+			if !result.Equal(tc.want) {
+				t.Errorf("EndOfDay(%v) = %v; want %v", tc.args.input, result, tc.want)
+			}
+		})
 	}
 }
 
 func TestAddBusinessDays(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		t    time.Time
 		days int
@@ -122,6 +136,8 @@ func TestAddBusinessDays(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := AddBusinessDays(tt.args.t, tt.args.days); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("AddBusinessDays() = %v, want %v", got, tt.want)
 			}
@@ -130,6 +146,8 @@ func TestAddBusinessDays(t *testing.T) {
 }
 
 func TestIsWeekend(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		t time.Time
 	}
@@ -161,6 +179,8 @@ func TestIsWeekend(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := IsWeekend(tt.args.t); got != tt.want {
 				t.Errorf("IsWeekend() = %v, want %v", got, tt.want)
 			}
@@ -169,6 +189,8 @@ func TestIsWeekend(t *testing.T) {
 }
 
 func TestTimeDifferenceHumanReadable(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		from time.Time
 		to   time.Time
@@ -237,6 +259,8 @@ func TestTimeDifferenceHumanReadable(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := TimeDifferenceHumanReadable(tt.args.from, tt.args.to); got != tt.want {
 				t.Errorf("TimeDifferenceHumanReadable() = %v, want %v", got, tt.want)
 			}
@@ -245,6 +269,8 @@ func TestTimeDifferenceHumanReadable(t *testing.T) {
 }
 
 func TestDurationUntilNext(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		day time.Weekday
 		t   time.Time
@@ -297,6 +323,8 @@ func TestDurationUntilNext(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := DurationUntilNext(tt.args.day, tt.args.t); got != tt.want {
 				t.Errorf("DurationUntilNext() = %v, want %v", got, tt.want)
 			}
@@ -305,6 +333,8 @@ func TestDurationUntilNext(t *testing.T) {
 }
 
 func TestConvertToTimeZone(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		t        time.Time
 		location string
@@ -363,6 +393,8 @@ func TestConvertToTimeZone(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := ConvertToTimeZone(tt.args.t, tt.args.location)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ConvertToTimeZone() error = %v, wantErr %v", err, tt.wantErr)
@@ -377,6 +409,8 @@ func TestConvertToTimeZone(t *testing.T) {
 }
 
 func TestHumanReadableDuration(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		d time.Duration
 	}
@@ -430,6 +464,8 @@ func TestHumanReadableDuration(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := HumanReadableDuration(tt.args.d); got != tt.want {
 				t.Errorf("HumanReadableDuration() = %v, want %v", got, tt.want)
 			}
@@ -438,6 +474,8 @@ func TestHumanReadableDuration(t *testing.T) {
 }
 
 func TestCalculateAge(t *testing.T) {
+	t.Parallel()
+
 	testTime := time.Now() // Fixed reference time
 	type args struct {
 		birthDate time.Time
@@ -517,6 +555,8 @@ func TestCalculateAge(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := CalculateAge(tt.args.birthDate); got != tt.want {
 				t.Errorf("CalculateAge() = %v, want %v", got, tt.want)
 			}
@@ -525,6 +565,8 @@ func TestCalculateAge(t *testing.T) {
 }
 
 func TestIsLeapYear(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		year int
 	}
@@ -571,6 +613,8 @@ func TestIsLeapYear(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := IsLeapYear(tt.args.year); got != tt.want {
 				t.Errorf("IsLeapYear() = %v, want %v", got, tt.want)
 			}
@@ -579,6 +623,8 @@ func TestIsLeapYear(t *testing.T) {
 }
 
 func TestNextOccurrence(t *testing.T) {
+	t.Parallel()
+
 	loc, _ := time.LoadLocation("UTC")
 	currentTime := time.Date(2024, time.December, 29, 10, 30, 0, 0, loc)
 
@@ -646,6 +692,8 @@ func TestNextOccurrence(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got := NextOccurrence(tt.args.hour, tt.args.minute, tt.args.second, tt.args.t)
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NextOccurrence() = %v, want %v", got, tt.want)
@@ -655,6 +703,8 @@ func TestNextOccurrence(t *testing.T) {
 }
 
 func TestWeekNumber(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		t time.Time
 	}
@@ -707,6 +757,8 @@ func TestWeekNumber(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			year, week := WeekNumber(tt.args.t)
 			if year != tt.wantYear {
 				t.Errorf("WeekNumber() gotYear = %v, wantYear %v", year, tt.wantYear)
@@ -719,6 +771,8 @@ func TestWeekNumber(t *testing.T) {
 }
 
 func TestDaysBetween(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		start time.Time
 		end   time.Time
@@ -779,6 +833,8 @@ func TestDaysBetween(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := DaysBetween(tt.args.start, tt.args.end); got != tt.want {
 				t.Errorf("DaysBetween() = %v, want %v", got, tt.want)
 			}
@@ -787,6 +843,8 @@ func TestDaysBetween(t *testing.T) {
 }
 
 func TestIsTimeBetween(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		t     time.Time
 		start time.Time
@@ -845,6 +903,8 @@ func TestIsTimeBetween(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := IsTimeBetween(tt.args.t, tt.args.start, tt.args.end); got != tt.want {
 				t.Errorf("IsTimeBetween() = %v, want %v", got, tt.want)
 			}
@@ -853,6 +913,8 @@ func TestIsTimeBetween(t *testing.T) {
 }
 
 func TestUnixMilliToTime(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		ms int64
 	}
@@ -892,6 +954,8 @@ func TestUnixMilliToTime(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := UnixMilliToTime(tt.args.ms).UTC(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("UnixMilliToTime() = %v, want %v", got, tt.want)
 			}
@@ -900,6 +964,8 @@ func TestUnixMilliToTime(t *testing.T) {
 }
 
 func TestSplitDuration(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		d time.Duration
 	}
@@ -924,7 +990,7 @@ func TestSplitDuration(t *testing.T) {
 		{
 			name: "1 day 2 hours 30 minutes 45 seconds",
 			args: args{
-				d: time.Duration(1*24*time.Hour + 2*time.Hour + 30*time.Minute + 45*time.Second),
+				d: 1*24*time.Hour + 2*time.Hour + 30*time.Minute + 45*time.Second,
 			},
 			wantDays:    1,
 			wantHours:   2,
@@ -934,7 +1000,7 @@ func TestSplitDuration(t *testing.T) {
 		{
 			name: "3 days 5 hours",
 			args: args{
-				d: time.Duration(3*24*time.Hour + 5*time.Hour),
+				d: 3*24*time.Hour + 5*time.Hour,
 			},
 			wantDays:    3,
 			wantHours:   5,
@@ -944,7 +1010,7 @@ func TestSplitDuration(t *testing.T) {
 		{
 			name: "No days, 1 hour 30 minutes",
 			args: args{
-				d: time.Duration(1*time.Hour + 30*time.Minute),
+				d: 1*time.Hour + 30*time.Minute,
 			},
 			wantDays:    0,
 			wantHours:   1,
@@ -954,7 +1020,7 @@ func TestSplitDuration(t *testing.T) {
 		{
 			name: "Negative duration",
 			args: args{
-				d: time.Duration(-26 * time.Hour),
+				d: -26 * time.Hour,
 			},
 			wantDays:    -1,
 			wantHours:   -2,
@@ -964,6 +1030,8 @@ func TestSplitDuration(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gotDays, gotHours, gotMinutes, gotSeconds := SplitDuration(tt.args.d)
 			if gotDays != tt.wantDays {
 				t.Errorf("SplitDuration() gotDays = %v, want %v", gotDays, tt.wantDays)
@@ -982,6 +1050,8 @@ func TestSplitDuration(t *testing.T) {
 }
 
 func TestGetMonthName(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		monthNumber int
 	}
@@ -1034,6 +1104,8 @@ func TestGetMonthName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := GetMonthName(tt.args.monthNumber)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetMonthName() error = %v, wantErr %v", err, tt.wantErr)
@@ -1048,6 +1120,8 @@ func TestGetMonthName(t *testing.T) {
 }
 
 func TestGetDayName(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		dayNumber int
 	}
@@ -1100,6 +1174,8 @@ func TestGetDayName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := GetDayName(tt.args.dayNumber)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetDayName() error = %v, wantErr %v", err, tt.wantErr)
@@ -1114,6 +1190,8 @@ func TestGetDayName(t *testing.T) {
 }
 
 func TestFormatForDisplay(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		t time.Time
 	}
@@ -1153,6 +1231,8 @@ func TestFormatForDisplay(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := FormatForDisplay(tt.args.t); got != tt.want {
 				t.Errorf("FormatForDisplay() = %v, want %v", got, tt.want)
 			}
@@ -1161,6 +1241,8 @@ func TestFormatForDisplay(t *testing.T) {
 }
 
 func TestIsToday(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		t time.Time
 	}
@@ -1198,8 +1280,11 @@ func TestIsToday(t *testing.T) {
 			want: true,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := IsToday(tt.args.t); got != tt.want {
 				t.Errorf("IsToday() = %v, want %v", got, tt.want)
 			}

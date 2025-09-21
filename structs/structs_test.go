@@ -110,7 +110,7 @@ func TestCompareStructsWithPointers(t *testing.T) {
 		MyMap:     map[string]string{"k": "v1"},
 	}
 
-	new := ComplexPointerTest{
+	newVal := ComplexPointerTest{
 		Data: PointerTest{
 			Name:         &name2,
 			Age:          &age2,
@@ -133,7 +133,7 @@ func TestCompareStructsWithPointers(t *testing.T) {
 		{FieldName: "map", OldValue: map[string]string{"k": "v1"}, NewValue: map[string]string{"k": "v2"}},
 	}
 
-	got, err := CompareStructs(old, new)
+	got, err := CompareStructs(old, newVal)
 	if err != nil {
 		t.Fatalf("CompareStructs() error: %v", err)
 	}
@@ -148,14 +148,13 @@ func TestCompareStructsWithPointers(t *testing.T) {
 // ================================================================================
 
 func BenchmarkCompareStructsSimple(b *testing.B) {
-	old := Test{Name: "example", Age: 10, IsAdult: false}
-	new := Test{Name: "example - updated", Age: 18, IsAdult: true}
+	oldVal := Test{Name: "example", Age: 10, IsAdult: false}
+	newVal := Test{Name: "example - updated", Age: 18, IsAdult: true}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
-		_, err := CompareStructs(old, new)
+	for b.Loop() {
+		_, err := CompareStructs(oldVal, newVal)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -163,22 +162,21 @@ func BenchmarkCompareStructsSimple(b *testing.B) {
 }
 
 func BenchmarkCompareStructsComplex(b *testing.B) {
-	old := ComplexTest{
+	oldVal := ComplexTest{
 		Data:      Test{Name: "example1", Age: 25, IsAdult: true},
 		UpdatedOn: time.Date(2024, 10, 22, 0, 0, 0, 0, time.UTC),
 		History:   []string{"user1", "user2"},
 	}
-	new := ComplexTest{
+	newVal := ComplexTest{
 		Data:      Test{Name: "example1", Age: 26, IsAdult: true},
 		UpdatedOn: time.Date(2024, 10, 22, 0, 1, 0, 0, time.UTC),
 		History:   []string{"user1", "user2", "user3"},
 	}
 
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
-		_, err := CompareStructs(old, new)
+	for b.Loop() {
+		_, err := CompareStructs(oldVal, newVal)
 		if err != nil {
 			b.Fatal(err)
 		}

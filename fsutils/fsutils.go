@@ -16,9 +16,9 @@ type ByteSize int64
 
 const (
 	KB ByteSize = 1024
-	MB ByteSize = KB * 1024
-	GB ByteSize = MB * 1024
-	TB ByteSize = GB * 1024
+	MB          = KB * 1024
+	GB          = MB * 1024
+	TB          = GB * 1024
 )
 
 // FormatFileSize formats a file size given in bytes into a human-readable string
@@ -117,13 +117,13 @@ func FilesIdentical(file1, file2 string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	defer f1.Close()
+	defer func() { _ = f1.Close() }()
 
 	f2, err := os.Open(file2)
 	if err != nil {
 		return false, err
 	}
-	defer f2.Close()
+	defer func() { _ = f2.Close() }()
 
 	const chunkSize = 32 * 1024
 	b1 := make([]byte, chunkSize)

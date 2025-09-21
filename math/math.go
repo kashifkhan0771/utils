@@ -2,7 +2,7 @@ package math
 
 import (
 	"errors"
-	"log"
+	"math"
 )
 
 // number is a type constraint that matches all numeric types (integers and floats).
@@ -72,35 +72,7 @@ func Clamp[T number](min, max, value T) T {
 // IntPow calculates base raised to the power of exp.
 // Supports both positive and negative exponents. Returns float64 for fractional results.
 func IntPow(base, exp int) float64 {
-	if base == 0 && exp < 0 {
-		log.Fatal("IntPow: Error, base 0 raised to a negative number simplifies to 1/0(Impossible).")
-	}
-	if exp == 0 {
-		return 1 // Any number to the power of 0 is 1
-	}
-
-	result := 1
-	isNegative := exp < 0
-
-	// Use absolute value of exp for calculations
-	if isNegative {
-		exp = -exp
-	}
-
-	for exp > 0 {
-		if exp%2 == 1 {
-			result *= base
-		}
-		base *= base
-		exp /= 2
-	}
-
-	// If the exponent was negative, return the reciprocal
-	if isNegative {
-		return 1 / float64(result)
-	}
-
-	return float64(result)
+	return math.Pow(float64(base), float64(exp))
 }
 
 // IsEven checks if an integer x is even.
@@ -160,22 +132,91 @@ func LCM(x, y int) int {
 	return (x / GCD(x, y)) * y
 }
 
-// Sqrt computes the square root of a number using Newton's method.
+// Sqrt computes the square root of a number using the standard library's math.Sqrt.
+// For negative inputs, it returns the original value and an error.
 func Sqrt[T number](x T) (float64, error) {
 	if x < 0 {
 		return float64(x), errors.New("square root of a negative number is undefined")
-	} else if x == 0 {
-		return 0.0, nil
 	}
 
-	epsilon := 1e-10 // Precision threshold
-	z := float64(x)  // Initial guess
+	return math.Sqrt(float64(x)), nil
+}
 
-	for {
-		nextZ := z - (z*z-float64(x))/(2*z)
-		if float64(Abs(nextZ-z)) < epsilon {
-			return z, nil
+// IsPrime checks if a number is prime. Complexity = O(sqrt(n)).
+func IsPrime(x int) bool {
+	// 1 and 0 are not primes and handle all negative numbers as non-prime.
+	if x < 2 || (x != 2 && IsEven(x)) {
+		return false
+	}
+
+	// 2 is the only even number that is a prime number
+	if x == 2 {
+		return true
+	}
+
+	// Since even numbers are eliminated, iterate over odd divisors only.
+	// Use i*i <= x to avoid float conversions and rounding concerns.
+	for i := 3; i*i <= x; i += 2 {
+		if x%i == 0 {
+			return false
 		}
-		z = nextZ
 	}
+
+	return true
+}
+
+// Sieve of Eratosthenes algorithm Complexity = O(n log log n).
+func PrimeList(n int) []int {
+	if n < 2 {
+		return []int{}
+	}
+	list := []int{}
+	// Slice of bool to flag each number, intially we assume every number is a prime number except 1 and 0
+	isPrime := make([]bool, n+1)
+	for i := 2; i <= n; i++ {
+		isPrime[i] = true
+	}
+	// Basic implementation of Sieve
+	for i := 2; i*i <= n; i++ {
+		if isPrime[i] {
+			for j := i + i; j <= n; j += i {
+				isPrime[j] = false
+			}
+		}
+	}
+	for i := 2; i <= n; i++ {
+		if isPrime[i] {
+			list = append(list, i)
+		}
+	}
+
+	return list
+}
+
+// Complexity = sqrt(n)
+func GetDivisors(n int) []int {
+	if n <= 0 {
+		return []int{}
+	}
+	// 2 is a good starting point for the slice capacity
+	list := make([]int, 0, 2)
+	for i := 1; i*i <= n; i++ {
+		if n%i == 0 {
+			list = append(list, i)
+			// Check for perfect squares
+			if i != n/i {
+				list = append(list, n/i)
+			}
+		}
+	}
+	// The list is not sorted.
+	return list
+}
+
+// RoundDecimalPlaces rounds a float64 to the specified number of decimal places.
+// Negative values for places are clamped to 0 (i.e., rounds to a whole number).
+func RoundDecimalPlaces(val float64, places int) float64 {
+	p := math.Pow10(max(places, 0))
+
+	return math.Round(val*p) / p
 }

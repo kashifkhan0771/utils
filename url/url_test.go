@@ -8,6 +8,8 @@ import (
 )
 
 func TestBuildURL(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		scheme      string
 		host        string
@@ -22,23 +24,25 @@ func TestBuildURL(t *testing.T) {
 	}{
 		{
 			name: "success - simple URL with single query param",
-			args: args{scheme: "http", host: "example.com", path: "onePath", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne"}},
-			want: "http://example.com/onePath?queryParamOne=valueQueryParamOne",
+			args: args{scheme: "https", host: "example.com", path: "onePath", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne"}},
+			want: "https://example.com/onePath?queryParamOne=valueQueryParamOne",
 		},
 		{
 			name: "success - URL with multiple path segments and query params",
-			args: args{scheme: "http", host: "example.com", path: "onePath/otherPath/other", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
-			want: "http://example.com/onePath/otherPath/other?queryParamOne=valueQueryParamOne&queryParamTwo=valueQueryParamTwo",
+			args: args{scheme: "https", host: "example.com", path: "onePath/otherPath/other", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
+			want: "https://example.com/onePath/otherPath/other?queryParamOne=valueQueryParamOne&queryParamTwo=valueQueryParamTwo",
 		},
 		{
 			name: "success - subdomain URL with multiple query params",
-			args: args{scheme: "http", host: "subdomain.example.com", path: "onePath", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
-			want: "http://subdomain.example.com/onePath?queryParamOne=valueQueryParamOne&queryParamTwo=valueQueryParamTwo",
+			args: args{scheme: "https", host: "subdomain.example.com", path: "onePath", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
+			want: "https://subdomain.example.com/onePath?queryParamOne=valueQueryParamOne&queryParamTwo=valueQueryParamTwo",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if value, _ := BuildURL(tt.args.scheme, tt.args.host, tt.args.path, tt.args.queryParams); value != tt.want {
 				t.Errorf("BuildURL() = got %v, want %v", value, tt.want)
 			}
@@ -47,6 +51,8 @@ func TestBuildURL(t *testing.T) {
 }
 
 func TestBuildURLError(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		scheme      string
 		host        string
@@ -66,12 +72,12 @@ func TestBuildURLError(t *testing.T) {
 		},
 		{
 			name: "error - build URL",
-			args: args{scheme: "http", host: "", path: "onePath", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
+			args: args{scheme: "https", host: "", path: "onePath", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
 			want: "host is required",
 		},
 		{
 			name: "error - build URL",
-			args: args{scheme: "http", host: "example.com", path: "one1Path2@", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
+			args: args{scheme: "https", host: "example.com", path: "one1Path2@", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
 			want: "path is permitted with a-z, 0-9, - and _ characters and multiple path segments",
 		},
 		{
@@ -81,13 +87,15 @@ func TestBuildURLError(t *testing.T) {
 		},
 		{
 			name: "error - build URL",
-			args: args{scheme: "http", host: "ex@ample.com", path: "onePath", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
+			args: args{scheme: "https", host: "ex@ample.com", path: "onePath", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
 			want: "the host is not valid",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if _, err := BuildURL(tt.args.scheme, tt.args.host, tt.args.path, tt.args.queryParams); err.Error() != tt.want {
 				t.Errorf("BuildURL() = got %v, want %v", err.Error(), tt.want)
 			}
@@ -96,6 +104,8 @@ func TestBuildURLError(t *testing.T) {
 }
 
 func TestAddQueryParams(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		urlStr      string
 		queryParams map[string]string
@@ -108,23 +118,25 @@ func TestAddQueryParams(t *testing.T) {
 	}{
 		{
 			name: "success - add query params",
-			args: args{urlStr: "http://example.com", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne"}},
-			want: "http://example.com?queryParamOne=valueQueryParamOne",
+			args: args{urlStr: "https://example.com", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne"}},
+			want: "https://example.com?queryParamOne=valueQueryParamOne",
 		},
 		{
 			name: "success - add query params",
-			args: args{urlStr: "http://subdomain.example.com", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
-			want: "http://subdomain.example.com?queryParamOne=valueQueryParamOne&queryParamTwo=valueQueryParamTwo",
+			args: args{urlStr: "https://subdomain.example.com", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
+			want: "https://subdomain.example.com?queryParamOne=valueQueryParamOne&queryParamTwo=valueQueryParamTwo",
 		},
 		{
 			name: "success - add query params",
-			args: args{urlStr: "http://subdomain.example.com?firstQueryParam=anyValidValue", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
-			want: "http://subdomain.example.com?firstQueryParam=anyValidValue&queryParamOne=valueQueryParamOne&queryParamTwo=valueQueryParamTwo",
+			args: args{urlStr: "https://subdomain.example.com?firstQueryParam=anyValidValue", queryParams: map[string]string{"queryParamOne": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
+			want: "https://subdomain.example.com?firstQueryParam=anyValidValue&queryParamOne=valueQueryParamOne&queryParamTwo=valueQueryParamTwo",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if valid, _ := AddQueryParams(tt.args.urlStr, tt.args.queryParams); valid != tt.want {
 				t.Errorf("AddQueryParams() = got %v, want %v", valid, tt.want)
 			}
@@ -133,6 +145,8 @@ func TestAddQueryParams(t *testing.T) {
 }
 
 func TestAddQueryParamsError(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		urlStr      string
 		queryParams map[string]string
@@ -150,23 +164,25 @@ func TestAddQueryParamsError(t *testing.T) {
 		},
 		{
 			name: "error - add query params",
-			args: args{urlStr: "http://subdomain.example.com", queryParams: map[string]string{"queryParam@One": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
-			want: "query parameter key queryParam@One must be alphanumeric",
+			args: args{urlStr: "https://subdomain.example.com", queryParams: map[string]string{"queryParam@One": "valueQueryParamOne", "queryParamTwo": "valueQueryParamTwo"}},
+			want: `query parameter key "queryParam@One" must contain only letters, digits, or hyphens`,
 		},
 		{
 			name: "error - add query params",
-			args: args{urlStr: "http://subdomain.example.com", queryParams: map[string]string{"queryParamOne": "valueQuery@ParamOne", "queryParamTwo": "valueQueryParamTwo"}},
-			want: "query parameter value valueQuery@ParamOne for key queryParamOne must be alphanumeric",
+			args: args{urlStr: "https://subdomain.example.com", queryParams: map[string]string{"queryParamOne": "valueQuery@ParamOne", "queryParamTwo": "valueQueryParamTwo"}},
+			want: `query parameter value "valueQuery@ParamOne" for key "queryParamOne" must contain only letters, digits, or hyphens`,
 		},
 		{
 			name: "error - add query params",
-			args: args{urlStr: "http://subdomain.example.com", queryParams: map[string]string{"queryParamOne": ""}},
+			args: args{urlStr: "https://subdomain.example.com", queryParams: map[string]string{"queryParamOne": ""}},
 			want: "query parameter value for key queryParamOne cannot be empty",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if _, err := AddQueryParams(tt.args.urlStr, tt.args.queryParams); err.Error() != tt.want {
 				t.Errorf("AddQueryParams() = got %v, want %v", err.Error(), tt.want)
 			}
@@ -175,6 +191,8 @@ func TestAddQueryParamsError(t *testing.T) {
 }
 
 func TestIsValidURL(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		urlStr      string
 		validScheme []string
@@ -187,12 +205,12 @@ func TestIsValidURL(t *testing.T) {
 	}{
 		{
 			name: "success - is valid URL",
-			args: args{urlStr: "http://example.com?someQuery=oneValue&otherQuery=otherValue", validScheme: []string{"https"}},
+			args: args{urlStr: "https://example.com?someQuery=oneValue&otherQuery=otherValue", validScheme: []string{"http"}},
 			want: false,
 		},
 		{
 			name: "success - is valid URL",
-			args: args{urlStr: "http://subdomain.example.com?someQuery=oneValue&otherQuery=otherValue", validScheme: []string{"http", "https"}},
+			args: args{urlStr: "https://subdomain.example.com?someQuery=oneValue&otherQuery=otherValue", validScheme: []string{"http", "https"}},
 			want: true,
 		},
 		{
@@ -234,6 +252,8 @@ func TestIsValidURL(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if valid := IsValidURL(tt.args.urlStr, tt.args.validScheme); valid != tt.want {
 				t.Errorf("IsValidURL() = got %v, want %v", valid, tt.want)
 			}
@@ -242,6 +262,8 @@ func TestIsValidURL(t *testing.T) {
 }
 
 func TestExtractDomain(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		urlStr string
 	}
@@ -253,7 +275,7 @@ func TestExtractDomain(t *testing.T) {
 	}{
 		{
 			name: "success - extract domain",
-			args: args{urlStr: "http://example.com?someQuery=oneValue&otherQuery=otherValue"},
+			args: args{urlStr: "https://example.com?someQuery=oneValue&otherQuery=otherValue"},
 			want: "example.com",
 		},
 		{
@@ -280,6 +302,8 @@ func TestExtractDomain(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got, _ := ExtractDomain(tt.args.urlStr); got != tt.want {
 				t.Errorf("ExtractDomain() = %s, want %s", got, tt.want)
 			}
@@ -288,6 +312,8 @@ func TestExtractDomain(t *testing.T) {
 }
 
 func TestExtractDomainError(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		urlStr string
 	}
@@ -306,6 +332,8 @@ func TestExtractDomainError(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if _, err := ExtractDomain(tt.args.urlStr); err.Error() != tt.want {
 				t.Errorf("ExtractDomain() = %s, want %s", err.Error(), tt.want)
 			}
@@ -314,6 +342,8 @@ func TestExtractDomainError(t *testing.T) {
 }
 
 func TestGetQueryParam(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		urlStr string
 		param  string
@@ -326,28 +356,28 @@ func TestGetQueryParam(t *testing.T) {
 	}{
 		{
 			name: "success - get query param",
-			args: args{urlStr: "http://someurl.com?paramOne=oneValue&paramTwo=otherValue", param: "paramOne"},
+			args: args{urlStr: "https://someurl.com?paramOne=oneValue&paramTwo=otherValue", param: "paramOne"},
 			want: "oneValue",
 		},
 		{
 			name: "success - get query param",
-			args: args{urlStr: "http://someurl.com?paramOne=oneValue&paramTwo=otherValue&oneQuery=value&otherQuery=otherValue", param: "paramTwo"},
+			args: args{urlStr: "https://someurl.com?paramOne=oneValue&paramTwo=otherValue&oneQuery=value&otherQuery=otherValue", param: "paramTwo"},
 			want: "otherValue",
 		},
 		{
 			name: "success - get query param",
-			args: args{urlStr: "http://someurl.com?paramOne=oneValue&paramTwo=otherValue&oneQuery=valueOneQuery&otherQuery=otherValue", param: "oneQuery"},
+			args: args{urlStr: "https://someurl.com?paramOne=oneValue&paramTwo=otherValue&oneQuery=valueOneQuery&otherQuery=otherValue", param: "oneQuery"},
 			want: "valueOneQuery",
 		},
 		{
 			name: "success - get query param",
-			args: args{urlStr: "http://someurl.com?paramOne=oneValue&paramTwo=otherValue&oneQuery=valueOneQuery&otherQuery=otherQueryValue", param: "otherQuery"},
+			args: args{urlStr: "https://someurl.com?paramOne=oneValue&paramTwo=otherValue&oneQuery=valueOneQuery&otherQuery=otherQueryValue", param: "otherQuery"},
 			want: "otherQueryValue",
 		},
 		{
 			name: "success - simple parameter",
 			args: args{
-				urlStr: "http://example.com?key=value",
+				urlStr: "https://example.com?key=value",
 				param:  "key",
 			},
 			want: "value",
@@ -355,7 +385,7 @@ func TestGetQueryParam(t *testing.T) {
 		{
 			name: "success - encoded parameter",
 			args: args{
-				urlStr: "http://example.com?key=value+with+spaces%26special%3Dchars",
+				urlStr: "https://example.com?key=value+with+spaces%26special%3Dchars",
 				param:  "key",
 			},
 			want: "value with spaces&special=chars",
@@ -363,7 +393,7 @@ func TestGetQueryParam(t *testing.T) {
 		{
 			name: "success - empty parameter value",
 			args: args{
-				urlStr: "http://example.com?key=",
+				urlStr: "https://example.com?key=",
 				param:  "key",
 			},
 			want: "",
@@ -371,7 +401,7 @@ func TestGetQueryParam(t *testing.T) {
 		{
 			name: "error - parameter not found",
 			args: args{
-				urlStr: "http://example.com?key=value",
+				urlStr: "https://example.com?key=value",
 				param:  "missing",
 			},
 			want: "",
@@ -379,6 +409,8 @@ func TestGetQueryParam(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got, _ := GetQueryParam(tt.args.urlStr, tt.args.param); got != tt.want {
 				t.Errorf("GetQueryParam() = %s, want %s", got, tt.want)
 			}
@@ -387,23 +419,19 @@ func TestGetQueryParam(t *testing.T) {
 }
 
 func TestGetQueryParamError(t *testing.T) {
-	type args struct {
-		urlStr string
-		param  string
-	}
-	testError := struct {
-		name string
-		args args
-		want interface{}
-	}{
-		name: "success - get query param with error",
-		args: args{urlStr: "http://someurl.com?paramOne=oneValue&paramTwo=otherValue", param: "none"},
-		want: "parameter none not found in URL http://someurl.com?paramOne=oneValue&paramTwo=otherValue",
-	}
-	if _, err := GetQueryParam(testError.args.urlStr, testError.args.param); err == nil {
+	t.Parallel()
+
+	var (
+		inputURL   = "https://someurl.com?paramOne=oneValue&paramTwo=otherValue"
+		inputParam = "none"
+
+		wantErrMsg = "parameter none not found in URL https://someurl.com?paramOne=oneValue&paramTwo=otherValue"
+	)
+
+	if _, err := GetQueryParam(inputURL, inputParam); err == nil {
 		t.Errorf("GetQueryParam() expected error, got nil")
-	} else if err.Error() != testError.want {
-		t.Errorf("GetQueryParam() error = %v, want %v", err.Error(), testError.want)
+	} else if err.Error() != wantErrMsg {
+		t.Errorf("GetQueryParam() error = %q, want %q", err.Error(), wantErrMsg)
 	}
 }
 
@@ -412,36 +440,55 @@ func TestGetQueryParamError(t *testing.T) {
 // ================================================================================
 
 func BenchmarkBuildURL(b *testing.B) {
+	var (
+		scheme, host, path = "http", "example.com", "onePath"
+		qp                 = map[string]string{"queryParamOne": "valueQueryParamOne"}
+	)
+
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		_, _ = BuildURL("http", "example.com", "onePath", map[string]string{"queryParamOne": "valueQueryParamOne"})
+	for b.Loop() {
+		_, _ = BuildURL(scheme, host, path, qp)
 	}
 }
 
 func BenchmarkAddQueryParams(b *testing.B) {
+	var (
+		urlStr = "https://example.com"
+		qp     = map[string]string{"queryParamOne": "valueQueryParamOne"}
+	)
+
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		_, _ = AddQueryParams("http://example.com", map[string]string{"queryParamOne": "valueQueryParamOne"})
+	for b.Loop() {
+		_, _ = AddQueryParams(urlStr, qp)
 	}
 }
 
 func BenchmarkIsValidURL(b *testing.B) {
+	var (
+		urlStr  = "https://example.com"
+		schemes = []string{"http", "https"}
+	)
+
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		IsValidURL("http://example.com", []string{"http", "https"})
+	for b.Loop() {
+		IsValidURL(urlStr, schemes)
 	}
 }
 
 func BenchmarkExtractDomain(b *testing.B) {
+	urlStr := "https://example.com"
+
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		_, _ = ExtractDomain("http://example.com")
+	for b.Loop() {
+		_, _ = ExtractDomain(urlStr)
 	}
 }
 
 func BenchmarkGetQueryParam(b *testing.B) {
+	urlStr, key := "https://example.com?key=value", "key"
+
 	b.ReportAllocs()
-	for i := 0; i < b.N; i++ {
-		_, _ = GetQueryParam("http://example.com?key=value", "key")
+	for b.Loop() {
+		_, _ = GetQueryParam(urlStr, key)
 	}
 }

@@ -1,6 +1,8 @@
 package math
 
 import (
+	"math"
+	"slices"
 	"testing"
 )
 
@@ -28,6 +30,11 @@ func TestAbsForInts(t *testing.T) {
 			args: args{x: 0},
 			want: 0,
 		},
+		{
+			name: "success - negative zero input",
+			args: args{x: -0},
+			want: 0.0,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -37,6 +44,7 @@ func TestAbsForInts(t *testing.T) {
 		})
 	}
 }
+
 func TestAbsForFloats(t *testing.T) {
 	type args struct {
 		x float32
@@ -68,6 +76,13 @@ func TestAbsForFloats(t *testing.T) {
 				t.Errorf("Abs() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestAbsForFloats_NaN(t *testing.T) {
+	got := Abs(float32(math.NaN()))
+	if !math.IsNaN(float64(got)) {
+		t.Errorf("Abs(NaN) = %v, want NaN", got)
 	}
 }
 
@@ -672,8 +687,8 @@ func TestSqrtForFloats(t *testing.T) {
 	}{
 		{
 			name: "success - square root of pi",
-			args: args{x: 3.14159265358979323846264338327950288419716939937510582097494459230781640628},
-			want: 1.77245385090551602729816748334114518279754945612238712821380778985291128458,
+			args: args{x: math.Pi},
+			want: math.SqrtPi,
 		},
 		{
 			name: "success - square root of square root of 2",
@@ -690,6 +705,247 @@ func TestSqrtForFloats(t *testing.T) {
 		})
 	}
 }
+func TestIsPrime(t *testing.T) {
+	type args struct {
+		x int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "success - negative 10",
+			args: args{x: -10},
+			want: false,
+		},
+		{
+			name: "success - 0",
+			args: args{x: 0},
+			want: false,
+		},
+		{
+			name: "success - 1",
+			args: args{x: 1},
+			want: false,
+		},
+		{
+			name: "success - 2",
+			args: args{x: 2},
+			want: true,
+		},
+		{
+			name: "success - 3",
+			args: args{x: 3},
+			want: true,
+		},
+		{
+			name: "success - 4",
+			args: args{x: 4},
+			want: false,
+		},
+		{
+			name: "success - 36473",
+			args: args{x: 36473},
+			want: true,
+		},
+		{
+			name: "success - 2147483647 (2^31-1)",
+			args: args{x: 2147483647},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsPrime(tt.args.x); got != tt.want {
+				t.Errorf("IsPrime() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestPrimeList(t *testing.T) {
+	type args struct {
+		x int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			name: "success - 2",
+			args: args{x: 2},
+			want: []int{2},
+		},
+		{
+			name: "success - 0",
+			args: args{x: 0},
+			want: []int{},
+		},
+		{
+			name: "success - 1",
+			args: args{x: 1},
+			want: []int{},
+		},
+		{
+			name: "success - 3",
+			args: args{x: 3},
+			want: []int{2, 3},
+		},
+		{
+			name: "success - 4",
+			args: args{x: 4},
+			want: []int{2, 3},
+		},
+		{
+			name: "success - 10",
+			args: args{x: 10},
+			want: []int{2, 3, 5, 7},
+		},
+		{
+			name: "success - 100 ",
+			args: args{x: 100},
+			want: []int{2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := PrimeList(tt.args.x); !slices.Equal(got, tt.want) {
+				t.Errorf("PrimeList() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+func TestGetDivisors(t *testing.T) {
+	type args struct {
+		x int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			name: "success - 0",
+			args: args{x: 0},
+			want: []int{},
+		},
+		{
+			name: "success - 1",
+			args: args{x: 1},
+			want: []int{1},
+		},
+		{
+			name: "success - 2",
+			args: args{x: 2},
+			want: []int{1, 2},
+		},
+		{
+			name: "success - 3",
+			args: args{x: 3},
+			want: []int{1, 3},
+		},
+		{
+			name: "success - 4",
+			args: args{x: 4},
+			want: []int{1, 2, 4},
+		},
+		{
+			name: "success - 10",
+			args: args{x: 10},
+			want: []int{1, 2, 5, 10},
+		},
+		{
+			name: "success - 49",
+			args: args{x: 49},
+			want: []int{1, 7, 49},
+		},
+		{
+			name: "success - 48",
+			args: args{x: 48},
+			want: []int{1, 2, 3, 4, 6, 8, 12, 16, 24, 48},
+		},
+		{
+			name: "success - 100 ",
+			args: args{x: 100},
+			want: []int{1, 2, 4, 5, 10, 20, 25, 50, 100},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := GetDivisors(tt.args.x)
+			// The slice need to be sorted in order to be compared
+			slices.Sort(got)
+			if !slices.Equal(got, tt.want) {
+				t.Errorf("GetDivisors() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestRoundDecimalPlaces(t *testing.T) {
+	tests := []struct {
+		name     string
+		value    float64
+		places   int
+		expected float64
+	}{
+		{
+			name:     "success - round to 2 decimal places",
+			value:    3.14159,
+			places:   2,
+			expected: 3.14,
+		},
+		{
+			name:     "success - round to 3 decimal places",
+			value:    2.718281828459045,
+			places:   3,
+			expected: 2.718,
+		},
+		{
+			name:     "success - round to 0 decimal places",
+			value:    1.9999,
+			places:   0,
+			expected: 2.0,
+		},
+		{
+			name:     "success - round negative number to 1 decimal place",
+			value:    -1.2345,
+			places:   1,
+			expected: -1.2,
+		},
+		{
+			name:     "success - round to 4 decimal places",
+			value:    0.123456789,
+			places:   4,
+			expected: 0.1235,
+		},
+		{
+			name:     "success - round to 5 decimal places",
+			value:    0.123456789,
+			places:   5,
+			expected: 0.12346,
+		},
+		{
+			name:     "success - round to 0 decimal places with negative number",
+			value:    3.14159,
+			places:   -1,
+			expected: 3.0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			result := RoundDecimalPlaces(tt.value, tt.places)
+			if result != tt.expected {
+				t.Errorf("RoundDecimalPlaces(%v, %d) = %v; want %v", tt.value, tt.places, result, tt.expected)
+			}
+		})
+	}
+}
 
 // ================================================================================
 // ### BENCHMARKS
@@ -697,46 +953,71 @@ func TestSqrtForFloats(t *testing.T) {
 
 func BenchmarkIntPow(b *testing.B) {
 	b.ReportAllocs()
-	b.ResetTimer()
 
-	bases := []int{2, 3, 4, 5}
-	exponents := []int{2, 3, 4}
-
-	for i := 0; i < b.N; i++ {
-		base := bases[i%len(bases)]
-		exp := exponents[i%len(exponents)]
-		IntPow(base, exp)
+	const base, exp = 3, 2
+	for b.Loop() {
+		_ = IntPow(base, exp)
 	}
 }
 
 func BenchmarkFactorial(b *testing.B) {
 	b.ReportAllocs()
 
-	for i := 0; i < b.N; i++ {
-		_, _ = Factorial(i % 20) // Factorial of numbers 0 to 19
+	const x = 7
+	for b.Loop() {
+		_, _ = Factorial(x)
 	}
 }
 
 func BenchmarkGCD(b *testing.B) {
 	b.ReportAllocs()
 
-	for i := 0; i < b.N; i++ {
-		GCD(i, i+1)
+	const x, y = 17, 19
+	for b.Loop() {
+		_ = GCD(x, y)
 	}
 }
 
 func BenchmarkLCM(b *testing.B) {
 	b.ReportAllocs()
 
-	for i := 0; i < b.N; i++ {
-		LCM(i, i+1)
+	const x, y = 4, 6
+	for b.Loop() {
+		_ = LCM(x, y)
 	}
 }
 
 func BenchmarkSqrt(b *testing.B) {
 	b.ReportAllocs()
 
-	for i := 0; i < b.N; i++ {
-		_, _ = Sqrt(i)
+	for b.Loop() {
+		_, _ = Sqrt(math.Pi)
+	}
+}
+
+func BenchmarkIsPrime(b *testing.B) {
+	b.ReportAllocs()
+
+	const prime = 2147483647
+	for b.Loop() {
+		_ = IsPrime(prime)
+	}
+}
+
+func BenchmarkPrimeList(b *testing.B) {
+	b.ReportAllocs()
+
+	const n = 1e8
+	for b.Loop() {
+		_ = PrimeList(n)
+	}
+}
+
+func BenchmarkGetDivisors(b *testing.B) {
+	b.ReportAllocs()
+
+	const n = 2e9
+	for b.Loop() {
+		_ = GetDivisors(n)
 	}
 }
