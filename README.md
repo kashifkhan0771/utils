@@ -70,6 +70,7 @@ cd utils
 | **conversion** | Conversion of data types, time, and temperatues   | [README](conversion/README.md) | [EXAMPLES](conversion/EXAMPLES.md)
 | **ratelimiter** | Token-bucket rate limiter (allow/wait, adjustable capacity & refill rate) | [README](ratelimiter/README.md) | [EXAMPLES](ratelimiter/EXAMPLES.md) |
 | **queue** | Queue data structure| [README](queue/README.md) | [EXAMPLES](queue/EXAMPLES.md) |
+| **image** | Utility functions for working with images | [README](image/README.md) | [EXAMPLES](image/EXAMPLES.md) |
 
 ## Comparison
 
@@ -99,6 +100,7 @@ cd utils
 | Dependency-Free           | ✅ Yes                      | ❌ No                            | ❌ No                            |
 | Small API Surface         | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
 | Rate Limiter Utilities    | ✅ Yes                      | ❌ No                            | ❌ No                            |
+| Image                     | ✅ Yes                      | ❌ No                            | ❌ No                            |
 
 
 ## Contributions
