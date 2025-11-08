@@ -14,8 +14,6 @@ import (
 	"golang.org/x/text/language"
 )
 
-var c = cases.Title(language.English)
-
 // SubstringSearchOptions contains options for substring search.
 type SubstringSearchOptions struct {
 	CaseInsensitive bool // Perform case-insensitive search
@@ -95,6 +93,8 @@ func SubstringSearch(input, substring string, options SubstringSearchOptions) []
 
 // Title return string in title case with English language-specific title
 func Title(input string) string {
+	c := cases.Title(language.English)
+
 	return c.String(input)
 }
 
