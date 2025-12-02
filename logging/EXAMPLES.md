@@ -153,3 +153,35 @@ func main() {
 ```
 [2025-01-09 12:34:56] [INFO] CustomPrefix: This message has a custom prefix.
 ```
+
+### Redact sensitive information in logs
+
+```go
+package main
+
+import (
+ logging "github.com/kashifkhan0771/utils/logging"
+ "os"
+)
+
+func main() {
+ // Create a logger
+ logger := logging.NewLogger("MyApp", logging.DEBUG, os.Stdout)
+
+ // Set redaction rules for sensitive data
+ logger.SetRedactionRules(map[string]string{
+  "password:":    "***REDACTED***",
+  "credit_card=": "***REDACTED***",
+ })
+
+ // Log messages with sensitive data
+ logger.Info("User logged in with password:mysecretpass123")
+ logger.Error("Payment failed for credit_card=1234-5678-9876-5432")
+}
+```
+#### Output:
+
+```
+[2025-01-09 12:34:56] [INFO] MyApp: User logged in with password:***REDACTED***
+[2025-01-09 12:34:56] [ERROR] MyApp: Payment failed for credit_card=***REDACTED***
+```
