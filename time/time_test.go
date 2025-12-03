@@ -495,7 +495,15 @@ func TestCalculateAge(t *testing.T) {
 		{
 			name: "Birthday not yet reached this year",
 			args: args{
-				birthDate: time.Date(testTime.Year()-25, testTime.Month()%12+1, testTime.Day(), 0, 0, 0, 0, time.UTC),
+				birthDate: func() time.Time {
+					futureMonth := testTime.Month() + 1
+					year := testTime.Year() - 25
+					if futureMonth > 12 {
+						futureMonth = 1
+						year++ // If we overflow to next year, change birth year
+					}
+					return time.Date(year, futureMonth, testTime.Day(), 0, 0, 0, 0, time.UTC)
+				}(),
 			},
 			want: 24,
 		},
