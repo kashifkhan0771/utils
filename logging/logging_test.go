@@ -97,6 +97,145 @@ func TestLogger(t *testing.T) {
 	}
 }
 
+func TestLoggerRedaction(t *testing.T) {
+	tests := []struct {
+		name           string
+		rules          map[string]string
+		message        string
+		wantContains   string
+		wantNotContain string
+	}{
+		{
+			name: "success - redact password",
+			rules: map[string]string{
+				"password:": "***REDACTED***",
+			},
+			message:        "User logged in with password:mysecretpass123",
+			wantContains:   "password:***REDACTED***",
+			wantNotContain: "mysecretpass123",
+		},
+		{
+			name: "success - redact credit card",
+			rules: map[string]string{
+				"credit_card=": "***REDACTED***",
+			},
+			message:        "Payment processed with credit_card=1234-5678-9876-5432",
+			wantContains:   "credit_card=***REDACTED***",
+			wantNotContain: "1234-5678-9876-5432",
+		},
+		{
+			name: "success - redact multiple fields",
+			rules: map[string]string{
+				"password:":    "***REDACTED***",
+				"email=":       "***REDACTED***",
+				"credit_card=": "***REDACTED***",
+			},
+			message:        "User email=user@example.com logged in with password:secret123",
+			wantContains:   "email=***REDACTED***",
+			wantNotContain: "user@example.com",
+		},
+		{
+			name:           "success - no redaction without rules",
+			rules:          map[string]string{},
+			message:        "User logged in with password:secret",
+			wantContains:   "password:secret",
+			wantNotContain: "REDACTED",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			buffer := &bytes.Buffer{}
+			logger := logging.NewLogger("Test", logging.INFO, buffer)
+			logger.SetRedactionRules(tt.rules)
+
+			logger.Info(tt.message)
+
+			output := buffer.String()
+			if !strings.Contains(output, tt.wantContains) {
+				t.Errorf("Expected output to contain '%v', got: %v", tt.wantContains, output)
+			}
+			if tt.wantNotContain != "" && strings.Contains(output, tt.wantNotContain) {
+				t.Errorf("Expected output NOT to contain '%v', got: %v", tt.wantNotContain, output)
+			}
+		})
+	}
+}
+
+func TestLoggerRedactionRegex(t *testing.T) {
+	tests := []struct {
+		name           string
+		patterns       map[string]string
+		message        string
+		wantContains   string
+		wantNotContain string
+		wantErr        bool
+	}{
+		{
+			name: "success - redact email with regex",
+			patterns: map[string]string{
+				`\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b`: "[EMAIL REDACTED]",
+			},
+			message:        "Contact us at support@example.com for help",
+			wantContains:   "[EMAIL REDACTED]",
+			wantNotContain: "support@example.com",
+		},
+		{
+			name: "success - redact credit card numbers",
+			patterns: map[string]string{
+				`\b\d{4}-\d{4}-\d{4}-\d{4}\b`: "[CARD REDACTED]",
+			},
+			message:        "Card number: 1234-5678-9012-3456",
+			wantContains:   "[CARD REDACTED]",
+			wantNotContain: "1234-5678-9012-3456",
+		},
+		{
+			name: "success - redact phone numbers",
+			patterns: map[string]string{
+				`\b\d{3}-\d{3}-\d{4}\b`: "[PHONE REDACTED]",
+			},
+			message:        "Call me at 555-123-4567",
+			wantContains:   "[PHONE REDACTED]",
+			wantNotContain: "555-123-4567",
+		},
+		{
+			name: "error - invalid regex pattern",
+			patterns: map[string]string{
+				`[invalid(regex`: "REDACTED",
+			},
+			message: "test message",
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			buffer := &bytes.Buffer{}
+			logger := logging.NewLogger("Test", logging.INFO, buffer)
+
+			err := logger.SetRedactionRegex(tt.patterns)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("SetRedactionRegex() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if tt.wantErr {
+				return
+			}
+
+			logger.Info(tt.message)
+
+			output := buffer.String()
+			if !strings.Contains(output, tt.wantContains) {
+				t.Errorf("Expected output to contain '%v', got: %v", tt.wantContains, output)
+			}
+			if tt.wantNotContain != "" && strings.Contains(output, tt.wantNotContain) {
+				t.Errorf("Expected output NOT to contain '%v', got: %v", tt.wantNotContain, output)
+			}
+		})
+	}
+}
+
 // ================================================================================
 // ### BENCHMARKS
 // ================================================================================
@@ -106,5 +245,17 @@ func BenchmarkLogger(b *testing.B) {
 	b.ReportAllocs()
 	for b.Loop() {
 		logger.Info("This is an info message")
+	}
+}
+
+func BenchmarkLoggerWithRedaction(b *testing.B) {
+	logger := logging.NewLogger("Test", logging.INFO, io.Discard)
+	logger.SetRedactionRules(map[string]string{
+		"password:": "***REDACTED***",
+		"email=":    "***REDACTED***",
+	})
+	b.ReportAllocs()
+	for b.Loop() {
+		logger.Info("User email=user@example.com logged in with password:secret123")
 	}
 }

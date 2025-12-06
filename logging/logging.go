@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 	"time"
 )
 
@@ -30,13 +31,20 @@ const (
 	ERROR                 // ERROR is used for critical error messages.
 )
 
+// RedactionRule defines how to redact sensitive information
+type RedactionRule struct {
+	Pattern     *regexp.Regexp // Regex pattern to match sensitive data
+	Replacement string         // Replacement text for matched patterns
+}
+
 // Logger is a configurable logging instance that supports multiple log levels,
 // optional colored output, and custom prefixes for log messages.
 type Logger struct {
-	minLevel      LogLevel  // Minimum log level for messages to be logged
-	prefix        string    // Prefix to prepend to all log messages
-	output        io.Writer // Output destination for log messages (e.g., os.Stdout)
-	disableColors bool      // Flag to disable color codes (useful for testing or non-ANSI terminals)
+	minLevel       LogLevel        // Minimum log level for messages to be logged
+	prefix         string          // Prefix to prepend to all log messages
+	output         io.Writer       // Output destination for log messages (e.g., os.Stdout)
+	disableColors  bool            // Flag to disable color codes (useful for testing or non-ANSI terminals)
+	redactionRules []RedactionRule // Rules for redacting sensitive information
 }
 
 // NewLogger creates and returns a new Logger instance with the specified prefix,
@@ -63,6 +71,56 @@ func NewLogger(prefix string, minLevel LogLevel, output io.Writer) *Logger {
 	}
 }
 
+// SetRedactionRules configures the logger to redact sensitive information based on
+// the provided patterns. Each key represents a pattern to match, and the value is
+// the replacement text.
+//
+// Parameters:
+//   - rules: A map where keys are patterns (e.g., "password=", "credit_card=") and
+//     values are replacement strings (e.g., "***REDACTED***").
+func (l *Logger) SetRedactionRules(rules map[string]string) {
+	l.redactionRules = make([]RedactionRule, 0, len(rules))
+	for pattern, replacement := range rules {
+		// Create a regex that matches the pattern followed by any non-space characters
+		regex := regexp.MustCompile(regexp.QuoteMeta(pattern) + `[^\s]+`)
+		l.redactionRules = append(l.redactionRules, RedactionRule{
+			Pattern:     regex,
+			Replacement: pattern + replacement,
+		})
+	}
+}
+
+// SetRedactionRegex allows users to define custom regex patterns for redaction.
+// This provides more flexibility than SetRedactionRules.
+//
+// Parameters:
+//   - patterns: A map where keys are regex patterns and values are replacement strings.
+func (l *Logger) SetRedactionRegex(patterns map[string]string) error {
+	l.redactionRules = make([]RedactionRule, 0, len(patterns))
+	for pattern, replacement := range patterns {
+		regex, err := regexp.Compile(pattern)
+		if err != nil {
+			return fmt.Errorf("invalid regex pattern '%s': %w", pattern, err)
+		}
+		l.redactionRules = append(l.redactionRules, RedactionRule{
+			Pattern:     regex,
+			Replacement: replacement,
+		})
+	}
+
+	return nil
+}
+
+// redact applies all configured redaction rules to the message
+func (l *Logger) redact(message string) string {
+	redactedMessage := message
+	for _, rule := range l.redactionRules {
+		redactedMessage = rule.Pattern.ReplaceAllString(redactedMessage, rule.Replacement)
+	}
+
+	return redactedMessage
+}
+
 // log handles the core logic of logging messages. It applies the appropriate
 // color coding (if enabled), formats the log message with a timestamp and prefix,
 // and writes it to the configured output destination.
@@ -73,6 +131,11 @@ func NewLogger(prefix string, minLevel LogLevel, output io.Writer) *Logger {
 func (l *Logger) log(level LogLevel, message string) {
 	if level < l.minLevel {
 		return
+	}
+
+	// Apply redaction rules
+	if len(l.redactionRules) > 0 {
+		message = l.redact(message)
 	}
 
 	// Determine the color and level string for the log level
