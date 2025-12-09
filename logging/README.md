@@ -53,6 +53,20 @@ The `logging` package provides a simple, flexible, and color-coded logging syste
 - **Disable Colors**:  
   The `disableColors` field in the `Logger` struct can be set to `true` to disable color codes (useful for testing or plain-text logs).
 
+### Redaction
+
+The `logging` package can redact sensitive values before writing logs. Two methods are provided:
+
+- `SetRedactionRules(rules map[string]string)`
+  - Treats each map key as a literal pattern prefix (e.g., `password:` or `api_key=`).
+  - Matches the key plus the following non-space characters and replaces them with the key concatenated with the provided replacement.
+  - Example: `{"password:": "***REDACTED***"}` turns `password:secret` into `password:***REDACTED***`.
+
+- `SetRedactionRegex(patterns map[string]string) error`
+  - Accepts full regular expressions as keys and replacement strings as values.
+  - Compiles each regex and returns an error if any pattern is invalid.
+  - The replacement string replaces the matched substring.
+
 #### **Notes**
 
 - If the `minLevel` is set to `DEBUG`, all log messages will be displayed.
