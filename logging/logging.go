@@ -96,18 +96,19 @@ func (l *Logger) SetRedactionRules(rules map[string]string) {
 // Parameters:
 //   - patterns: A map where keys are regex patterns and values are replacement strings.
 func (l *Logger) SetRedactionRegex(patterns map[string]string) error {
-	l.redactionRules = make([]RedactionRule, 0, len(patterns))
+	rules := make([]RedactionRule, 0, len(patterns))
 	for pattern, replacement := range patterns {
 		regex, err := regexp.Compile(pattern)
 		if err != nil {
 			return fmt.Errorf("invalid regex pattern '%s': %w", pattern, err)
 		}
-		l.redactionRules = append(l.redactionRules, RedactionRule{
+		rules = append(rules, RedactionRule{
 			Pattern:     regex,
 			Replacement: replacement,
 		})
 	}
 
+	l.redactionRules = rules
 	return nil
 }
 
