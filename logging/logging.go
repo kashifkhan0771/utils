@@ -109,6 +109,7 @@ func (l *Logger) SetRedactionRegex(patterns map[string]string) error {
 	}
 
 	l.redactionRules = rules
+
 	return nil
 }
 
