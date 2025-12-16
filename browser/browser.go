@@ -8,9 +8,6 @@ import (
 	"strings"
 )
 
-
-
-
 func OpenURL(url string) error {
 	var cmd string
 	var args []string
@@ -18,14 +15,14 @@ func OpenURL(url string) error {
 	switch runtime.GOOS {
 	case "windows":
 		cmd = "cmd"
-		args = []string{"/c", "start", url}
+		args = []string{"/c", "start","", url}
 	case "darwin":
 		cmd = "open"
 		args = []string{url}
 	default:
 		if isWSL() {
 			cmd = "cmd.exe"
-			args = []string{"/c", "start", url}
+			args = []string{"/c", "start","", url}
 		} else {
 			cmd = "xdg-open"
 			args = []string{url}
@@ -45,4 +42,3 @@ func isWSL() bool {
 
 	return strings.Contains(strings.ToLower(string(releaseData)), "microsoft")
 }
-
