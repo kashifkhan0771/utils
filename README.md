@@ -47,6 +47,7 @@ cd utils
 | Package Name  | Description                                        | Documentation                 | Examples                          |
 | ------------- | -------------------------------------------------- | ----------------------------- | --------------------------------- |
 | **boolean**   | Utilities for boolean value checking and toggling  | [README](boolean/README.md)   | [EXAMPLES](boolean/EXAMPLES.md)   |
+| **browser**   | Utilities to open URLs in the default web browser  | [README](browser/README.md)   | [EXAMPLES](browser/EXAMPLES.md)   |
 | **caching**   | Cache management utilities                         | [README](caching/README.md)   | [EXAMPLES](caching/EXAMPLES.md)   |
 | **cryptoutils** | A set of cryptographic utility functions for various cryptographic operations            | [README](cryptoutils/README.md)       | [EXAMPLES](cryptoutils/EXAMPLES.md)       |
 | **ctxutils**  | Context utilities                                  | [README](ctxutils/README.md)  | [EXAMPLES](ctxutils/EXAMPLES.md)  |
@@ -77,6 +78,7 @@ cd utils
 | Feature / Utility Area     | `kashifkhan0771/utils`      | `go-commons-lang`                 | `gookit/goutil`                   |
 |---------------------------|-----------------------------|----------------------------------|----------------------------------|
 | Boolean Utilities         | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
+| Browser Utilities         | ✅ Yes                      | ❌ No                            | ❌ No                            |
 | Caching                   | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
 | Cryptographic Utilities   | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
 | Context Utilities         | ✅ Yes                      | ❌ No                            | ❌ No                            |
