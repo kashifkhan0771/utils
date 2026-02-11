@@ -72,6 +72,7 @@ cd utils
 | **ratelimiter** | Token-bucket rate limiter (allow/wait, adjustable capacity & refill rate) | [README](ratelimiter/README.md) | [EXAMPLES](ratelimiter/EXAMPLES.md) |
 | **queue** | Queue data structure| [README](queue/README.md) | [EXAMPLES](queue/EXAMPLES.md) |
 | **image** | Utility functions for working with images | [README](image/README.md) | [EXAMPLES](image/EXAMPLES.md) |
+| **pdf** | PDF utilities (HTML to PDF, text extraction, merge, split) | [README](pdf/README.md) | [EXAMPLES](pdf/EXAMPLES.md) |
 
 ## Comparison
 
