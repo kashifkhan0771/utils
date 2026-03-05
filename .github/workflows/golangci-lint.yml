@@ -20,8 +20,8 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/setup-go@v6
         with:
-          go-version-file: 'go.mod'
+          go-version-file: "go.mod"
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
-          version: v2.3.1
+          version: v2.4.0
