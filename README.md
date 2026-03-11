@@ -49,7 +49,7 @@ cd utils
 | **boolean**   | Utilities for boolean value checking and toggling  | [README](boolean/README.md)   | [EXAMPLES](boolean/EXAMPLES.md)   |
 | **browser**   | Utilities to open URLs in the default web browser  | [README](browser/README.md)   | [EXAMPLES](browser/EXAMPLES.md)   |
 | **caching**   | Cache management utilities                         | [README](caching/README.md)   | [EXAMPLES](caching/EXAMPLES.md)   |
-| **conversion** | Conversion of data types, time, and temperatues   | [README](conversion/README.md) | [EXAMPLES](conversion/EXAMPLES.md) |
+| **conversion** | Conversion of data types, time, and temperatures   | [README](conversion/README.md) | [EXAMPLES](conversion/EXAMPLES.md) |
 | **cryptoutils** | A set of cryptographic utility functions for various cryptographic operations            | [README](cryptoutils/README.md)       | [EXAMPLES](cryptoutils/EXAMPLES.md)       |
 | **ctxutils**  | Context utilities                                  | [README](ctxutils/README.md)  | [EXAMPLES](ctxutils/EXAMPLES.md)  |
 | **errutils**  | Error aggregation and management utilities         | [README](errutils/README.md)  | [EXAMPLES](errutils/EXAMPLES.md)  |
