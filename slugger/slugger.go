@@ -125,6 +125,10 @@ func (sl *Slugger) SetSubstitutions(substitutions map[string]string) {
 }
 
 func copyMap(m map[string]string) map[string]string {
+	if m == nil {
+		return nil
+	}
+
 	cp := make(map[string]string, len(m))
 	for k, v := range m {
 		cp[k] = v
@@ -148,8 +152,6 @@ var ligatureReplacer = strings.NewReplacer(
 // - Keeps only ASCII letters, digits, spaces, and a few safe punctuation chars (-_.)
 // - Removes all other characters
 func normalizeWordsToSafeASCII(s string) []string {
-	const keep = "-_."
-
 	// Handle common ligatures explicitly (belt & suspenders with NFKD)
 	s = ligatureReplacer.Replace(s)
 
@@ -157,11 +159,20 @@ func normalizeWordsToSafeASCII(s string) []string {
 	s = norm.NFKD.String(s)
 
 	s = strings.Map(func(r rune) rune {
-		if r <= unicode.MaxASCII && (unicode.IsLetter(r) || unicode.IsNumber(r) || unicode.IsSpace(r) || strings.ContainsRune(keep, r)) {
+		if r > unicode.MaxASCII {
+			return -1
+		}
+
+		if unicode.IsLetter(r) || unicode.IsNumber(r) || unicode.IsSpace(r) {
 			return r
 		}
 
-		return -1
+		switch r {
+		case '-', '_', '.':
+			return r
+		default:
+			return -1
+		}
 	}, s)
 
 	return strings.Fields(s)
@@ -216,6 +227,8 @@ func (sl *Slugger) initReplacer() {
 
 	subs := make([]string, 0, len(subsPairs)*2)
 	for _, sub := range subsPairs {
+		// Add a leading space so that substituted values are separated into their own
+		// words once we call strings.Fields() later in the pipeline.
 		subs = append(subs, strings.ToLower(sub.k), " "+sub.v)
 	}
 
