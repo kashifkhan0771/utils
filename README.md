@@ -63,6 +63,7 @@ cd utils
 | **queue** | Queue data structure| [README](queue/README.md) | [EXAMPLES](queue/EXAMPLES.md) |
 | **rand**      | Random number and string generation utilities      | [README](rand/README.md)      | [EXAMPLES](rand/EXAMPLES.md)      |
 | **ratelimiter** | Token-bucket rate limiter (allow/wait, adjustable capacity & refill rate) | [README](ratelimiter/README.md) | [EXAMPLES](ratelimiter/EXAMPLES.md) |
+| **regexamples** | Generate random strings that match a given regular expression | [README](regexamples/README.md) | [EXAMPLES](regexamples/EXAMPLES.md) |
 | **slice**     | Slice manipulation and de-duplication utilities    | [README](slice/README.md)     | [EXAMPLES](slice/EXAMPLES.md)     |
 | **slugger**   | A simple and efficient way to generate URL-friendly slugs from strings             | [README](slugger/README.md)       | [EXAMPLES](slugger/EXAMPLES.md)       |
 | **sort**      | Sorting algorithms                                 | [README](sort/README.md)      | [EXAMPLES](sort/EXAMPLES.md)      |
