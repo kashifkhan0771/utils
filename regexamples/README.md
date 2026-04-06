@@ -7,6 +7,6 @@
 
 ## Examples:
 
-For examples of each function, please checkout [EXAMPLES.md](/regexamples/EXAMPLES.md)
+For examples of each function, please checkout [EXAMPLES.md](./EXAMPLES.md)
 
 ---

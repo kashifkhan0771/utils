@@ -3,7 +3,6 @@ package regexamples
 
 import (
 	"fmt"
-	"math"
 	randv2 "math/rand/v2"
 	"regexp/syntax"
 	"strings"
@@ -20,6 +19,10 @@ const (
 
 // Generator holds a compiled pattern and a random source, and can produce
 // multiple matching strings efficiently.
+//
+// A Generator is not safe for concurrent use. If you need to generate strings
+// from multiple goroutines, create a separate Generator per goroutine or
+// protect access with a sync.Mutex.
 type Generator struct {
 	re  *syntax.Regexp
 	rng *randv2.Rand
@@ -216,7 +219,7 @@ func (g *Generator) pickFromCharClass(ranges []rune) (rune, error) {
 		return 0, fmt.Errorf("character class matches no characters")
 	}
 
-	return g.pickFromRanges(ranges), nil
+	return g.pickFromRangesN(ranges, total), nil
 }
 
 // intersectWithPrintable clips each [lo, hi] pair in ranges to [printableMin, printableMax]
@@ -247,16 +250,15 @@ func intersectWithPrintable(ranges []rune) []rune {
 
 // pickFromRanges picks a uniformly random rune from a list of [lo, hi] pairs.
 func (g *Generator) pickFromRanges(ranges []rune) rune {
-	total := countRunes(ranges)
+	return g.pickFromRangesN(ranges, countRunes(ranges))
+}
+
+func (g *Generator) pickFromRangesN(ranges []rune, total int) rune {
 	n := g.rng.IntN(total)
 
 	for i := 0; i < len(ranges); i += 2 {
 		size := int(ranges[i+1]-ranges[i]) + 1
 		if n < size {
-			if n < 0 || n > math.MaxInt32 {
-				return 0
-			}
-
 			return ranges[i] + rune(n)
 		}
 
@@ -277,12 +279,7 @@ func countRunes(ranges []rune) int {
 }
 
 func (g *Generator) randPrintable() rune {
-	val := g.rng.IntN(int(printableMax - printableMin + 1))
-	if val < 0 || val > math.MaxInt32 {
-		return 0
-	}
-
-	return printableMin + rune(val)
+	return printableMin + rune(g.rng.IntN(int(printableMax-printableMin+1)))
 }
 
 func (g *Generator) randPrintableExcluding(exclude rune) rune {
