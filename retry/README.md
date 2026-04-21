@@ -4,9 +4,9 @@ The `retry` package provides a generic, context-aware way to retry fallible oper
 
 #### **Options**
 
-- **`MaxAttempts int`**: Total number of times the operation will be tried before giving up.
+- **`MaxAttempts uint`**: Total number of times the operation will be tried before giving up.
 - **`TotalTimeout time.Duration`**: Maximum time allowed across all attempts, including backoff delays.
-- **`Backoff func(attempt int) time.Duration`**: Returns how long to wait before the next attempt. `attempt` is zero-indexed.
+- **`Backoff func(attempt uint) time.Duration`**: Returns how long to wait before the next attempt. `attempt` is zero-indexed.
 - **`ShouldRetry func(err error) bool`**: Reports whether the given error is retryable. Return `false` to abort immediately.
 
 #### **Functions**
@@ -19,14 +19,14 @@ The `retry` package provides a generic, context-aware way to retry fallible oper
 
 #### **Backoff Strategies**
 
-- **`FixedBackoff(d time.Duration) func(attempt int) time.Duration`**:  
+- **`FixedBackoff(d time.Duration) func(attempt uint) time.Duration`**:  
   Waits exactly `d` between every attempt.
 
-- **`LinearBackoff(d time.Duration) func(attempt int) time.Duration`**:  
+- **`LinearBackoff(d time.Duration) func(attempt uint) time.Duration`**:  
   Waits `d * attempt`. Grows linearly: `0, d, 2d, 3d, …`
 
-- **`ExponentialBackoff(d time.Duration) func(attempt int) time.Duration`**:  
-  Waits `d * 2^attempt`. Doubles on each failure: `d, 2d, 4d, 8d, …`
+- **`ExponentialBackoff(d time.Duration) func(attempt uint) time.Duration`**:  
+  Waits `max(d * 2^attempt, 2^63 - 1)`. Doubles on each failure: `d, 2d, 4d, 8d, …`
 
 #### **Notes**
 - `TotalTimeout` is enforced via a derived context passed to every attempt. If the deadline is exceeded mid-backoff, `Do` returns `context.DeadlineExceeded` immediately.

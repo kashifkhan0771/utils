@@ -28,7 +28,7 @@ func main() {
 ```
 #### Output:
 ```
-"response" <nil>
+response <nil>
 ```
 
 ---
@@ -140,7 +140,7 @@ attempt 3  fixed=1s      linear=3s      exponential=8s
 
 ---
 
-### Respecting context cancellation
+### Respecting the total timeout
 ```go
 package main
 

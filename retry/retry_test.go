@@ -131,11 +131,15 @@ func TestDo_ParentContextCancelled(t *testing.T) {
 }
 
 func TestDo_ZeroValueReturnedOnError(t *testing.T) {
-	_, err := Do(context.Background(), defaultOpts(), func(ctx context.Context) (string, error) {
+	result, err := Do(context.Background(), defaultOpts(), func(ctx context.Context) (string, error) {
 		return "partial", errors.New("fail")
 	})
 	if err == nil {
 		t.Fatal("expected error")
+	}
+
+	if result != "" {
+		t.Fatalf("expected zero value, got %v", result)
 	}
 }
 
@@ -169,7 +173,7 @@ func TestDoVoid_RetriesAndFails(t *testing.T) {
 
 func TestFixedBackoff(t *testing.T) {
 	b := FixedBackoff(100 * time.Millisecond)
-	for _, attempt := range []int{0, 1, 2, 5} {
+	for _, attempt := range []uint{0, 1, 2, 5} {
 		if got := b(attempt); got != 100*time.Millisecond {
 			t.Fatalf("attempt %d: expected 100ms, got %v", attempt, got)
 		}
@@ -178,7 +182,7 @@ func TestFixedBackoff(t *testing.T) {
 
 func TestLinearBackoff(t *testing.T) {
 	b := LinearBackoff(100 * time.Millisecond)
-	cases := map[int]time.Duration{
+	cases := map[uint]time.Duration{
 		0: 0,
 		1: 100 * time.Millisecond,
 		2: 200 * time.Millisecond,
@@ -193,7 +197,7 @@ func TestLinearBackoff(t *testing.T) {
 
 func TestExponentialBackoff(t *testing.T) {
 	b := ExponentialBackoff(100 * time.Millisecond)
-	cases := map[int]time.Duration{
+	cases := map[uint]time.Duration{
 		0: 100 * time.Millisecond,
 		1: 200 * time.Millisecond,
 		2: 400 * time.Millisecond,
@@ -216,9 +220,13 @@ func BenchmarkDo_AlwaysSucceeds(b *testing.B) {
 
 	b.ResetTimer()
 	for b.Loop() {
-		Do(context.Background(), opts, func(ctx context.Context) (string, error) {
+		_, err := Do(context.Background(), opts, func(ctx context.Context) (string, error) {
 			return "ok", nil
 		})
+
+		if err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -232,9 +240,13 @@ func BenchmarkDo_AlwaysFails(b *testing.B) {
 
 	b.ResetTimer()
 	for b.Loop() {
-		Do(context.Background(), opts, func(ctx context.Context) (string, error) {
+		_, err := Do(context.Background(), opts, func(ctx context.Context) (string, error) {
 			return "", errors.New("fail")
 		})
+
+		if err == nil {
+			b.Fatal("expected error, got nil")
+		}
 	}
 }
 
@@ -249,13 +261,17 @@ func BenchmarkDo_SuccessOnLastAttempt(b *testing.B) {
 	b.ResetTimer()
 	for b.Loop() {
 		attempt := 0
-		Do(context.Background(), opts, func(ctx context.Context) (string, error) {
+		_, err := Do(context.Background(), opts, func(ctx context.Context) (string, error) {
 			attempt++
 			if attempt < 5 {
 				return "", errors.New("transient")
 			}
 			return "ok", nil
 		})
+
+		if err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -270,9 +286,13 @@ func BenchmarkDo_ShouldRetryFalse(b *testing.B) {
 
 	b.ResetTimer()
 	for b.Loop() {
-		Do(context.Background(), opts, func(ctx context.Context) (string, error) {
+		_, err := Do(context.Background(), opts, func(ctx context.Context) (string, error) {
 			return "", permanent
 		})
+
+		if !errors.Is(err, permanent) {
+			b.Fatalf("expected permanent error, got %v", err)
+		}
 	}
 }
 
@@ -286,9 +306,13 @@ func BenchmarkDoVoid_AlwaysSucceeds(b *testing.B) {
 
 	b.ResetTimer()
 	for b.Loop() {
-		DoVoid(context.Background(), opts, func(ctx context.Context) error {
+		err := DoVoid(context.Background(), opts, func(ctx context.Context) error {
 			return nil
 		})
+
+		if err != nil {
+			b.Fatal(err)
+		}
 	}
 }
 
@@ -317,7 +341,7 @@ func BenchmarkExponentialBackoff(b *testing.B) {
 }
 
 func BenchmarkDo_MaxAttempts(b *testing.B) {
-	for _, maxAttempts := range []int{1, 5, 10, 50} {
+	for _, maxAttempts := range []uint{1, 5, 10, 50} {
 		b.Run(fmt.Sprintf("attempts=%d", maxAttempts), func(b *testing.B) {
 			opts := Options{
 				MaxAttempts:  maxAttempts,
@@ -328,16 +352,20 @@ func BenchmarkDo_MaxAttempts(b *testing.B) {
 
 			b.ResetTimer()
 			for b.Loop() {
-				Do(context.Background(), opts, func(ctx context.Context) (string, error) {
+				_, err := Do(context.Background(), opts, func(ctx context.Context) (string, error) {
 					return "", errors.New("fail")
 				})
+
+				if err == nil {
+					b.Fatal("expected error, got nil")
+				}
 			}
 		})
 	}
 }
 
 func BenchmarkDo_BackoffStrategies(b *testing.B) {
-	strategies := map[string]func(int) time.Duration{
+	strategies := map[string]func(uint) time.Duration{
 		"fixed":       FixedBackoff(0),
 		"linear":      LinearBackoff(0),
 		"exponential": ExponentialBackoff(0),
@@ -354,9 +382,13 @@ func BenchmarkDo_BackoffStrategies(b *testing.B) {
 
 			b.ResetTimer()
 			for b.Loop() {
-				Do(context.Background(), opts, func(ctx context.Context) (string, error) {
+				_, err := Do(context.Background(), opts, func(ctx context.Context) (string, error) {
 					return "", errors.New("fail")
 				})
+
+				if err == nil {
+					b.Fatal("expected error, got nil")
+				}
 			}
 		})
 	}
