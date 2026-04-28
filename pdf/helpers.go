@@ -4,7 +4,22 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"unicode"
 )
+
+// toLatin1 replaces characters outside the Latin-1 range (U+0020–U+00FF) with
+// a space, since fpdf's built-in fonts only cover that range.
+func toLatin1(s string) string {
+	var b strings.Builder
+	for _, r := range s {
+		if r >= 0x20 && r <= 0xFF && unicode.IsPrint(r) {
+			b.WriteRune(r)
+		} else {
+			b.WriteByte(' ')
+		}
+	}
+	return b.String()
+}
 
 // parsePageRange parses a page range string like "1-3" or "5" and returns
 // the start and end page numbers (1-indexed). For a single page like "5",

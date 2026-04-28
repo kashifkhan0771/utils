@@ -57,6 +57,7 @@ func ConvertHTMLToPDF(htmlContent string, outputPath string) error {
 	p := fpdf.New("P", "mm", "A4", "")
 	p.SetAutoPageBreak(true, 15)
 	p.AddPage()
+	p.SetFont("Arial", "", 12)
 
 	renderNode(p, doc, nil)
 
@@ -87,7 +88,7 @@ func renderNode(p *fpdf.Fpdf, n *html.Node, stack []fontState) {
 	if n.Type == html.TextNode {
 		text := strings.TrimSpace(n.Data)
 		if text != "" {
-			p.Write(6, text+" ")
+			p.Write(6, toLatin1(text)+" ")
 		}
 		return
 	}
@@ -99,49 +100,70 @@ func renderNode(p *fpdf.Fpdf, n *html.Node, stack []fontState) {
 		return
 	}
 
-	// Derive current font from the stack; fall back to document default.
+	// Skip non-visual elements — their text must not appear in output.
+	switch n.Data {
+	case "script", "style", "head", "noscript", "iframe", "svg", "canvas":
+		return
+	}
+
+	// Derive current font from stack; fall back to document default.
 	cur := fontState{"Arial", "", 12}
 	if len(stack) > 0 {
 		cur = stack[len(stack)-1]
 	}
 
+	// lineH returns line height matching font size.
+	lineH := func(size float64) float64 { return size * 0.45 }
+
 	var pushed bool
+	var isBlock bool
+
 	switch n.Data {
 	case "h1":
-		p.Ln(4)
+		p.Ln(lineH(24) + 2)
 		p.SetFont("Arial", "B", 24)
 		stack = append(stack, fontState{"Arial", "B", 24})
-		pushed = true
+		pushed, isBlock = true, true
 	case "h2":
-		p.Ln(4)
+		p.Ln(lineH(20) + 2)
 		p.SetFont("Arial", "B", 20)
 		stack = append(stack, fontState{"Arial", "B", 20})
-		pushed = true
+		pushed, isBlock = true, true
 	case "h3":
-		p.Ln(3)
+		p.Ln(lineH(16) + 1)
 		p.SetFont("Arial", "B", 16)
 		stack = append(stack, fontState{"Arial", "B", 16})
-		pushed = true
+		pushed, isBlock = true, true
 	case "h4":
-		p.Ln(3)
+		p.Ln(lineH(14) + 1)
 		p.SetFont("Arial", "B", 14)
 		stack = append(stack, fontState{"Arial", "B", 14})
-		pushed = true
+		pushed, isBlock = true, true
 	case "h5":
-		p.Ln(2)
+		p.Ln(lineH(12))
 		p.SetFont("Arial", "B", 12)
 		stack = append(stack, fontState{"Arial", "B", 12})
-		pushed = true
+		pushed, isBlock = true, true
 	case "h6":
-		p.Ln(2)
+		p.Ln(lineH(10))
 		p.SetFont("Arial", "B", 10)
 		stack = append(stack, fontState{"Arial", "B", 10})
-		pushed = true
+		pushed, isBlock = true, true
 	case "p":
-		p.Ln(4)
+		p.Ln(lineH(12) + 2)
 		p.SetFont("Arial", "", 12)
 		stack = append(stack, fontState{"Arial", "", 12})
-		pushed = true
+		pushed, isBlock = true, true
+	case "div", "section", "article", "main", "header", "footer", "nav":
+		p.Ln(3)
+		isBlock = true
+	case "ul", "ol":
+		p.Ln(2)
+		isBlock = true
+	case "li":
+		p.Ln(1)
+		p.Write(6, "  - ")
+		isBlock = true
 	case "b", "strong":
 		p.SetFont(cur.family, "B", cur.size)
 		stack = append(stack, fontState{cur.family, "B", cur.size})
@@ -155,7 +177,12 @@ func renderNode(p *fpdf.Fpdf, n *html.Node, stack []fontState) {
 		stack = append(stack, fontState{cur.family, "U", cur.size})
 		pushed = true
 	case "br":
-		p.Ln(6)
+		p.Ln(5)
+	case "hr":
+		p.Ln(3)
+		pw, _ := p.GetPageSize()
+		p.Line(10, p.GetY(), pw-10, p.GetY())
+		p.Ln(3)
 	case "img":
 		renderImage(p, n)
 		return
@@ -167,21 +194,19 @@ func renderNode(p *fpdf.Fpdf, n *html.Node, stack []fontState) {
 
 	if pushed {
 		stack = stack[:len(stack)-1]
-		// Restore parent font state.
 		parent := fontState{"Arial", "", 12}
 		if len(stack) > 0 {
 			parent = stack[len(stack)-1]
 		}
 		p.SetFont(parent.family, parent.style, parent.size)
 
-		switch n.Data {
-		case "h1", "h2", "h3", "h4", "h5", "h6", "p":
-			p.Ln(4)
-			// After block element, reset to document default.
+		if isBlock {
+			p.Ln(lineH(cur.size) + 1)
 			p.SetFont("Arial", "", 12)
 		}
+	} else if isBlock {
+		p.Ln(2)
 	}
-
 }
 
 // renderImage attempts to add an image from a local file path to the PDF.
