@@ -49,16 +49,21 @@ cd utils
 | **boolean**   | Utilities for boolean value checking and toggling  | [README](boolean/README.md)   | [EXAMPLES](boolean/EXAMPLES.md)   |
 | **browser**   | Utilities to open URLs in the default web browser  | [README](browser/README.md)   | [EXAMPLES](browser/EXAMPLES.md)   |
 | **caching**   | Cache management utilities                         | [README](caching/README.md)   | [EXAMPLES](caching/EXAMPLES.md)   |
+| **conversion** | Conversion of data types, time, and temperatures   | [README](conversion/README.md) | [EXAMPLES](conversion/EXAMPLES.md) |
 | **cryptoutils** | A set of cryptographic utility functions for various cryptographic operations            | [README](cryptoutils/README.md)       | [EXAMPLES](cryptoutils/EXAMPLES.md)       |
 | **ctxutils**  | Context utilities                                  | [README](ctxutils/README.md)  | [EXAMPLES](ctxutils/EXAMPLES.md)  |
 | **errutils**  | Error aggregation and management utilities         | [README](errutils/README.md)  | [EXAMPLES](errutils/EXAMPLES.md)  |
 | **fake**      | Fake data generation (UUIDs, addresses, dates)     | [README](fake/README.md)      | [EXAMPLES](fake/EXAMPLES.md)      |
 | **fsutils**   | File system utilities (size, metadata, comparison) | [README](fsutils/README.md)   | [EXAMPLES](fsutils/EXAMPLES.md)   |
+| **image** | Utility functions for working with images | [README](image/README.md) | [EXAMPLES](image/EXAMPLES.md) |
 | **logging**   | Flexible logging system for Golang                 | [README](logging/README.md)   | [EXAMPLES](logging/EXAMPLES.md)   |
 | **maps**      | Utilities for state and metadata maps              | [README](maps/README.md)      | [EXAMPLES](maps/EXAMPLES.md)      |
 | **math**      | Mathematical utilities and helpers                 | [README](math/README.md)      | [EXAMPLES](math/EXAMPLES.md)      |
 | **pointers**  | Helper functions for working with pointer values   | [README](pointers/README.md)  | [EXAMPLES](pointers/EXAMPLES.md)  |
+| **queue** | Queue data structure| [README](queue/README.md) | [EXAMPLES](queue/EXAMPLES.md) |
 | **rand**      | Random number and string generation utilities      | [README](rand/README.md)      | [EXAMPLES](rand/EXAMPLES.md)      |
+| **ratelimiter** | Token-bucket rate limiter (allow/wait, adjustable capacity & refill rate) | [README](ratelimiter/README.md) | [EXAMPLES](ratelimiter/EXAMPLES.md) |
+| **regexamples** | Generate random strings that match a given regular expression | [README](regexamples/README.md) | [EXAMPLES](regexamples/EXAMPLES.md) |
 | **slice**     | Slice manipulation and de-duplication utilities    | [README](slice/README.md)     | [EXAMPLES](slice/EXAMPLES.md)     |
 | **slugger**   | A simple and efficient way to generate URL-friendly slugs from strings             | [README](slugger/README.md)       | [EXAMPLES](slugger/EXAMPLES.md)       |
 | **sort**      | Sorting algorithms                                 | [README](sort/README.md)      | [EXAMPLES](sort/EXAMPLES.md)      |
@@ -68,43 +73,6 @@ cd utils
 | **templates** | Template rendering utilities                       | [README](templates/README.md) | [EXAMPLES](templates/EXAMPLES.md) |
 | **timeutils** | Time and date manipulation utilities               | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
 | **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
-| **conversion** | Conversion of data types, time, and temperatues   | [README](conversion/README.md) | [EXAMPLES](conversion/EXAMPLES.md)
-| **ratelimiter** | Token-bucket rate limiter (allow/wait, adjustable capacity & refill rate) | [README](ratelimiter/README.md) | [EXAMPLES](ratelimiter/EXAMPLES.md) |
-| **queue** | Queue data structure| [README](queue/README.md) | [EXAMPLES](queue/EXAMPLES.md) |
-| **image** | Utility functions for working with images | [README](image/README.md) | [EXAMPLES](image/EXAMPLES.md) |
-| **pdf** | PDF utilities (HTML to PDF, text extraction, merge, split) | [README](pdf/README.md) | [EXAMPLES](pdf/EXAMPLES.md) |
-
-## Comparison
-
-| Feature / Utility Area     | `kashifkhan0771/utils`      | `go-commons-lang`                 | `gookit/goutil`                   |
-|---------------------------|-----------------------------|----------------------------------|----------------------------------|
-| Boolean Utilities         | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
-| Browser Utilities         | ✅ Yes                      | ❌ No                            | ❌ No                            |
-| Caching                   | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
-| Cryptographic Utilities   | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
-| Context Utilities         | ✅ Yes                      | ❌ No                            | ❌ No                            |
-| Error Aggregation         | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
-| Fake Data (UUID, etc.)    | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
-| Filesystem Utilities      | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
-| Logging                   | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
-| Maps / Metadata Helpers   | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
-| Math Utilities            | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
-| Pointer Utilities         | ✅ Yes                      | ❌ No                            | ❌ No                            |
-| Conversion Utilities      | ✅ Yes                      | ❌ No                            | ❌ No                            |
-| Random Utilities          | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
-| Slice Utilities           | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
-| Slugify                   | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
-| Sorting                   | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
-| String Utilities          | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
-| Struct Comparison         | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
-| Template Helpers          | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
-| Time Utilities            | ✅ Yes                      | ✅ Yes                           | ✅ Yes                           |
-| URL Utilities             | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
-| Dependency-Free           | ✅ Yes                      | ❌ No                            | ❌ No                            |
-| Small API Surface         | ✅ Yes                      | ❌ No                            | ✅ Yes                           |
-| Rate Limiter Utilities    | ✅ Yes                      | ❌ No                            | ❌ No                            |
-| Image                     | ✅ Yes                      | ❌ No                            | ❌ No                            |
-
 
 ## Contributions
 
