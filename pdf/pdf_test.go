@@ -132,6 +132,63 @@ func TestConvertHTMLToPDF(t *testing.T) {
 	}
 }
 
+func TestConvertHTMLFileToPDF(t *testing.T) {
+	tmpDir := t.TempDir()
+
+	tests := []struct {
+		name       string
+		html       string
+		outputName string
+		wantErr    bool
+	}{
+		{
+			name:       "valid_html_file",
+			html:       "<h1>Title</h1><p>Content</p>",
+			outputName: "from_file.pdf",
+			wantErr:    false,
+		},
+		{
+			name:       "empty_html_file",
+			html:       "   ",
+			outputName: "empty_file.pdf",
+			wantErr:    true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			htmlFile := filepath.Join(tmpDir, tt.name+".html")
+			if err := os.WriteFile(htmlFile, []byte(tt.html), 0600); err != nil {
+				t.Fatalf("failed to write HTML file: %v", err)
+			}
+
+			outputPath := filepath.Join(tmpDir, tt.outputName)
+			err := ConvertHTMLFileToPDF(htmlFile, outputPath)
+
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("ConvertHTMLFileToPDF() error = %v, wantErr = %v", err, tt.wantErr)
+			}
+
+			if !tt.wantErr {
+				info, err := os.Stat(outputPath)
+				if err != nil {
+					t.Fatalf("output file not created: %v", err)
+				}
+				if info.Size() == 0 {
+					t.Error("output file is empty")
+				}
+			}
+		})
+	}
+
+	t.Run("nonexistent_html_file", func(t *testing.T) {
+		err := ConvertHTMLFileToPDF(filepath.Join(tmpDir, "no.html"), filepath.Join(tmpDir, "out.pdf"))
+		if err == nil {
+			t.Fatal("expected error for nonexistent input file")
+		}
+	})
+}
+
 func TestExtractTextFromPDF(t *testing.T) {
 	tmpDir := t.TempDir()
 
@@ -342,6 +399,15 @@ func TestSplitPDF(t *testing.T) {
 				return filepath.Join(tmpDir, "nonexistent.pdf")
 			},
 			pageRanges: []string{"1-2"},
+			wantFiles:  nil,
+			wantErr:    true,
+		},
+		{
+			name: "split_range_exceeds_page_count",
+			setupFunc: func(t *testing.T) string {
+				return createTestPDF(t, tmpDir, "split_g.pdf", 3)
+			},
+			pageRanges: []string{"1-10"},
 			wantFiles:  nil,
 			wantErr:    true,
 		},

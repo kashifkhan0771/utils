@@ -21,6 +21,13 @@ import (
 	"golang.org/x/net/html"
 )
 
+// fontState holds font properties for the context stack used during HTML rendering.
+type fontState struct {
+	family string
+	style  string
+	size   float64
+}
+
 // ConvertHTMLToPDF converts an HTML string into a PDF document and saves it to
 // the specified output path.
 //
@@ -51,7 +58,7 @@ func ConvertHTMLToPDF(htmlContent string, outputPath string) error {
 	p.SetAutoPageBreak(true, 15)
 	p.AddPage()
 
-	renderNode(p, doc)
+	renderNode(p, doc, nil)
 
 	if p.Err() {
 		return fmt.Errorf("PDF generation error: %w", p.Error())
@@ -60,8 +67,23 @@ func ConvertHTMLToPDF(htmlContent string, outputPath string) error {
 	return p.OutputFileAndClose(outputPath)
 }
 
+// ConvertHTMLFileToPDF reads an HTML file at inputPath and converts it to a PDF
+// saved at outputPath. Supports the same HTML elements as ConvertHTMLToPDF.
+func ConvertHTMLFileToPDF(inputPath string, outputPath string) error {
+	inputPath = filepath.Clean(inputPath)
+
+	data, err := os.ReadFile(inputPath)
+	if err != nil {
+		return fmt.Errorf("failed to read HTML file: %w", err)
+	}
+
+	return ConvertHTMLToPDF(string(data), outputPath)
+}
+
 // renderNode recursively walks the HTML node tree and renders content to the PDF.
-func renderNode(p *fpdf.Fpdf, n *html.Node) {
+// stack carries the font state of ancestor elements so inline elements can restore
+// the parent font on exit rather than blindly resetting to a default.
+func renderNode(p *fpdf.Fpdf, n *html.Node, stack []fontState) {
 	if n.Type == html.TextNode {
 		text := strings.TrimSpace(n.Data)
 		if text != "" {
@@ -70,60 +92,96 @@ func renderNode(p *fpdf.Fpdf, n *html.Node) {
 		return
 	}
 
-	if n.Type == html.ElementNode {
-		switch n.Data {
-		case "h1":
-			p.Ln(4)
-			p.SetFont("Arial", "B", 24)
-		case "h2":
-			p.Ln(4)
-			p.SetFont("Arial", "B", 20)
-		case "h3":
-			p.Ln(3)
-			p.SetFont("Arial", "B", 16)
-		case "h4":
-			p.Ln(3)
-			p.SetFont("Arial", "B", 14)
-		case "h5":
-			p.Ln(2)
-			p.SetFont("Arial", "B", 12)
-		case "h6":
-			p.Ln(2)
-			p.SetFont("Arial", "B", 10)
-		case "p":
-			p.Ln(4)
-			p.SetFont("Arial", "", 12)
-		case "b", "strong":
-			p.SetFont("Arial", "B", 12)
-		case "i", "em":
-			p.SetFont("Arial", "I", 12)
-		case "br":
-			p.Ln(6)
-		case "a":
-			p.SetFont("Arial", "U", 12)
-		case "img":
-			renderImage(p, n)
-			return
+	if n.Type != html.ElementNode {
+		for c := n.FirstChild; c != nil; c = c.NextSibling {
+			renderNode(p, c, stack)
 		}
+		return
+	}
+
+	// Derive current font from the stack; fall back to document default.
+	cur := fontState{"Arial", "", 12}
+	if len(stack) > 0 {
+		cur = stack[len(stack)-1]
+	}
+
+	var pushed bool
+	switch n.Data {
+	case "h1":
+		p.Ln(4)
+		p.SetFont("Arial", "B", 24)
+		stack = append(stack, fontState{"Arial", "B", 24})
+		pushed = true
+	case "h2":
+		p.Ln(4)
+		p.SetFont("Arial", "B", 20)
+		stack = append(stack, fontState{"Arial", "B", 20})
+		pushed = true
+	case "h3":
+		p.Ln(3)
+		p.SetFont("Arial", "B", 16)
+		stack = append(stack, fontState{"Arial", "B", 16})
+		pushed = true
+	case "h4":
+		p.Ln(3)
+		p.SetFont("Arial", "B", 14)
+		stack = append(stack, fontState{"Arial", "B", 14})
+		pushed = true
+	case "h5":
+		p.Ln(2)
+		p.SetFont("Arial", "B", 12)
+		stack = append(stack, fontState{"Arial", "B", 12})
+		pushed = true
+	case "h6":
+		p.Ln(2)
+		p.SetFont("Arial", "B", 10)
+		stack = append(stack, fontState{"Arial", "B", 10})
+		pushed = true
+	case "p":
+		p.Ln(4)
+		p.SetFont("Arial", "", 12)
+		stack = append(stack, fontState{"Arial", "", 12})
+		pushed = true
+	case "b", "strong":
+		p.SetFont(cur.family, "B", cur.size)
+		stack = append(stack, fontState{cur.family, "B", cur.size})
+		pushed = true
+	case "i", "em":
+		p.SetFont(cur.family, "I", cur.size)
+		stack = append(stack, fontState{cur.family, "I", cur.size})
+		pushed = true
+	case "a":
+		p.SetFont(cur.family, "U", cur.size)
+		stack = append(stack, fontState{cur.family, "U", cur.size})
+		pushed = true
+	case "br":
+		p.Ln(6)
+	case "img":
+		renderImage(p, n)
+		return
 	}
 
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-		renderNode(p, c)
+		renderNode(p, c, stack)
 	}
 
-	// Reset font after block-level elements
-	if n.Type == html.ElementNode {
+	if pushed {
+		stack = stack[:len(stack)-1]
+		// Restore parent font state.
+		parent := fontState{"Arial", "", 12}
+		if len(stack) > 0 {
+			parent = stack[len(stack)-1]
+		}
+		p.SetFont(parent.family, parent.style, parent.size)
+
 		switch n.Data {
-		case "h1", "h2", "h3", "h4", "h5", "h6":
+		case "h1", "h2", "h3", "h4", "h5", "h6", "p":
 			p.Ln(4)
-			p.SetFont("Arial", "", 12)
-		case "p":
-			p.Ln(4)
-			p.SetFont("Arial", "", 12)
-		case "b", "strong", "i", "em", "a":
+			// After block element, reset to document default.
 			p.SetFont("Arial", "", 12)
 		}
 	}
+
 }
 
 // renderImage attempts to add an image from a local file path to the PDF.
@@ -146,8 +204,11 @@ func renderImage(p *fpdf.Fpdf, n *html.Node) {
 		return
 	}
 
+	// Constrain image to page width (margins ~10mm each side).
+	pageWidth, _ := p.GetPageSize()
+	pageWidth -= 20
 	p.Ln(4)
-	p.Image(src, -1, -1, 0, 0, true, "", 0, "")
+	p.Image(src, -1, -1, pageWidth, 0, true, "", 0, "")
 	p.Ln(4)
 }
 
@@ -198,17 +259,18 @@ func MergePDFs(inputFiles []string, outputFile string) error {
 
 	outputFile = filepath.Clean(outputFile)
 
+	cleaned := make([]string, len(inputFiles))
 	for i, f := range inputFiles {
-		inputFiles[i] = filepath.Clean(f)
-		if _, err := os.Stat(inputFiles[i]); err != nil {
-			return fmt.Errorf("input file %q does not exist: %w", inputFiles[i], err)
+		cleaned[i] = filepath.Clean(f)
+		if _, err := os.Stat(cleaned[i]); err != nil {
+			return fmt.Errorf("input file %q does not exist: %w", cleaned[i], err)
 		}
 	}
 
 	conf := model.NewDefaultConfiguration()
 	conf.ValidationMode = model.ValidationRelaxed
 
-	return api.MergeCreateFile(inputFiles, outputFile, false, conf)
+	return api.MergeCreateFile(cleaned, outputFile, false, conf)
 }
 
 // SplitPDF splits a PDF file into multiple smaller PDF files based on the
@@ -229,6 +291,12 @@ func SplitPDF(inputFile string, pageRanges []string, outputDir string) error {
 		return fmt.Errorf("input file %q does not exist: %w", inputFile, err)
 	}
 
+	// Get total page count for range validation.
+	totalPages, err := api.PageCountFile(inputFile)
+	if err != nil {
+		return fmt.Errorf("failed to read page count: %w", err)
+	}
+
 	if err := os.MkdirAll(outputDir, 0750); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
@@ -240,6 +308,10 @@ func SplitPDF(inputFile string, pageRanges []string, outputDir string) error {
 		start, end, err := parsePageRange(rangeStr)
 		if err != nil {
 			return fmt.Errorf("invalid page range %q: %w", rangeStr, err)
+		}
+
+		if end > totalPages {
+			return fmt.Errorf("page range %q exceeds document page count (%d)", rangeStr, totalPages)
 		}
 
 		outputFile := filepath.Join(outputDir, fmt.Sprintf("pages_%d-%d.pdf", start, end))
