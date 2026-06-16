@@ -10,7 +10,7 @@ require (
 	github.com/pdfcpu/pdfcpu v0.13.0
 	golang.org/x/image v0.41.0
 	golang.org/x/net v0.55.0
-	golang.org/x/sync v0.20.0
+	golang.org/x/sync v0.21.0
 	golang.org/x/text v0.37.0
 )
 
