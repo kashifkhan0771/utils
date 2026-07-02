@@ -9,7 +9,7 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/pdfcpu/pdfcpu v0.13.0
 	golang.org/x/image v0.43.0
-	golang.org/x/net v0.55.0
+	golang.org/x/net v0.56.0
 	golang.org/x/sync v0.21.0
 	golang.org/x/text v0.38.0
 )
@@ -22,6 +22,6 @@ require (
 	github.com/mattn/go-runewidth v0.0.24 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
-	golang.org/x/crypto v0.52.0 // indirect
+	golang.org/x/crypto v0.53.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
