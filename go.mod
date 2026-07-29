@@ -8,7 +8,7 @@ require (
 	github.com/ledongthuc/pdf v0.0.0-20250511090121-5959a4027728
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/pdfcpu/pdfcpu v0.13.0
-	golang.org/x/image v0.43.0
+	golang.org/x/image v0.44.0
 	golang.org/x/net v0.57.0
 	golang.org/x/sync v0.22.0
 	golang.org/x/text v0.40.0
