@@ -230,7 +230,7 @@ func TestTimeDifferenceHumanReadable(t *testing.T) {
 				from: time.Date(2024, time.December, 25, 15, 0, 0, 0, time.UTC),
 				to:   time.Date(2024, time.December, 25, 12, 0, 0, 0, time.UTC),
 			},
-			want: "in 3 hour(s)",
+			want: "3 hour(s) ago",
 		},
 		{
 			name: "success - past beyond 24 hours",
@@ -246,7 +246,7 @@ func TestTimeDifferenceHumanReadable(t *testing.T) {
 				from: time.Date(2024, time.December, 25, 15, 0, 0, 0, time.UTC),
 				to:   time.Date(2024, time.December, 25, 12, 0, 0, 0, time.UTC),
 			},
-			want: "in 3 hour(s)",
+			want: "3 hour(s) ago",
 		},
 		{
 			name: "success - negative time difference beyond 24 hours",
