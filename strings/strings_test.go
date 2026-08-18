@@ -278,6 +278,11 @@ func TestRunLengthEncode(t *testing.T) {
 			args: args{input: "!!!a#$$$$$@"},
 			want: "!3a1#1$5@1",
 		},
+		{
+			name: "success - encode a string with multi-byte UTF-8 runes without panicking",
+			args: args{input: "你你你a"},
+			want: "你3a1",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -761,6 +766,18 @@ func TestTruncate(t *testing.T) {
 			input:   "Hello 👋🌍",
 			options: &TruncateOptions{Length: 7}, // expect 4 chars + "..." if rune-safe
 			want:    "Hell...",
+		},
+		{
+			name:    "unicode-safe truncation (multi-byte CJK characters)",
+			input:   "你好世界你好世界",
+			options: &TruncateOptions{Length: 5},
+			want:    "你好...",
+		},
+		{
+			name:    "omission longer than length stays within length",
+			input:   "This is a long string",
+			options: &TruncateOptions{Length: 2, Omission: "..."},
+			want:    "..",
 		},
 	}
 
