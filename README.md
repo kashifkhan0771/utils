@@ -55,6 +55,7 @@ cd utils
 | **errutils**  | Error aggregation and management utilities         | [README](errutils/README.md)  | [EXAMPLES](errutils/EXAMPLES.md)  |
 | **fake**      | Fake data generation (UUIDs, addresses, dates)     | [README](fake/README.md)      | [EXAMPLES](fake/EXAMPLES.md)      |
 | **fsutils**   | File system utilities (size, metadata, comparison) | [README](fsutils/README.md)   | [EXAMPLES](fsutils/EXAMPLES.md)   |
+| **httputils** | HTTP helpers (JSON/error responses, middleware)    | [README](httputils/README.md) | [EXAMPLES](httputils/EXAMPLES.md) |
 | **image** | Utility functions for working with images | [README](image/README.md) | [EXAMPLES](image/EXAMPLES.md) |
 | **logging**   | Flexible logging system for Golang                 | [README](logging/README.md)   | [EXAMPLES](logging/EXAMPLES.md)   |
 | **maps**      | Utilities for state and metadata maps              | [README](maps/README.md)      | [EXAMPLES](maps/EXAMPLES.md)      |
@@ -74,6 +75,7 @@ cd utils
 | **templates** | Template rendering utilities                       | [README](templates/README.md) | [EXAMPLES](templates/EXAMPLES.md) |
 | **timeutils** | Time and date manipulation utilities               | [README](time/README.md)      | [EXAMPLES](time/EXAMPLES.md)      |
 | **url**       | URL parsing and manipulation utilities             | [README](url/README.md)       | [EXAMPLES](url/EXAMPLES.md)       |
+| **validation** | Validation primitives, aggregation, and struct validation | [README](validation/README.md) | [EXAMPLES](validation/EXAMPLES.md) |
 | **retry**     | Retry fallible operations                          | [README](retry/README.md)     | [EXAMPLES](retry/EXAMPLES.md)     |
 
 ## Contributions
