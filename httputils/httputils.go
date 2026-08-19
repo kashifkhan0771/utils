@@ -1,3 +1,6 @@
+// Package httputils provides helpers for building HTTP services: JSON and
+// error responses, request ID propagation, panic recovery and middleware
+// composition, built on top of the utils logging and ctxutils packages.
 package httputils
 
 import (

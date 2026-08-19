@@ -1,3 +1,5 @@
+// Package validation provides validators for common checks such as strings,
+// numbers, emails, URLs and slugs, plus error aggregation and struct validation.
 package validation
 
 import (
@@ -70,7 +72,7 @@ func IsURL(name, value string, allowedSchemes ...string) error {
 
 var slugRegex = regexp.MustCompile(`^[a-z0-9]+(?:-[a-z0-9]+)*$`)
 
-// IsSlug matches a string to validate its a slug.
+// IsSlug checks if a string is a valid slug.
 func IsSlug(name, value string) error {
 	if !slugRegex.MatchString(value) {
 		return fmt.Errorf("%s: must be a valid slug", name)
@@ -79,12 +81,12 @@ func IsSlug(name, value string) error {
 	return nil
 }
 
-// Validator is an interface types that want to validate multiple values implement.
+// Validator is an interface that types implement to validate multiple values.
 type Validator interface {
 	Validate() error
 }
 
-// ValidateStruct validates a  struct that implements the validator interface.
+// ValidateStruct validates a struct that implements the Validator interface.
 func ValidateStruct(v Validator) error {
 	if v == nil {
 		return nil
