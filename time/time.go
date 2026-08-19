@@ -41,7 +41,7 @@ func TimeDifferenceHumanReadable(from, to time.Time) string {
 			return fmt.Sprintf("%d day(s) ago", int(diff.Hours()/24))
 		}
 
-		return fmt.Sprintf("in %d hour(s)", int(diff.Hours()))
+		return fmt.Sprintf("%d hour(s) ago", int(diff.Hours()))
 	}
 	if diff.Hours() > 24 {
 		return fmt.Sprintf("in %d day(s)", int(diff.Hours()/24))
