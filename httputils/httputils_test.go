@@ -128,6 +128,24 @@ func TestRecoverer(t *testing.T) {
 		}
 	})
 
+	t.Run("discards partial response when handler writes before panicking", func(t *testing.T) {
+		handler := Recoverer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte("prefix"))
+			panic("boom")
+		}))
+
+		rec := httptest.NewRecorder()
+		handler.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/", nil))
+
+		if rec.Code != http.StatusInternalServerError {
+			t.Errorf("status = %d, want %d", rec.Code, http.StatusInternalServerError)
+		}
+		if got, want := rec.Body.String(), `{"error":"internal server error"}`; got != want {
+			t.Errorf("body = %q, want %q (no partial response allowed)", got, want)
+		}
+	})
+
 	t.Run("passes through when no panic", func(t *testing.T) {
 		handler := Recoverer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusNoContent)
@@ -140,6 +158,23 @@ func TestRecoverer(t *testing.T) {
 			t.Errorf("status = %d, want %d", rec.Code, http.StatusNoContent)
 		}
 	})
+}
+
+type failingWriter struct{}
+
+func (failingWriter) Header() http.Header { return make(http.Header) }
+func (failingWriter) WriteHeader(int)     {}
+
+func (failingWriter) Write(p []byte) (int, error) {
+	return 0, errors.New("write failed")
+}
+
+func TestJSONWriteError(t *testing.T) {
+	t.Parallel()
+
+	if err := JSON(failingWriter{}, http.StatusOK, "x"); err == nil {
+		t.Error("JSON() error = nil, want write error")
+	}
 }
 
 func TestChain(t *testing.T) {

@@ -4,6 +4,7 @@
 package httputils
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
@@ -34,7 +35,9 @@ func JSON(w http.ResponseWriter, status int, v any) error {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	_, _ = w.Write(body)
+	if _, err := w.Write(body); err != nil {
+		return fmt.Errorf("httputils: write response: %w", err)
+	}
 
 	return nil
 }
@@ -72,18 +75,71 @@ func newRequestID() string {
 	return hex.EncodeToString(b)
 }
 
+// bufferedResponseWriter buffers the downstream response so it can be
+// discarded if the handler panics, preventing partial responses from
+// reaching the client.
+type bufferedResponseWriter struct {
+	header  http.Header
+	status  int
+	body    bytes.Buffer
+	written bool
+}
+
+func newBufferedResponseWriter() *bufferedResponseWriter {
+	return &bufferedResponseWriter{header: make(http.Header)}
+}
+
+func (b *bufferedResponseWriter) Header() http.Header {
+	return b.header
+}
+
+func (b *bufferedResponseWriter) WriteHeader(status int) {
+	if b.written {
+		return
+	}
+
+	b.status = status
+	b.written = true
+}
+
+func (b *bufferedResponseWriter) Write(p []byte) (int, error) {
+	if !b.written {
+		b.WriteHeader(http.StatusOK)
+	}
+
+	return b.body.Write(p)
+}
+
+func (b *bufferedResponseWriter) commit(w http.ResponseWriter) {
+	for k, vs := range b.header {
+		for _, v := range vs {
+			w.Header().Add(k, v)
+		}
+	}
+	if b.written {
+		w.WriteHeader(b.status)
+	}
+	_, _ = w.Write(b.body.Bytes())
+}
+
 // Recoverer is a middleware that recovers panics from downstream handlers,
-// logs them, and returns a safe 500 response.
+// logs them, and returns a safe 500 response. The downstream response is
+// buffered and only committed if the handler returns normally.
 func Recoverer(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		bw := newBufferedResponseWriter()
+
 		defer func() {
 			if rec := recover(); rec != nil {
 				Logger.Error(fmt.Sprintf("panic recovered: %v", rec))
-				_ = JSON(w, http.StatusInternalServerError, ErrorResponse{Error: "internal server error"})
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusInternalServerError)
+				_, _ = w.Write([]byte(`{"error":"internal server error"}`))
 			}
 		}()
 
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(bw, r)
+		bw.commit(w)
 	})
 }
 

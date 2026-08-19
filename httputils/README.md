@@ -12,6 +12,6 @@ The httputils package provides tools and utilities for working with HTTP. It pre
 
 ## Examples:
 
-For examples of each function, please checkout [EXAMPLES.md](/httputils/EXAMPLES.md)
+For examples of each function, please checkout [EXAMPLES.md](EXAMPLES.md)
 
 ---
