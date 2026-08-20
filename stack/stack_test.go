@@ -138,7 +138,7 @@ func TestStackPeekNthElementOutOfBounds(t *testing.T) {
 	cases := []int{-1, 3, 4, 100}
 	for _, n := range cases {
 		val, ok := stack.PeekNthElement(n)
-		if ok {
+		if ok || val != 0 {
 			t.Errorf("PeekNthElement(%d) = %v, %v; want zero value, false", n, val, ok)
 		}
 	}
