@@ -128,3 +128,18 @@ func TestStackWithStructs(t *testing.T) {
 		t.Errorf("Peek(0) = %v, %v; want %v, true", val, ok, p1)
 	}
 }
+
+func TestStackPeekNthElementOutOfBounds(t *testing.T) {
+	stack := New[int]()
+	stack.Push(10)
+	stack.Push(20)
+	stack.Push(30)
+
+	cases := []int{-1, 3, 4, 100}
+	for _, n := range cases {
+		val, ok := stack.PeekNthElement(n)
+		if ok {
+			t.Errorf("PeekNthElement(%d) = %v, %v; want zero value, false", n, val, ok)
+		}
+	}
+}
