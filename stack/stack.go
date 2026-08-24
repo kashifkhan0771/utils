@@ -57,11 +57,15 @@ func (s *Stack[T]) Peek() (T, bool) {
 // PeekNthElement returns the element at position n from the top without removing it.
 // n=0 returns the top element, n=1 returns the second element from top, etc.
 // Returns the zero value and false if the index is out of bounds.
+
+// Convert n (counted from the top of the stack) into the slice index,
+// which is counted from the bottom. The -1 accounts for zero-based indexing.
+// For example, with 5 elements: n=0 -> index 4 (top), n=1 -> index 3, etc.
 func (s *Stack[T]) PeekNthElement(n int) (T, bool) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	if (len(s.data) - n - 1) < 0 {
+	if n < 0 || (len(s.data)-n-1) < 0 {
 		var zero T
 
 		return zero, false
