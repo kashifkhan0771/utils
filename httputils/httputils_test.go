@@ -53,7 +53,9 @@ func TestError(t *testing.T) {
 	t.Parallel()
 
 	rec := httptest.NewRecorder()
-	Error(rec, http.StatusBadRequest, errors.New("name: must not be empty"))
+	if err := Error(rec, http.StatusBadRequest, errors.New("name: must not be empty")); err != nil {
+		t.Fatalf("Error() error = %v, want nil", err)
+	}
 
 	if rec.Code != http.StatusBadRequest {
 		t.Errorf("status = %d, want %d", rec.Code, http.StatusBadRequest)
@@ -131,7 +133,9 @@ func TestRecoverer(t *testing.T) {
 	t.Run("discards partial response when handler writes before panicking", func(t *testing.T) {
 		handler := Recoverer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write([]byte("prefix"))
+			if _, err := w.Write([]byte("prefix")); err != nil {
+				t.Fatalf("Write() error = %v, want nil", err)
+			}
 			panic("boom")
 		}))
 
@@ -174,6 +178,14 @@ func TestJSONWriteError(t *testing.T) {
 
 	if err := JSON(failingWriter{}, http.StatusOK, "x"); err == nil {
 		t.Error("JSON() error = nil, want write error")
+	}
+}
+
+func TestErrorWriteError(t *testing.T) {
+	t.Parallel()
+
+	if err := Error(failingWriter{}, http.StatusBadRequest, errors.New("bad request")); err == nil {
+		t.Error("Error() error = nil, want write error")
 	}
 }
 

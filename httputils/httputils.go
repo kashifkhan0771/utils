@@ -43,14 +43,23 @@ func JSON(w http.ResponseWriter, status int, v any) error {
 }
 
 // Error logs err and writes a standard JSON error response to w.
-func Error(w http.ResponseWriter, status int, err error) {
+// It returns an error if the response cannot be encoded or written.
+func Error(w http.ResponseWriter, status int, err error) error {
 	Logger.Error(err.Error())
 
-	body, _ := json.Marshal(ErrorResponse{Error: err.Error()})
+	body, err := json.Marshal(ErrorResponse{Error: err.Error()})
+	if err != nil {
+		return fmt.Errorf("httputils: encode error response: %w", err)
+	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	_, _ = w.Write(body)
+	_, err = w.Write(body)
+	if err != nil {
+		return fmt.Errorf("httputils: write error response: %w", err)
+	}
+
+	return nil
 }
 
 // WithRequestID is a middleware that assigns a request ID from the
@@ -59,7 +68,17 @@ func WithRequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id := r.Header.Get("X-Request-ID")
 		if id == "" {
-			id = newRequestID()
+			var err error
+			id, err = newRequestID()
+			if err != nil {
+				Logger.Error(fmt.Sprintf("httputils: generate request ID: %v", err))
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusInternalServerError)
+				if _, writeErr := w.Write([]byte(`{"error":"internal server error"}`)); writeErr != nil {
+					Logger.Error(fmt.Sprintf("httputils: write request ID error response: %v", writeErr))
+				}
+				return
+			}
 		}
 
 		ctx := ctxutils.SetStringValue(r.Context(), ctxutils.ContextKeyString{Key: "requestID"}, id)
@@ -68,11 +87,14 @@ func WithRequestID(next http.Handler) http.Handler {
 	})
 }
 
-func newRequestID() string {
+func newRequestID() (string, error) {
 	b := make([]byte, 16)
-	_, _ = rand.Read(b)
+	_, err := rand.Read(b)
+	if err != nil {
+		return "", fmt.Errorf("httputils: generate request ID: %w", err)
+	}
 
-	return hex.EncodeToString(b)
+	return hex.EncodeToString(b), nil
 }
 
 // bufferedResponseWriter buffers the downstream response so it can be
@@ -110,7 +132,7 @@ func (b *bufferedResponseWriter) Write(p []byte) (int, error) {
 	return b.body.Write(p)
 }
 
-func (b *bufferedResponseWriter) commit(w http.ResponseWriter) {
+func (b *bufferedResponseWriter) commit(w http.ResponseWriter) error {
 	for k, vs := range b.header {
 		for _, v := range vs {
 			w.Header().Add(k, v)
@@ -119,7 +141,12 @@ func (b *bufferedResponseWriter) commit(w http.ResponseWriter) {
 	if b.written {
 		w.WriteHeader(b.status)
 	}
-	_, _ = w.Write(b.body.Bytes())
+	_, err := w.Write(b.body.Bytes())
+	if err != nil {
+		return fmt.Errorf("httputils: commit response: %w", err)
+	}
+
+	return nil
 }
 
 // Recoverer is a middleware that recovers panics from downstream handlers,
@@ -134,12 +161,16 @@ func Recoverer(next http.Handler) http.Handler {
 				Logger.Error(fmt.Sprintf("panic recovered: %v", rec))
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusInternalServerError)
-				_, _ = w.Write([]byte(`{"error":"internal server error"}`))
+				if _, err := w.Write([]byte(`{"error":"internal server error"}`)); err != nil {
+					Logger.Error(fmt.Sprintf("httputils: write panic response: %v", err))
+				}
 			}
 		}()
 
 		next.ServeHTTP(bw, r)
-		bw.commit(w)
+		if err := bw.commit(w); err != nil {
+			Logger.Error(err.Error())
+		}
 	})
 }
 

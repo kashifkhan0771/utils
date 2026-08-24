@@ -61,7 +61,9 @@ import (
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	if id == "" {
-		httputils.Error(w, http.StatusBadRequest, errors.New("id: must not be empty"))
+		if err := httputils.Error(w, http.StatusBadRequest, errors.New("id: must not be empty")); err != nil {
+			log.Printf("failed to write error response: %v", err)
+		}
 		return
 	}
 
@@ -105,7 +107,9 @@ import (
 func getUserHandler(w http.ResponseWriter, r *http.Request) {
 	requestID, ok := ctxutils.GetStringValue(r.Context(), ctxutils.ContextKeyString{Key: "requestID"})
 	if !ok {
-		httputils.Error(w, http.StatusInternalServerError, errors.New("no request id in context"))
+		if err := httputils.Error(w, http.StatusInternalServerError, errors.New("no request id in context")); err != nil {
+			log.Printf("failed to write error response: %v", err)
+		}
 		return
 	}
 
