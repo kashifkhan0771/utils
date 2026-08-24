@@ -77,6 +77,7 @@ func WithRequestID(next http.Handler) http.Handler {
 				if _, writeErr := w.Write([]byte(`{"error":"internal server error"}`)); writeErr != nil {
 					Logger.Error(fmt.Sprintf("httputils: write request ID error response: %v", writeErr))
 				}
+
 				return
 			}
 		}
