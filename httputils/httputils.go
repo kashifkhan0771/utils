@@ -45,6 +45,9 @@ func JSON(w http.ResponseWriter, status int, v any) error {
 // Error logs err and writes a standard JSON error response to w.
 // It returns an error if the response cannot be encoded or written.
 func Error(w http.ResponseWriter, status int, err error) error {
+	if err == nil {
+		err = fmt.Errorf("httputils: Error called with nil error")
+	}
 	Logger.Error(err.Error())
 
 	body, err := json.Marshal(ErrorResponse{Error: err.Error()})
@@ -142,8 +145,10 @@ func (b *bufferedResponseWriter) commit(w http.ResponseWriter) error {
 	if b.written {
 		w.WriteHeader(b.status)
 	}
-	_, err := w.Write(b.body.Bytes())
-	if err != nil {
+	if b.body.Len() == 0 {
+		return nil
+	}
+	if _, err := w.Write(b.body.Bytes()); err != nil {
 		return fmt.Errorf("httputils: commit response: %w", err)
 	}
 
