@@ -1,6 +1,7 @@
 package rand
 
 import (
+	"math"
 	"strings"
 	"testing"
 )
@@ -82,6 +83,24 @@ func TestNumberInRange(t *testing.T) {
 			name:    "success - same min and max",
 			min:     5,
 			max:     5,
+			wantErr: false,
+		},
+		{
+			name:    "success - complete int64 range",
+			min:     math.MinInt64,
+			max:     math.MaxInt64,
+			wantErr: false,
+		},
+		{
+			name:    "success - lower int64 half",
+			min:     math.MinInt64,
+			max:     -1,
+			wantErr: false,
+		},
+		{
+			name:    "success - upper int64 half",
+			min:     0,
+			max:     math.MaxInt64,
 			wantErr: false,
 		},
 		{
