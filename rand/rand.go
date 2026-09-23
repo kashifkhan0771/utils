@@ -44,23 +44,23 @@ func NumberInRange(min, max int64) (int64, error) {
 		return 0, fmt.Errorf("min (%d) cannot be greater than max (%d)", min, max)
 	}
 
-	// Early return if min equals max
 	if min == max {
 		return min, nil
 	}
 
-	rangeSize := max - min + 1
-	// Calculate the largest multiple of rangeSize that fits in MaxInt64
-	limit := math.MaxInt64 - (math.MaxInt64 % rangeSize)
+	// unsigned arithmetic safely calculates ranges larger than MaxInt64
+	rangeSize := uint64(max) - uint64(min) + 1 //nolint:gosec // conversions intentionally use modulo-2^64 arithmetic
 
-	for {
-		n := randv2.Int64N(math.MaxInt64) //nolint: gosec // related to issue #107
-
-		if n < limit {
-			return min + (n % rangeSize), nil
-		}
-		// If we're above the limit, try again to ensure uniform distribution
+	// zero rangeSize represents 2^64 possible values which is the complete int64 range
+	if rangeSize == 0 {
+		return int64(randv2.Uint64()), nil //nolint:gosec // this API intentionally provides pseudo-random values
 	}
+
+	offset := randv2.Uint64N(rangeSize) //nolint:gosec // this API intentionally provides pseudo-random values
+
+	// addition may wrap in uint64, but the resulting bit pattern still
+	// corresponds to the correct int64 value
+	return int64(uint64(min) + offset), nil //nolint:gosec // conversion intentionally maps the resulting bit pattern
 }
 
 // String generates a random string using the default constants
