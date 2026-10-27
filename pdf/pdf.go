@@ -9,6 +9,7 @@ package pdf
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -302,7 +303,7 @@ func MergePDFs(inputFiles []string, outputFile string) error {
 	conf := model.NewDefaultConfiguration()
 	conf.ValidationMode = model.ValidationRelaxed
 
-	return api.MergeCreateFile(cleaned, outputFile, false, conf)
+	return api.MergeCreateFile(context.Background(), cleaned, outputFile, false, conf)
 }
 
 // SplitPDF splits a PDF file into multiple smaller PDF files based on the
@@ -324,7 +325,7 @@ func SplitPDF(inputFile string, pageRanges []string, outputDir string) error {
 	}
 
 	// Get total page count for range validation.
-	totalPages, err := api.PageCountFile(inputFile)
+	totalPages, err := api.PageCountFile(context.Background(), inputFile)
 	if err != nil {
 		return fmt.Errorf("failed to read page count: %w", err)
 	}
@@ -351,7 +352,7 @@ func SplitPDF(inputFile string, pageRanges []string, outputDir string) error {
 		// pdfcpu uses page selection strings like "1-3"
 		pageSelection := fmt.Sprintf("%d-%d", start, end)
 
-		if err := api.TrimFile(inputFile, outputFile, []string{pageSelection}, conf); err != nil {
+		if err := api.TrimFile(context.Background(), inputFile, outputFile, []string{pageSelection}, conf); err != nil {
 			return fmt.Errorf("failed to split pages %s: %w", rangeStr, err)
 		}
 	}
