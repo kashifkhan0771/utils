@@ -7,7 +7,7 @@ require (
 	github.com/go-pdf/fpdf v0.9.0
 	github.com/ledongthuc/pdf v0.0.0-20261020125853-5e46805f718e
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
-	github.com/pdfcpu/pdfcpu v0.16.3
+	github.com/pdfcpu/pdfcpu v0.16.4
 	golang.org/x/image v0.47.0
 	golang.org/x/net v0.62.0
 	golang.org/x/sync v0.24.0
