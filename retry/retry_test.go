@@ -91,19 +91,22 @@ func TestDo_ZeroMaxAttempts(t *testing.T) {
 }
 
 func TestDo_NoBackoffAfterFinalAttempt(t *testing.T) {
-	const backoffDelay = 200 * time.Millisecond
+	var backoffAttempts []uint
 	opts := Options{
 		MaxAttempts:  2,
 		TotalTimeout: 5 * time.Second,
-		Backoff:      FixedBackoff(backoffDelay),
-		ShouldRetry:  func(err error) bool { return true },
+		Backoff: func(attempt uint) time.Duration {
+			backoffAttempts = append(backoffAttempts, attempt)
+			return 0
+		},
+		ShouldRetry: func(err error) bool { return true },
 	}
 
-	start := time.Now()
+	fnCalls := 0
 	_, err := Do(context.Background(), opts, func(ctx context.Context) (string, error) {
+		fnCalls++
 		return "", errors.New("transient")
 	})
-	elapsed := time.Since(start)
 
 	if err == nil {
 		t.Fatal("expected error, got nil")
@@ -111,12 +114,12 @@ func TestDo_NoBackoffAfterFinalAttempt(t *testing.T) {
 	if err.Error() != "retry: max attempts reached: transient" {
 		t.Fatalf("expected wrapped last error, got %v", err)
 	}
-	// One inter-attempt backoff only; must not wait again after the final failure.
-	if elapsed < backoffDelay {
-		t.Fatalf("expected at least one backoff, elapsed %v", elapsed)
+	if fnCalls != 2 {
+		t.Fatalf("expected fn to run twice, got %d", fnCalls)
 	}
-	if elapsed >= 2*backoffDelay {
-		t.Fatalf("unexpected backoff after final attempt, elapsed %v", elapsed)
+	// One inter-attempt backoff only; must not call Backoff after the final failure.
+	if len(backoffAttempts) != 1 || backoffAttempts[0] != 0 {
+		t.Fatalf("expected exactly one Backoff call with attempt 0, got %v", backoffAttempts)
 	}
 }
 
