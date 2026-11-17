@@ -23,10 +23,16 @@ type RetryFunc[T any] func(ctx context.Context) (T, error)
 
 // Do calls fn repeatedly until fn succeeds, ShouldRetry returns false,
 // MaxAttempts is reached, or TotalTimeout elapses.
+// MaxAttempts must be greater than zero.
+// Backoff is only applied between attempts; the final failed attempt returns
+// immediately without waiting.
 func Do[T any](ctx context.Context, opts Options, fn RetryFunc[T]) (T, error) {
 	var zero T
 	if ctx == nil {
 		return zero, fmt.Errorf("retry: context must not be nil")
+	}
+	if opts.MaxAttempts == 0 {
+		return zero, fmt.Errorf("retry: MaxAttempts must be greater than 0")
 	}
 
 	if opts.TotalTimeout > 0 {
@@ -54,6 +60,12 @@ func Do[T any](ctx context.Context, opts Options, fn RetryFunc[T]) (T, error) {
 
 		if !shouldRetry(err) {
 			return zero, err
+		}
+
+		// Skip backoff after the final attempt so callers get the last error
+		// immediately instead of waiting (and possibly seeing ctx.Err()).
+		if attempt+1 >= opts.MaxAttempts {
+			break
 		}
 
 		select {
