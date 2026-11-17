@@ -65,6 +65,87 @@ func TestDo_MaxAttemptsReached(t *testing.T) {
 	if *attempts != 3 {
 		t.Fatalf("expected 3 attempts, got %d", *attempts)
 	}
+	if err.Error() != "retry: max attempts reached: transient" {
+		t.Fatalf("expected wrapped max-attempts error, got %v", err)
+	}
+}
+
+func TestDo_ZeroMaxAttempts(t *testing.T) {
+	opts := defaultOpts()
+	opts.MaxAttempts = 0
+
+	called := 0
+	_, err := Do(context.Background(), opts, func(ctx context.Context) (string, error) {
+		called++
+		return "", errors.New("should not run")
+	})
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if err.Error() != "retry: MaxAttempts must be greater than 0" {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if called != 0 {
+		t.Fatalf("expected fn not to be called, got %d calls", called)
+	}
+}
+
+func TestDo_NoBackoffAfterFinalAttempt(t *testing.T) {
+	var backoffAttempts []uint
+	opts := Options{
+		MaxAttempts:  2,
+		TotalTimeout: 5 * time.Second,
+		Backoff: func(attempt uint) time.Duration {
+			backoffAttempts = append(backoffAttempts, attempt)
+			return 0
+		},
+		ShouldRetry: func(err error) bool { return true },
+	}
+
+	fnCalls := 0
+	_, err := Do(context.Background(), opts, func(ctx context.Context) (string, error) {
+		fnCalls++
+		return "", errors.New("transient")
+	})
+
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if err.Error() != "retry: max attempts reached: transient" {
+		t.Fatalf("expected wrapped last error, got %v", err)
+	}
+	if fnCalls != 2 {
+		t.Fatalf("expected fn to run twice, got %d", fnCalls)
+	}
+	// One inter-attempt backoff only; must not call Backoff after the final failure.
+	if len(backoffAttempts) != 1 || backoffAttempts[0] != 0 {
+		t.Fatalf("expected exactly one Backoff call with attempt 0, got %v", backoffAttempts)
+	}
+}
+
+func TestDo_FinalAttemptPreservesLastErrorOverTimeout(t *testing.T) {
+	// Previously the final failure slept, so a short remaining deadline could
+	// replace the real last error with context.DeadlineExceeded.
+	transient := errors.New("transient")
+	opts := Options{
+		MaxAttempts:  1,
+		TotalTimeout: 30 * time.Millisecond,
+		Backoff:      FixedBackoff(200 * time.Millisecond),
+		ShouldRetry:  func(err error) bool { return true },
+	}
+
+	_, err := Do(context.Background(), opts, func(ctx context.Context) (string, error) {
+		return "", transient
+	})
+	if err == nil {
+		t.Fatal("expected error, got nil")
+	}
+	if errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("expected last error, got timeout: %v", err)
+	}
+	if !errors.Is(err, transient) {
+		t.Fatalf("expected transient wrapped error, got %v", err)
+	}
 }
 
 func TestDo_ShouldRetryFalseStopsEarly(t *testing.T) {

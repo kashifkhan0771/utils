@@ -29,6 +29,8 @@ The `retry` package provides a generic, context-aware way to retry fallible oper
   Waits `min(d * 2^attempt, 2^63 - 1)`. Doubles on each failure: `d, 2d, 4d, 8d, …`
 
 #### **Notes**
+- `MaxAttempts` must be greater than `0`. A value of `0` returns an error immediately without calling `fn`.
+- Backoff runs only between attempts. After the final failed attempt, `Do` returns immediately (no trailing wait), so the last error from `fn` is preserved instead of being replaced by a timeout during an unused sleep.
 - `TotalTimeout` is enforced via a derived context passed to every attempt. If the deadline is exceeded mid-backoff, `Do` returns `context.DeadlineExceeded` immediately. A value of `0` means no timeout is applied.
 - A non-retryable error returned from `ShouldRetry` is returned as-is, without wrapping.
 - When `MaxAttempts` is exhausted, `Do` returns an error wrapping the last error from `fn`: `"retry: max attempts reached: <last error>"`. Use `errors.Is`/`errors.As` to inspect the underlying cause.

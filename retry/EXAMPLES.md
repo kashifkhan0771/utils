@@ -175,6 +175,9 @@ response <nil>
 ---
 
 ### Inspecting the cause after max attempts exhausted
+Backoff is applied only between attempts. After the final failure, `Do` returns immediately
+with the wrapped last error (no trailing sleep).
+
 ```go
 package main
 
