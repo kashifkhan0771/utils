@@ -5,68 +5,121 @@ import (
 	"testing"
 )
 
-// TODO: these can be written as a table test
-
-func TestSetStringValueAndGetStringValue(t *testing.T) {
-	ctx := context.Background()
-
-	key := ContextKeyString{Key: "userID"}
-	value := "Shahzad"
-
-	ctx = SetStringValue(ctx, key, value)
-	retrievedValue, ok := GetStringValue(ctx, key)
-	if !ok {
-		t.Errorf("Expected value to be found, but it was not.")
+func TestStringValue(t *testing.T) {
+	tests := []struct {
+		name      string
+		setKey    ContextKeyString
+		getKey    ContextKeyString
+		value     string
+		wantValue string
+		wantOK    bool
+	}{
+		{
+			name:      "same key returns stored value",
+			setKey:    ContextKeyString{Key: "userID"},
+			getKey:    ContextKeyString{Key: "userID"},
+			value:     "Shahzad",
+			wantValue: "Shahzad",
+			wantOK:    true,
+		},
+		{
+			name:      "wrong key is not found",
+			setKey:    ContextKeyString{Key: "userID"},
+			getKey:    ContextKeyString{Key: "wrongKey"},
+			value:     "Shahzad",
+			wantValue: "",
+			wantOK:    false,
+		},
+		{
+			name:      "empty string is stored and found",
+			setKey:    ContextKeyString{Key: "userID"},
+			getKey:    ContextKeyString{Key: "userID"},
+			value:     "",
+			wantValue: "",
+			wantOK:    true,
+		},
 	}
 
-	if retrievedValue != value {
-		t.Errorf("Expected value: %s, but got: %v", value, retrievedValue)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := SetStringValue(context.Background(), tt.setKey, tt.value)
+
+			got, ok := GetStringValue(ctx, tt.getKey)
+			if ok != tt.wantOK {
+				t.Errorf("GetStringValue() found = %v, want %v", ok, tt.wantOK)
+			}
+			if got != tt.wantValue {
+				t.Errorf("GetStringValue() = %q, want %q", got, tt.wantValue)
+			}
+		})
 	}
 }
 
-func TestSetIntValueAndGetIntValue(t *testing.T) {
-	ctx := context.Background()
-
-	key := ContextKeyInt{Key: 123}
-	value := 456
-
-	ctx = SetIntValue(ctx, key, value)
-	retrievedValue, ok := GetIntValue(ctx, key)
-	if !ok {
-		t.Errorf("Expected value to be found, but it was not.")
+func TestIntValue(t *testing.T) {
+	tests := []struct {
+		name      string
+		setKey    ContextKeyInt
+		getKey    ContextKeyInt
+		value     int
+		wantValue int
+		wantOK    bool
+	}{
+		{
+			name:      "same key returns stored value",
+			setKey:    ContextKeyInt{Key: 123},
+			getKey:    ContextKeyInt{Key: 123},
+			value:     456,
+			wantValue: 456,
+			wantOK:    true,
+		},
+		{
+			name:      "wrong key is not found",
+			setKey:    ContextKeyInt{Key: 123},
+			getKey:    ContextKeyInt{Key: 999},
+			value:     456,
+			wantValue: 0,
+			wantOK:    false,
+		},
+		{
+			name:      "zero is stored and found",
+			setKey:    ContextKeyInt{Key: 123},
+			getKey:    ContextKeyInt{Key: 123},
+			value:     0,
+			wantValue: 0,
+			wantOK:    true,
+		},
 	}
 
-	if retrievedValue != value {
-		t.Errorf("Expected value: %d, but got: %v", value, retrievedValue)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := SetIntValue(context.Background(), tt.setKey, tt.value)
+
+			got, ok := GetIntValue(ctx, tt.getKey)
+			if ok != tt.wantOK {
+				t.Errorf("GetIntValue() found = %v, want %v", ok, tt.wantOK)
+			}
+			if got != tt.wantValue {
+				t.Errorf("GetIntValue() = %d, want %d", got, tt.wantValue)
+			}
+		})
 	}
 }
 
-func TestSetStringValueWithWrongKey(t *testing.T) {
+func TestMissingValue(t *testing.T) {
+	t.Parallel()
+
 	ctx := context.Background()
 
-	key := ContextKeyString{Key: "userID"}
-	value := "Shahzad"
-	ctx = SetStringValue(ctx, key, value)
-
-	wrongKey := ContextKeyString{Key: "wrongKey"}
-	_, ok := GetStringValue(ctx, wrongKey)
-	if ok {
-		t.Errorf("Expected value not to be found, but it was.")
+	if _, ok := GetStringValue(ctx, ContextKeyString{Key: "userID"}); ok {
+		t.Errorf("GetStringValue() on empty context found a value, want not found")
 	}
-}
 
-func TestSetIntValueWithWrongKey(t *testing.T) {
-	ctx := context.Background()
-
-	key := ContextKeyInt{Key: 123}
-	value := 456
-
-	ctx = SetIntValue(ctx, key, value)
-	wrongKey := ContextKeyInt{Key: 999}
-	_, ok := GetIntValue(ctx, wrongKey)
-
-	if ok {
-		t.Errorf("Expected value not to be found, but it was.")
+	if _, ok := GetIntValue(ctx, ContextKeyInt{Key: 123}); ok {
+		t.Errorf("GetIntValue() on empty context found a value, want not found")
 	}
 }
 
