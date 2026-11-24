@@ -103,6 +103,31 @@ func TestTokenize(t *testing.T) {
 			args: args{input: "This is a custom-tokenization!example", customDelimiters: "-!"},
 			want: []string{"This", "is", "a", "custom", "tokenization", "example"},
 		},
+		{
+			name: "success - ASCII whitespace",
+			args: args{input: "\talpha\nbeta\rgamma\vdelta\fepsilon "},
+			want: []string{"alpha", "beta", "gamma", "delta", "epsilon"},
+		},
+		{
+			name: "success - Unicode whitespace",
+			args: args{input: "\u00a0alpha\u2003beta\u2028gamma\u2029delta\u3000"},
+			want: []string{"alpha", "beta", "gamma", "delta"},
+		},
+		{
+			name: "success - whitespace and custom delimiters",
+			args: args{input: " alpha,\tbeta;\ngamma•delta ", customDelimiters: ",;•"},
+			want: []string{"alpha", "beta", "gamma", "delta"},
+		},
+		{
+			name: "success - whitespace only",
+			args: args{input: "\t\n\r\v\f \u00a0\u2003"},
+			want: []string{},
+		},
+		{
+			name: "success - preserve non-whitespace format characters",
+			args: args{input: "alpha\u200bbeta"},
+			want: []string{"alpha\u200bbeta"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

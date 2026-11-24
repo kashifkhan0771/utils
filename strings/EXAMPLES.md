@@ -42,7 +42,7 @@ func main() {
 
 ```go
 func main() {
-	tokens := strings.Tokenize("hello,world;this is Go", ",;")
+	tokens := strings.Tokenize("hello,world;\tthis\nis Go", ",;")
 	fmt.Println(tokens) // Output: [hello world this is Go]
 }
 ```

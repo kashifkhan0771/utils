@@ -146,7 +146,7 @@ func ToTitle(input string, exceptions []string) string {
 func Tokenize(input string, customDelimiters string) []string {
 	// Create a function to split a string based on custom delimiters.
 	customSplit := func(c rune) bool {
-		return strings.ContainsRune(customDelimiters, c) || c == ' '
+		return strings.ContainsRune(customDelimiters, c) || unicode.IsSpace(c)
 	}
 
 	// Split the string using the custom split function.

@@ -3,7 +3,7 @@
 - **SubstringSearch**: Searches for substrings in a string with customizable options.
 - **Title**: Converts a string to title case (capitalizes the first letter of each word).
 - **ToTitle**: Converts a string to title case, ignoring specified words.
-- **Tokenize**: Splits a string into tokens using specified delimiters.
+- **Tokenize**: Splits a string into tokens using Unicode whitespace (including tabs and newlines) and specified delimiters.
 - **Rot13Encode**: Encodes a string using the ROT13 cipher.
 - **Rot13Decode**: Decodes a string using the ROT13 cipher.
 - **CaesarEncrypt**: Encrypts a string using the Caesar cipher with a given shift.
